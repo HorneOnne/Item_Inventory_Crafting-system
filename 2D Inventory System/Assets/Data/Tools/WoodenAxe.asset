@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88805880ac79b2f4c8592f2e1b2c64ff, type: 3}
   m_Name: WoodenAxe
   m_EditorClassIdentifier: 
-  id: 0
-  itemName: Wood Pickaxe
   icon: {fileID: 466588112, guid: e7c5c8b24618b374a892495940f725fc, type: 3}
-  itemType: 7
+  itemType: 9
   max_quantity: 1
+  description: 
+  axePower: 0

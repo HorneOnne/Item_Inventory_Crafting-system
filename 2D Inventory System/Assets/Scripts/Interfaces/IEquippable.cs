@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IEquippable 
 {
-    public void Equip(Player player);
+    public void Equip(PlayerController player);
 }

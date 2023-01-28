@@ -6,7 +6,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Recipe Object", menuName = "ScriptableObject/Recipe", order = 51)]
 public class RecipeData : ScriptableObject
 {
-    private readonly byte GRID_SIZE = 3;
     public ItemData outputItem;
     public ushort quantityItemOutput;
 

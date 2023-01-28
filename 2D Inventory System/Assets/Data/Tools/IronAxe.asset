@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: IronAxe
   m_EditorClassIdentifier: 
   icon: {fileID: -1614335765, guid: 84f31bbd12f783e4e932524e735d43ae, type: 3}
-  itemType: 7
+  itemType: 9
   max_quantity: 1
   description: 
   axePower: 0

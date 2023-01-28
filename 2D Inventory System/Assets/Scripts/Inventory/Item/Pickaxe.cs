@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Pickaxe : Item
 {
-    public override void Use(Player player)
+    public override void Use(PlayerController player)
     {
         Debug.Log("Use pickaxe");
     }

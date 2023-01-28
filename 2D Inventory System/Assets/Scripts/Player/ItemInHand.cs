@@ -1,31 +1,16 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
 
-/*
-    -- EN
-    This Script use for handle item when player interact with item in 
-    inventory ui like get item.
-    
-    -- VN
-    Script nay dung de xu ly vat pham khi nguoi choi tuong tac voi inventory ui
-    giong nhu lay vat pham ra khoi inventory....
-    
- */
-[RequireComponent(typeof(PlayerInventory))]
+
 public class ItemInHand : MonoBehaviour
-{   
-    private PlayerInventory inventory;
+{
     public ItemSlot itemSlot;
 
-    [Header("UI Display")]
-    public UIItemInHand uiItemInHand;
+    [Header("References")]
+    private UIItemInHand uiItemInHand;
 
     private void Start()
     {
-        inventory = this.GetComponent<PlayerInventory>(); 
+        uiItemInHand = UIItemInHand.Instance;
     }
 
 

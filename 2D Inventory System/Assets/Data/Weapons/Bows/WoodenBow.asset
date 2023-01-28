@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WoodenBow
   m_EditorClassIdentifier: 
   icon: {fileID: 0}
-  itemType: 2
+  itemType: 4
   max_quantity: 1
   description: 
   attackSpeed: 0

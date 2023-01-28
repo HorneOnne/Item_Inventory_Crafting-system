@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TheUndergroundAxe
   m_EditorClassIdentifier: 
   icon: {fileID: -973612531, guid: 0804b8f0cd3b81241862b9b94a207c61, type: 3}
-  itemType: 7
+  itemType: 9
   max_quantity: 1
   description: 
   axePower: 0

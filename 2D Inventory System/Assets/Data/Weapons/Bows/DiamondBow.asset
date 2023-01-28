@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 329cd0043012fee4f8d0a0a6cfd837c6, type: 3}
   m_Name: DiamondBow
   m_EditorClassIdentifier: 
-  itemName: Diamond Bow
   icon: {fileID: -865407655, guid: e7c5c8b24618b374a892495940f725fc, type: 3}
-  itemType: 2
+  itemType: 4
   max_quantity: 1
   description: 
   attackSpeed: 0

@@ -5,7 +5,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(ItemInHand))]
+
 public class PlayerInventory : MonoBehaviour
 {
     // Events
@@ -16,16 +16,8 @@ public class PlayerInventory : MonoBehaviour
     public List<ItemSlot> slotList = new List<ItemSlot>();
 
 
-    [Header("References")]
-    [SerializeField] private ItemInHand itemInHand;
-
-    public ItemInHand ItemInHand { get { return itemInHand; } }
-
-
     private void Start()
     {
-        itemInHand = GetComponent<ItemInHand>();
-
         for (int i = 0; i < capacity; i++)
         {
             slotList.Add(new ItemSlot());

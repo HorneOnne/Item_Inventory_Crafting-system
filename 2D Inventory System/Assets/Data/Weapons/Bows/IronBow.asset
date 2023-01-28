@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: IronBow
   m_EditorClassIdentifier: 
   icon: {fileID: 1832282138, guid: e7c5c8b24618b374a892495940f725fc, type: 3}
-  itemType: 2
+  itemType: 4
   max_quantity: 1
   description: 
   attackSpeed: 0

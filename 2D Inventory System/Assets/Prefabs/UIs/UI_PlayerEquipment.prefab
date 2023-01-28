@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 95, y: 95}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1209299249833953129
 CanvasRenderer:
@@ -88,7 +88,7 @@ GameObject:
   - component: {fileID: 5811067868624701006}
   - component: {fileID: 6580329745220204681}
   m_Layer: 5
-  m_Name: Image
+  m_Name: EquipmentImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -112,7 +112,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 56, y: 56}
+  m_SizeDelta: {x: 65, y: 65}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5811067868624701006
 CanvasRenderer:
@@ -161,8 +161,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7458145588481894705}
-  - component: {fileID: 3760472259516981543}
   - component: {fileID: 2421280608836268526}
+  - component: {fileID: -1980402018218972505}
   m_Layer: 5
   m_Name: UI_PlayerEquipment
   m_TagString: Untagged
@@ -191,21 +191,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &3760472259516981543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7458145588481894704}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a893778e0237462439068e83a135b421, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slotImage: {fileID: 6580329745220204681}
-  amountItemInSlotText: {fileID: 0}
-  slotIndex: 0
 --- !u!114 &2421280608836268526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -219,6 +204,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Delegates: []
+--- !u!114 &-1980402018218972505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7458145588481894704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26cb2049810e3f4daf1273a51fc276b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  equipmentImage: {fileID: 6580329745220204681}
+  defaultEquipmentIcon: {fileID: 0}
+  equipmentType: 0
 --- !u!1 &8226807456746485748
 GameObject:
   m_ObjectHideFlags: 0

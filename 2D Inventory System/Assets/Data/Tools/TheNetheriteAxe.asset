@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TheNetheriteAxe
   m_EditorClassIdentifier: 
   icon: {fileID: -162372788, guid: 0804b8f0cd3b81241862b9b94a207c61, type: 3}
-  itemType: 0
+  itemType: 9
   max_quantity: 0
   description: 
   axePower: 0

@@ -9,10 +9,10 @@ public abstract class ItemData : ScriptableObject
     [Header("Item Properties")]
     public Sprite icon;
     public ItemType itemType;
-    public ushort max_quantity;
-    [Multiline(10)]
+    public ushort max_quantity;   
+    [Multiline(5)]
     public string description;
-   
+
 
     public override bool Equals(object other)
     {
@@ -47,14 +47,16 @@ public abstract class ItemData : ScriptableObject
 
 public enum ItemType
 {
-    Null,
-    Armor,
-    Weapon,
-    Shoes,
-    LightSource,
-    Currency,
-    Consumption, 
-    Tool,
-    Buff, 
-    Material
+    Null = 0,
+    ChestArmor = 1,
+    Helm = 2,
+    Shield = 3,
+    Weapon = 4,
+    Shoes = 5,
+    LightSource = 6,
+    Currency = 7,
+    Consumption = 8, 
+    Tool = 9,
+    Buff = 10, 
+    Material = 11,
 }

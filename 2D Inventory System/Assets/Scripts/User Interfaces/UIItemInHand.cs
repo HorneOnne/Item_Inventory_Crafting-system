@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIItemInHand : MonoBehaviour
+public class UIItemInHand : Singleton<UIItemInHand>
 {
-    [SerializeField] ItemInHand itemInHand;
+    [Header("References")]
+    public PlayerController player;
     [SerializeField] GameObject uiSlotPrefab;
-
     private GameObject uiSlotDisplay;
 
     // Cached
@@ -15,13 +15,13 @@ public class UIItemInHand : MonoBehaviour
 
     private void Awake()
     {
-        mainCamera = Camera.main;   
+        mainCamera = Camera.main;
     }
 
 
     private void Update()
     {
-        if(itemInHand.HasItem() && uiSlotDisplay != null)
+        if(player.ItemInHand.HasItem() && uiSlotDisplay != null)
         {
             mainCameraPosition = (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition);
             uiSlotDisplay.GetComponent<RectTransform>().transform.position = mainCameraPosition;
@@ -38,22 +38,22 @@ public class UIItemInHand : MonoBehaviour
 
     public void DisplayItemInHand(Transform parent = null)
     {
-        if (itemInHand.HasItem() == false)
+        if (player.ItemInHand.HasItem() == false)
         {
-            itemInHand.ClearSlot();
+            player.ItemInHand.ClearSlot();
             return;
         }
 
         if(uiSlotDisplay != null)
         {
-            uiSlotDisplay.GetComponent<UIItemSlot>().slotImage.sprite = itemInHand.itemSlot.itemObject.icon;
-            uiSlotDisplay.GetComponent<UIItemSlot>().amountItemInSlotText.text = itemInHand.itemSlot.itemQuantity.ToString();         
+            uiSlotDisplay.GetComponent<UIItemSlot>().slotImage.sprite = player.ItemInHand.itemSlot.itemObject.icon;
+            SetItemQuantityText();
         }
         else
         {
             uiSlotDisplay = Instantiate(uiSlotPrefab, this.transform.parent.transform);
-            uiSlotDisplay.GetComponent<UIItemSlot>().slotImage.sprite = itemInHand.itemSlot.itemObject.icon;
-            uiSlotDisplay.GetComponent<UIItemSlot>().amountItemInSlotText.text = itemInHand.itemSlot.itemQuantity.ToString();
+            uiSlotDisplay.GetComponent<UIItemSlot>().slotImage.sprite = player.ItemInHand.itemSlot.itemObject.icon;
+            SetItemQuantityText();
 
             if (parent != null)
             {
@@ -65,5 +65,12 @@ public class UIItemInHand : MonoBehaviour
         }
     }
 
-
+    private void SetItemQuantityText()
+    {
+        int itemQuantity = player.ItemInHand.itemSlot.itemQuantity;
+        if (itemQuantity > 1)
+            uiSlotDisplay.GetComponent<UIItemSlot>().amountItemInSlotText.text = player.ItemInHand.itemSlot.itemQuantity.ToString();
+        else
+            uiSlotDisplay.GetComponent<UIItemSlot>().amountItemInSlotText.text = "";
+    }
 }

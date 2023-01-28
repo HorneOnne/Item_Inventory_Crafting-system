@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11fb6a7510fa58b499a26b35445b0d79, type: 3}
   m_Name: GoldDagger
   m_EditorClassIdentifier: 
-  itemName: Gold Dagger
   icon: {fileID: 1291960860, guid: e7c5c8b24618b374a892495940f725fc, type: 3}
-  itemType: 2
+  itemType: 4
   max_quantity: 1
   description: 
   damage: 30
   numOfUseRemaining: 150
+  upgradeSwordData: {fileID: 0}

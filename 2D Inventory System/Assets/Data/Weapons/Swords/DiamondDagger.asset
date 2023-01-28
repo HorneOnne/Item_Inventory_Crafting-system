@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DiamondDagger
   m_EditorClassIdentifier: 
   icon: {fileID: -411906627, guid: 0804b8f0cd3b81241862b9b94a207c61, type: 3}
-  itemType: 2
+  itemType: 4
   max_quantity: 1
   description: 
   damage: 50

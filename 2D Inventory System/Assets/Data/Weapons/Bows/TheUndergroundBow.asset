@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 329cd0043012fee4f8d0a0a6cfd837c6, type: 3}
   m_Name: TheUndergroundBow
   m_EditorClassIdentifier: 
-  itemName: The Underground Bow
   icon: {fileID: 1626572343, guid: e7c5c8b24618b374a892495940f725fc, type: 3}
-  itemType: 2
+  itemType: 4
   max_quantity: 1
   description: 
   attackSpeed: 0
