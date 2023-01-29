@@ -1,26 +1,30 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
-
 
 public class PlayerInventory : MonoBehaviour
 {
     // Events
     public static event System.Action OnInventoryUpdate;
 
+    [Header("References")]
+    private Player player;
+    private ItemInHand itemInHand; 
+
+
     [Header("Inventory Settings")]
     public int capacity;
-    public List<ItemSlot> slotList = new List<ItemSlot>();
+    public List<ItemSlot> inventory = new List<ItemSlot>();
 
 
     private void Start()
     {
+        player = GetComponent<Player>();
+        itemInHand = player.ItemInHand;
+
         for (int i = 0; i < capacity; i++)
         {
-            slotList.Add(new ItemSlot());
+            inventory.Add(new ItemSlot());
         }
     }
 
@@ -28,65 +32,30 @@ public class PlayerInventory : MonoBehaviour
     {
         if(HasSlot(slotIndex))
         {
-            return slotList[slotIndex].itemObject;
+            return inventory[slotIndex].itemObject;
         }
         return null;
     }
 
-    public bool AddItem(ItemData itemObject)
-    {
-        for (int i = 0; i < capacity; i++)
-        {
-            if (slotList[i].itemObject != null)
-            {
-                if (itemObject == slotList[i].itemObject)
-                {
-                    if(slotList[i].IsFullSlot() == false)
-                    {
-                        slotList[i].AddNewItem(itemObject);
-                        OnInventoryUpdate?.Invoke();
-                        return true;
-                    }
-                   
-                }
-            }
-        }
-
-        for (int i = 0; i < capacity; i++)
-        {
-            if (slotList[i].itemObject == null)
-            {
-                slotList[i].AddNewItem(itemObject);
-                OnInventoryUpdate?.Invoke();
-                return true;
-            }
-        }
-
-        OnInventoryUpdate?.Invoke();
-        return false;
-    }
 
     public bool AddItem(int index)
     {
-        bool isSlotNotFull = slotList[index].AddItem();
+        bool isSlotNotFull = inventory[index].AddItem();
         OnInventoryUpdate?.Invoke();
 
         return isSlotNotFull;
     }
 
 
-
-    // NEW INTERACTIVE METHOD
-    // ======================
     public void AddNewItemIntoInventoryAtIndex(int index, ItemData item)
     {
-        slotList[index].AddNewItem(item);
+        inventory[index].AddNewItem(item);
         OnInventoryUpdate?.Invoke();
     }
 
     public void RemoveItemFromInventoryAtIndex(int index)
     {
-        slotList[index].RemoveItem();
+        inventory[index].RemoveItem();
         OnInventoryUpdate?.Invoke();
     }
 
@@ -95,7 +64,7 @@ public class PlayerInventory : MonoBehaviour
     {
         try
         {
-            slotList[slotIndex].HasItem();
+            inventory[slotIndex].HasItem();
         }
         catch
         {
@@ -110,8 +79,35 @@ public class PlayerInventory : MonoBehaviour
     {
         if(HasSlot(slotIndex))
         {
-            return slotList[slotIndex].HasItem();
+            return inventory[slotIndex].HasItem();
         }
         return false;
+    }
+
+
+    public void StackItem()
+    {
+        if (itemInHand.GetItem() == null) return;
+        Dictionary<int, int> dict = new Dictionary<int, int>();
+        Dictionary<int, int> sortedDict = new Dictionary<int, int>();
+
+        for (int i = 0; i < inventory.Count; i++)
+        {
+            if (inventory[i].itemObject == itemInHand.GetItem())
+            {
+                dict.Add(i, inventory[i].ItemQuantity);
+            }
+        }
+
+        // Use OrderBy to sort the dictionary by value
+        sortedDict = dict.OrderBy(x => x.Value)
+            .ToDictionary(x => x.Key, x => x.Value);
+     
+        foreach(var e in sortedDict)
+        {
+            itemInHand.itemSlot.AddItemsFromAnotherSlot(inventory[e.Key]);
+            UIItemInHand.Instance.DisplayItemInHand();
+            UIPlayerInventory.Instance.UpdateInventoryUIAt(e.Key);
+        }
     }
 }

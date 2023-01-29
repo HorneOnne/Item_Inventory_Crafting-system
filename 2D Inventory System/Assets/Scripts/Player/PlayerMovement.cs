@@ -1,10 +1,10 @@
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerController))]
+[RequireComponent(typeof(Player))]
 public class PlayerMovement : MonoBehaviour
 {
     [Header("References")]
-    private PlayerController player;
+    private Player player;
     private PlayerData playerData;
     private PlayerInputHandler playerInputHandler;
     private Rigidbody2D rb;
@@ -27,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        player = GetComponent<PlayerController>();
+        player = GetComponent<Player>();
         playerInputHandler = player.PlayerInputHandler;
         playerData = player.playerData;
 

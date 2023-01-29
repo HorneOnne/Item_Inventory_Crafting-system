@@ -1,10 +1,12 @@
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerController))]
+[RequireComponent(typeof(Player))]
 public class PlayerInputHandler : MonoBehaviour
 {
     [Header("References")]
-    private PlayerController player;
+    private Player player;
+    private PlayerInventory playerInventory;
+
     private PlayerMovement playerMovement;
 
   
@@ -19,9 +21,17 @@ public class PlayerInputHandler : MonoBehaviour
 
 
 
+    float doubleClickTime = 0.2f; // time in seconds between clicks to register as a double click
+    float lastClickTime = 0; // time of last click
+    bool click = false; // variable to track if a click has occurred
+
+
+
     private void Start()
     {
-        player = GetComponent<PlayerController>();
+        player = GetComponent<Player>();
+        playerInventory = player.PlayerInventory;
+
         playerMovement = player.PlayerMovement;
     }
 
@@ -51,6 +61,44 @@ public class PlayerInputHandler : MonoBehaviour
             TriggerJump = true;
             jumpBufferCount = 0;
         }
+
+
+
+        if (CheckForDoubleLeftClick())
+            //playerInventory.StackItem();
+            CraftingTableManager.Instance.StackItem();
+    }
+
+    
+    private bool CheckForDoubleLeftClick()
+    {
+        bool detectDoubleClick = false;
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            // check if last click was within doubleClickTime
+            if (Time.time - lastClickTime < doubleClickTime)
+            {
+                // double click detected
+                //Debug.Log("Double click detected");
+                detectDoubleClick = true;
+                click = false;
+            }
+            else
+            {
+                // first click
+                lastClickTime = Time.time;
+                click = true;
+            }
+        }
+        else if (Input.GetMouseButtonUp(0) && click)
+        {
+            // single click detected
+            //Debug.Log("Single click detected");
+            click = false;
+        }
+
+        return detectDoubleClick;
     }
 
     public void ResetJumpInput() => TriggerJump = false;

@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
 {
     [Header("References")]
-    public PlayerController player;
+    public Player player;
     private ItemInHand itemInHand;
     private UIItemInHand uiItemInHand;
     private PlayerEquipment playerEquipment;

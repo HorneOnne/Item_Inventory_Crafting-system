@@ -5,7 +5,7 @@ using UnityEngine;
 public class UIItemInHand : Singleton<UIItemInHand>
 {
     [Header("References")]
-    public PlayerController player;
+    public Player player;
     [SerializeField] GameObject uiSlotPrefab;
     private GameObject uiSlotDisplay;
 
@@ -47,6 +47,7 @@ public class UIItemInHand : Singleton<UIItemInHand>
         if(uiSlotDisplay != null)
         {
             uiSlotDisplay.GetComponent<UIItemSlot>().slotImage.sprite = player.ItemInHand.itemSlot.itemObject.icon;
+            //uiSlotDisplay.GetComponent<UIItemSlot>().slotImage.sprite = player.ItemInHand.GetItem().icon;
             SetItemQuantityText();
         }
         else

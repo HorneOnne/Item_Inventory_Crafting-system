@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerController))]
+[RequireComponent(typeof(Player))]
 public class PlayerEquipment : MonoBehaviour
 {
-    private PlayerController player;
+    private Player player;
 
     public ItemSlot helmSlot;
     public ItemSlot chestSlot;
@@ -14,7 +14,7 @@ public class PlayerEquipment : MonoBehaviour
 
     private void Awake()
     {
-        player = GetComponent<PlayerController>(); 
+        player = GetComponent<Player>(); 
     }
 
     public bool TryEquipHelm(ItemSlot equipItemSlot)

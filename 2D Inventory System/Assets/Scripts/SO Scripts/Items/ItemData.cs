@@ -59,4 +59,5 @@ public enum ItemType
     Tool = 9,
     Buff = 10, 
     Material = 11,
+    Projectile = 12,
 }

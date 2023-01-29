@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IUseable
 {
-    public void Use(PlayerController player);
+    public void Use(Player player);
 }

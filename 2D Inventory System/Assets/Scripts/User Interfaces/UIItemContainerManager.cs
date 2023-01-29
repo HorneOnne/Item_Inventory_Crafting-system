@@ -16,7 +16,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
     public GameObject itemSlotPrefab;
 
     [Header("References")]
-    [SerializeField] Transform mainPanel;
+    [SerializeField] Transform contentPanel;
     [SerializeField] TextMeshProUGUI currentItemTypeText;
 
 
@@ -29,7 +29,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
 
 
     [Header("Logic References")]
-    public PlayerController player;
+    public Player player;
     private UIItemInHand uiItemInHand;
 
 
@@ -60,7 +60,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
         int index = 0;
         foreach(var item in ItemContainerManager.Instance.itemSet)
         {
-            GameObject slotObject = Instantiate(itemSlotPrefab, mainPanel);
+            GameObject slotObject = Instantiate(itemSlotPrefab, contentPanel);
             Utilities.AddEvent(slotObject, EventTriggerType.PointerClick, (baseEvent) => OnSlotClicked(baseEvent, slotObject));
             slotObject.GetComponent<UIItemSlot>().Set(item.icon, null, (short)index);
 
@@ -85,7 +85,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
         {
             if (item.itemType == itemType)
             {
-                GameObject slotObject = Instantiate(itemSlotPrefab, mainPanel);
+                GameObject slotObject = Instantiate(itemSlotPrefab, contentPanel);
                 Utilities.AddEvent(slotObject, EventTriggerType.PointerClick, (baseEvent) => OnSlotClicked(baseEvent, slotObject));
                 slotObject.GetComponent<UIItemSlot>().Set(item.icon, null, (short)index);
 

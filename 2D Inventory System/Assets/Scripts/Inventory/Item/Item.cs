@@ -34,7 +34,7 @@ public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
         this.itemData = itemData;
     }
 
-    public virtual void Collect(PlayerController player)
+    public virtual void Collect(Player player)
     {
         Vector2 displacment = player.transform.position - this.transform.position;
         float distance = displacment.magnitude;
@@ -42,12 +42,12 @@ public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
         rb.velocity = displacment * 20;
     }
 
-    public virtual void Drop(PlayerController player)
+    public virtual void Drop(Player player)
     {
         
     }
 
-    public virtual void Use(PlayerController player)
+    public virtual void Use(Player player)
     {
         
     }

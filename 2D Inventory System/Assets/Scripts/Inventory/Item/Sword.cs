@@ -22,13 +22,13 @@ public class Sword : Item, IUpgradeable
 
     public void Upgrade()
     {
-        if(CanUpgrade())
+        /*if(CanUpgrade())
         {
             currentLevel++;
 
             base.itemData = ((SwordData)base.itemData).upgradeSwordData;
             base.UpdateData();       
-        }
+        }*/
         
     }
 }

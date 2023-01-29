@@ -12,7 +12,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     public static event System.Action OnGetOutputItem;
 
     [Header("References")]
-    public PlayerController player;
+    public Player player;
     private CraftingTableManager craftingTableManager;
     private ItemInHand itemInHand;
     private UIItemInHand ui_itemInHand;
@@ -69,7 +69,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
 
 
     #region UPDATE CRAFTINGTABLE DISPLAY UI REGION.
-    private void UpdateCraftingTableDisplayUI()
+    public void UpdateCraftingTableDisplayUI()
     {
         // Update Crafting grid slot
         for (int i = 0; i < craftingTableManager.craftingGridData.Length; i++)
@@ -81,7 +81,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
         UpdateOutputSlotCraftingTalbeDisplay();
     }
 
-    private void UpdateCraftingTableDisplayUIAt(int index)
+    public void UpdateCraftingTableDisplayUIAt(int index)
     {
         UIItemSlot uiSlot = craftingGridSlot[index].GetComponent<UIItemSlot>();
         if (craftingTableManager.craftingGridData[index].HasItem())

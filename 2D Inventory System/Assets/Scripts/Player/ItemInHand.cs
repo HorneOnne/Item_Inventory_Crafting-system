@@ -8,6 +8,12 @@ public class ItemInHand : MonoBehaviour
     [Header("References")]
     private UIItemInHand uiItemInHand;
 
+
+    #region Properties
+    public StoredType ItemGetFrom { get; set; }
+
+    #endregion
+
     private void Start()
     {
         uiItemInHand = UIItemInHand.Instance;
@@ -17,6 +23,12 @@ public class ItemInHand : MonoBehaviour
     public ItemData GetItem()
     {
         return itemSlot.itemObject;
+    }
+
+    public void Take(ItemSlot takenSlot)
+    {
+        if (itemSlot == null)
+            itemSlot = takenSlot;
     }
 
 
@@ -85,4 +97,12 @@ public class ItemInHand : MonoBehaviour
         uiItemInHand.DisplayItemInHand();
     }
 
+
+}
+
+public enum StoredType
+{
+    PlayerInventory,
+    CraftingTable,
+    Another
 }

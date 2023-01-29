@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -12,7 +13,8 @@ public class CraftingTableManager : Singleton<CraftingTableManager>
 
 
     [Header("References")]
-    public PlayerController player;
+    public Player player;
+    private ItemInHand itemInHand;
 
 
     private void OnEnable()
@@ -40,6 +42,7 @@ public class CraftingTableManager : Singleton<CraftingTableManager>
 
     private void Start()
     {
+        itemInHand = player.ItemInHand;
         craftingSystem.InitialRecipe();
     }
 
@@ -141,6 +144,32 @@ public class CraftingTableManager : Singleton<CraftingTableManager>
     {
         bool isSlotNotFull = craftingGridData[index].AddItem();
         return isSlotNotFull;
+    }
+
+    public void StackItem()
+    {
+        if (itemInHand.GetItem() == null) return;
+        Dictionary<int, int> dict = new Dictionary<int, int>();
+        Dictionary<int, int> sortedDict = new Dictionary<int, int>();
+
+        for (int i = 0; i < craftingGridData.Length; i++)
+        {
+            if (craftingGridData[i].itemObject == itemInHand.GetItem())
+            {
+                dict.Add(i, craftingGridData[i].ItemQuantity);
+            }
+        }
+
+        // Use OrderBy to sort the dictionary by value
+        sortedDict = dict.OrderBy(x => x.Value)
+            .ToDictionary(x => x.Key, x => x.Value);
+
+        foreach (var e in sortedDict)
+        {
+            itemInHand.itemSlot.AddItemsFromAnotherSlot(craftingGridData[e.Key]);
+            UIItemInHand.Instance.DisplayItemInHand();
+            UICraftingTableManager.Instance.UpdateCraftingTableDisplayUIAt(e.Key);
+        }
     }
 }
 
