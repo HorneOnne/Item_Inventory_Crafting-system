@@ -46,7 +46,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
 
 
 
-    public void LoadAllCreativeItemSlotType()
+    public void LoadAllItem()
     {
         currentItemTypeText.text = "All Items";
 
@@ -58,7 +58,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
         itemScriptableObjectList.Clear();
 
         int index = 0;
-        foreach(var item in ItemContainerManager.Instance.itemSet)
+        foreach(var item in ItemContainerManager.Instance.itemDataSet)
         {
             GameObject slotObject = Instantiate(itemSlotPrefab, contentPanel);
             Utilities.AddEvent(slotObject, EventTriggerType.PointerClick, (baseEvent) => OnSlotClicked(baseEvent, slotObject));
@@ -71,7 +71,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
         }
     }
 
-    private void LoadCreativeItemSlotType(ItemType itemType)
+    private void LoadAllItemInType(GeneralItemType generalItemType)
     {
         foreach (var slot in UI_SlotList)
         {
@@ -81,9 +81,9 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
         itemScriptableObjectList.Clear();
 
         int index = 0;
-        foreach (var item in ItemContainerManager.Instance.itemSet)
+        foreach (var item in ItemContainerManager.Instance.itemDataSet)
         {
-            if (item.itemType == itemType)
+            if (GeneralItemTypeContainer.GetAllItemInType(generalItemType).Contains(item.itemType))
             {
                 GameObject slotObject = Instantiate(itemSlotPrefab, contentPanel);
                 Utilities.AddEvent(slotObject, EventTriggerType.PointerClick, (baseEvent) => OnSlotClicked(baseEvent, slotObject));
@@ -103,7 +103,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
     private void OnSlotClicked(BaseEventData baseEvent, GameObject clickedObj)
     {
         ItemData item = itemScriptableObjectList[clickedObj.GetComponent<UIItemSlot>().SlotIndex];
-        player.ItemInHand.itemSlot = new ItemSlot(item, item.max_quantity);
+        player.ItemInHand.Set(new ItemSlot(item, item.max_quantity), StoredType.Another);
         uiItemInHand.DisplayItemInHand();
     }
 
@@ -114,7 +114,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
         if (currentTagSelected == allTabObject) return;
 
         AnimateUITagSelected(allTabObject);
-        LoadAllCreativeItemSlotType();
+        LoadAllItem();
     }
 
     public void LoadTools()
@@ -123,7 +123,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
 
         AnimateUITagSelected(toolTabObject);
 
-        LoadCreativeItemSlotType(ItemType.Tool);
+        LoadAllItemInType(GeneralItemType.Tools);
         currentItemTypeText.text = "Tools";
     }
 
@@ -133,7 +133,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
 
         AnimateUITagSelected(weaponTabObject);
 
-        LoadCreativeItemSlotType(ItemType.Weapon);
+        LoadAllItemInType(GeneralItemType.Weapons);
         currentItemTypeText.text = "Weapons";
     }
 

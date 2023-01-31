@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Bow007_Lv1
   m_EditorClassIdentifier: 
   icon: {fileID: 312159038, guid: 0804b8f0cd3b81241862b9b94a207c61, type: 3}
-  itemType: 4
+  itemType: 12
   max_quantity: 1
   description: 
   currentLevel: 1

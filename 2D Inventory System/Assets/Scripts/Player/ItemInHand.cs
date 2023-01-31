@@ -1,21 +1,28 @@
+using System;
 using UnityEngine;
 
 
 public class ItemInHand : MonoBehaviour
 {
-    public ItemSlot itemSlot;
+    public static event Action OnItemInHandChanged;
+
+
+    [SerializeField] private ItemSlot itemSlot;
 
     [Header("References")]
+    private Player player;
     private UIItemInHand uiItemInHand;
+    public Item itemObject;
 
 
     #region Properties
-    public StoredType ItemGetFrom { get; set; }
+    public StoredType ItemGetFrom { get; private set; }
 
     #endregion
 
     private void Start()
     {
+        player = GetComponent<Player>();    
         uiItemInHand = UIItemInHand.Instance;
     }
 
@@ -25,16 +32,25 @@ public class ItemInHand : MonoBehaviour
         return itemSlot.itemObject;
     }
 
-    public void Take(ItemSlot takenSlot)
+    public void Set(ItemSlot takenSlot, StoredType from)
     {
-        if (itemSlot == null)
-            itemSlot = takenSlot;
+        itemSlot = takenSlot;
+        ItemGetFrom = from;
+
+        OnItemInHandChanged?.Invoke();
+    }
+
+    public void SetItemObject(Item item)
+    {
+        itemObject = item;
     }
 
 
     public bool PickupItem(ref ItemSlot itemContainerSlot)
     {
-        if (HasItem() == false)
+        OnItemInHandChanged?.Invoke();
+
+        if (HasItemData() == false)
         {
             itemSlot = new ItemSlot(itemContainerSlot);
             itemContainerSlot.ClearSlot();
@@ -62,12 +78,21 @@ public class ItemInHand : MonoBehaviour
                 //Debug.Log("Not same");
                 return false;
             }            
-        }
+        }      
     }
 
-    public bool HasItem()
+    public bool HasItemData()
     {
+        if (itemSlot == null) 
+            return false;
+
         return itemSlot.HasItem();
+    }
+
+
+    public bool HasItemObject()
+    {
+        return itemObject != null;
     }
 
 
@@ -76,15 +101,14 @@ public class ItemInHand : MonoBehaviour
     public void ClearSlot()
     {
         itemSlot.ClearSlot();
+        ItemGetFrom = StoredType.Another;
     }
 
 
     public void UseItem()
     {
-        if (HasItem() == false) return;
-
-        Debug.Log("UseItem");
-        //itemSlot.itemObject.Use();
+        if (HasItemData() == false || HasItemObject() == false) return;
+        itemObject.Use(player);
     }
 
 

@@ -44,20 +44,3 @@ public abstract class ItemData : ScriptableObject
         return output.ToString();
     }
 }
-
-public enum ItemType
-{
-    Null = 0,
-    ChestArmor = 1,
-    Helm = 2,
-    Shield = 3,
-    Weapon = 4,
-    Shoes = 5,
-    LightSource = 6,
-    Currency = 7,
-    Consumption = 8, 
-    Tool = 9,
-    Buff = 10, 
-    Material = 11,
-    Projectile = 12,
-}

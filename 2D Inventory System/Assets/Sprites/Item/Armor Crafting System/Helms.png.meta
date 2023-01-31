@@ -69,7 +69,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -10215,8 +10215,9 @@ TextureImporter:
       Helms_179: -861774268
       Helms_319: -1352647628
       Helms_113: -1327773315
-      Helms_281: 863832865
+      Helms_404: 590062629
       Helms_16: 1859216333
+      Helms_281: 863832865
       Helms_19: 1784454782
       Helms_333: -314806601
       Helms_204: -713465101
@@ -10234,7 +10235,6 @@ TextureImporter:
       Helms_122: 974061315
       Helms_263: -184410932
       Helms_432: 585786628
-      Helms_404: 590062629
       Helms_416: -2119563662
       Helms_329: 1427090608
       Helms_464: -1623548661
@@ -10321,9 +10321,9 @@ TextureImporter:
       Helms_143: 918393249
       Helms_271: 1387597750
       Helms_321: -866279793
-      Helms_356: 285833022
-      Helms_453: 685956670
       Helms_405: 52817471
+      Helms_453: 685956670
+      Helms_356: 285833022
       Helms_459: -568378835
       Helms_339: 1506752389
       Helms_48: 2083931545
@@ -10522,18 +10522,18 @@ TextureImporter:
       Helms_345: -317543604
       Helms_332: -1099583372
       Helms_117: 1852208583
-      Helms_207: -247031500
-      Helms_87: -1067665701
-      Helms_191: -624021949
       Helms_371: -1306930687
+      Helms_87: -1067665701
       Helms_259: 1242993997
+      Helms_191: -624021949
+      Helms_380: 1772233851
       Helms_324: 1795678102
       Helms_125: 2070111813
-      Helms_131: 521707345
-      Helms_194: -244166043
       Helms_374: 186923893
+      Helms_207: -247031500
+      Helms_194: -244166043
+      Helms_131: 521707345
       Helms_282: -1533257955
-      Helms_380: 1772233851
       Helms_64: 1253154869
       Helms_304: 1286566646
       Helms_235: 1198243821

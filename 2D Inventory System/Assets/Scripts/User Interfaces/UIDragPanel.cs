@@ -31,7 +31,7 @@ public class UIDragPanel : MonoBehaviour, IDragHandler, IPointerDownHandler
     public void OnPointerDown(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Right
-            && itemInHand.HasItem() == false)
+            && itemInHand.HasItemData() == false)
         {
             rt.transform.SetAsLastSibling();
         }

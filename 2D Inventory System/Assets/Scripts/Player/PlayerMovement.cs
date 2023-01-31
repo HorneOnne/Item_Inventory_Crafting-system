@@ -54,8 +54,6 @@ public class PlayerMovement : MonoBehaviour
         // Pre-Calculate Physics
         AddGravityMultiplier();
         SetMaxVelocity();
-
-        FlipCharacterFace(playerInputHandler.MovementInput);
     }
 
 
@@ -65,23 +63,7 @@ public class PlayerMovement : MonoBehaviour
         return Physics2D.OverlapCircle(groundCheckPoint.position, playerData.roundCheckRadius, playerData.groundLayer);
     }
 
-    public void FlipCharacterFace(float XInput)
-    {
-        if (XInput != 0 && XInput != FacingDirection)
-        {
-            Flip();
-        }
-
-    }
-
-    private void Flip()
-    {
-        FacingDirection *= -1;
-        transform.Rotate(0f, 180f, 0f);
-
-    }
-
-
+ 
     private void MoveOnGround()
     {
         if (playerInputHandler.MovementInput != 0)
@@ -121,6 +103,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (playerInputHandler.TriggerJump)
         {
+            Debug.Log("Trigger Jump");
             rb.velocity = new Vector2(rb.velocity.x, playerData.jumpForce * Time.fixedDeltaTime);
             playerInputHandler.ResetJumpInput();
         }

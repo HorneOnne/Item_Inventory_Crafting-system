@@ -80,7 +80,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
         currentPointerState = GetPointerState();
 
 
-        if (player.ItemInHand.HasItem())
+        if (player.ItemInHand.HasItemData())
         {
             if (Input.GetMouseButton(1) && currentSlotClicked != null)
             {
@@ -225,7 +225,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
 
             if (playerInventory.HasItem(index))
             {
-                if (IsSameItem(playerInventory.inventory[index].itemObject, itemInHand.itemSlot.itemObject))
+                if (IsSameItem(playerInventory.inventory[index].itemObject, itemInHand.GetItem()))
                 {
                     CombineItemSlotQuantity(index);
                 }
@@ -263,7 +263,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     {
         //if (currentPointerState != PointerState.LeftClick) return;
 
-        if (itemInHand.HasItem() == false)
+        if (itemInHand.HasItemData() == false)
         {
             if (playerInventory.inventory[index].HasItem() == false)
             {
@@ -295,7 +295,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     {
         if (currentPointerState != PointerState.RightClick) return;
 
-        if (itemInHand.HasItem() == false)
+        if (itemInHand.HasItemData() == false)
         {
             if (playerInventory.inventory[index].HasItem() == false)
             {
@@ -312,7 +312,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
             if (playerInventory.inventory[index].HasItem() == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                playerInventory.AddNewItemIntoInventoryAtIndex(index, itemInHand.itemSlot.itemObject);
+                playerInventory.AddNewItemIntoInventoryAtIndex(index, itemInHand.GetItem());
                 itemInHand.RemoveItem();
 
             }
@@ -339,12 +339,12 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     {
         if(currentPointerState != PointerState.RightPress) return;
 
-        if(itemInHand.HasItem() == true)
+        if(itemInHand.HasItemData() == true)
         {
             if (playerInventory.inventory[index].HasItem() == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                playerInventory.AddNewItemIntoInventoryAtIndex(index, itemInHand.itemSlot.itemObject);
+                playerInventory.AddNewItemIntoInventoryAtIndex(index, itemInHand.GetItem());
                 itemInHand.RemoveItem();
 
             }
@@ -390,26 +390,26 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     /// <param name="index">index for itemSlotList</param>
     private void SwapItemInHandAndInventorySlot(int index)
     {
-        if(itemInHand.itemSlot.HasItem() &&
+        if(itemInHand.HasItemData() &&
            playerInventory.inventory[index].HasItem())
         {
-            var itemSlotToSwap_01 = itemInHand.itemSlot;
+            var itemSlotToSwap_01 = itemInHand.GetSlot();
             var itemSlotToSwap_02 = new ItemSlot(playerInventory.inventory[index]);
             playerInventory.inventory[index].ClearSlot();
-            itemInHand.itemSlot = itemSlotToSwap_02;
+            itemInHand.Set(itemSlotToSwap_02, StoredType.PlayerInventory);
             playerInventory.inventory[index] = itemSlotToSwap_01;
 
             uiItemInHand.DisplayItemInHand();    
         } 
 
 
-        if (itemInHand.itemSlot.HasItem() &&
+        if (itemInHand.HasItemData() &&
            playerInventory.inventory[index].HasItem() == false)
         {
-            var itemSlotToSwap_01 = itemInHand.itemSlot;
+            var itemSlotToSwap_01 = itemInHand.GetSlot();
             var itemSlotToSwap_02 = new ItemSlot(playerInventory.inventory[index]);
             playerInventory.inventory[index].ClearSlot();
-            itemInHand.itemSlot = itemSlotToSwap_02;
+            itemInHand.Set(itemSlotToSwap_02, StoredType.PlayerInventory);
             playerInventory.inventory[index] = itemSlotToSwap_01;
         }
     }
@@ -425,7 +425,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     {
         var chosenSlot = new ItemSlot(playerInventory.inventory[index]);
         playerInventory.inventory[index].ClearSlot();
-        itemInHand.itemSlot = chosenSlot;
+        itemInHand.Set(chosenSlot, StoredType.PlayerInventory);
 
         uiItemInHand.DisplayItemInHand();
     }
@@ -443,7 +443,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
 
             var chosenSlot = new ItemSlot(playerInventory.inventory[index]);
             chosenSlot.SetItemQuantity(splitItemQuantity);
-            itemInHand.itemSlot = chosenSlot;
+            itemInHand.Set(chosenSlot, StoredType.PlayerInventory);
 
             uiItemInHand.DisplayItemInHand();
         }
@@ -460,10 +460,10 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     private void CombineItemSlotQuantity(int index)
     {
         //Debug.Log("CombineItemSlotQuantity");
-        if (IsSameItem(playerInventory.inventory[index].itemObject, itemInHand.itemSlot.itemObject))
+        if (IsSameItem(playerInventory.inventory[index].itemObject, itemInHand.GetItem()))
         {
             Debug.Log("Same Object");
-            itemInHand.itemSlot = playerInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot());
+            itemInHand.Set(playerInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot()), StoredType.PlayerInventory);
             uiItemInHand.DisplayItemInHand();
             
         }

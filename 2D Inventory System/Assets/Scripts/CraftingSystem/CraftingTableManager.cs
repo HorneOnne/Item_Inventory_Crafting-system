@@ -166,7 +166,7 @@ public class CraftingTableManager : Singleton<CraftingTableManager>
 
         foreach (var e in sortedDict)
         {
-            itemInHand.itemSlot.AddItemsFromAnotherSlot(craftingGridData[e.Key]);
+            itemInHand.GetSlot().AddItemsFromAnotherSlot(craftingGridData[e.Key]);
             UIItemInHand.Instance.DisplayItemInHand();
             UICraftingTableManager.Instance.UpdateCraftingTableDisplayUIAt(e.Key);
         }

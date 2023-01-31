@@ -69,7 +69,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -5294,9 +5294,9 @@ TextureImporter:
       Chest_213: 845173467
       Chest_13: 286867596
       Chest_12: 373456540
-      Chest_87: -1681211226
-      Chest_103: -1168523727
       Chest_196: 284953948
+      Chest_103: -1168523727
+      Chest_87: -1681211226
       Chest_217: -275661446
       Chest_50: 25342679
       Chest_225: 2139723727
@@ -5310,24 +5310,23 @@ TextureImporter:
       Chest_39: 905787839
       Chest_158: -2008969206
       Chest_10: 80895830
+      Chest_236: -1703802403
       Chest_94: -1418346982
-      Chest_162: -1515910275
       Chest_240: 868796216
-      Chest_226: -1995273134
+      Chest_162: -1515910275
       Chest_49: 1965165088
       Chest_241: -516450763
-      Chest_79: 1510109746
+      Chest_226: -1995273134
       Chest_116: -1288890885
-      Chest_236: -1703802403
+      Chest_79: 1510109746
       Chest_234: 1402920801
       Chest_59: -1172096560
       Chest_207: -1804049623
       Chest_29: -121407187
       Chest_233: 859445338
       Chest_11: -356392249
-      Chest_18: 1989088118
       Chest_63: -899252194
-      Chest_143: -881186400
+      Chest_18: 1989088118
       Chest_45: 1950106536
       Chest_152: -1085600154
       Chest_5: 1645704078
@@ -5335,12 +5334,13 @@ TextureImporter:
       Chest_37: -1696417458
       Chest_8: -1350801202
       Chest_19: 495910018
+      Chest_143: -881186400
       Chest_72: 929632760
       Chest_218: -100497761
       Chest_111: -2144922559
       Chest_105: 2100452793
-      Chest_106: 214635692
       Chest_133: 1550139748
+      Chest_106: 214635692
       Chest_205: -2089659679
       Chest_124: -900049083
       Chest_17: 205876798

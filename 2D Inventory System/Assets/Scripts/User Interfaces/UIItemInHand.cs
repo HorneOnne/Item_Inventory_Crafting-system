@@ -21,7 +21,7 @@ public class UIItemInHand : Singleton<UIItemInHand>
 
     private void Update()
     {
-        if(player.ItemInHand.HasItem() && uiSlotDisplay != null)
+        if(player.ItemInHand.HasItemData() && uiSlotDisplay != null)
         {
             mainCameraPosition = (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition);
             uiSlotDisplay.GetComponent<RectTransform>().transform.position = mainCameraPosition;
@@ -38,7 +38,7 @@ public class UIItemInHand : Singleton<UIItemInHand>
 
     public void DisplayItemInHand(Transform parent = null)
     {
-        if (player.ItemInHand.HasItem() == false)
+        if (player.ItemInHand.HasItemData() == false)
         {
             player.ItemInHand.ClearSlot();
             return;
@@ -46,14 +46,13 @@ public class UIItemInHand : Singleton<UIItemInHand>
 
         if(uiSlotDisplay != null)
         {
-            uiSlotDisplay.GetComponent<UIItemSlot>().slotImage.sprite = player.ItemInHand.itemSlot.itemObject.icon;
-            //uiSlotDisplay.GetComponent<UIItemSlot>().slotImage.sprite = player.ItemInHand.GetItem().icon;
+            uiSlotDisplay.GetComponent<UIItemSlot>().slotImage.sprite = player.ItemInHand.GetItem().icon;
             SetItemQuantityText();
         }
         else
         {
             uiSlotDisplay = Instantiate(uiSlotPrefab, this.transform.parent.transform);
-            uiSlotDisplay.GetComponent<UIItemSlot>().slotImage.sprite = player.ItemInHand.itemSlot.itemObject.icon;
+            uiSlotDisplay.GetComponent<UIItemSlot>().slotImage.sprite = player.ItemInHand.GetItem().icon;
             SetItemQuantityText();
 
             if (parent != null)
@@ -68,9 +67,9 @@ public class UIItemInHand : Singleton<UIItemInHand>
 
     private void SetItemQuantityText()
     {
-        int itemQuantity = player.ItemInHand.itemSlot.itemQuantity;
+        int itemQuantity = player.ItemInHand.GetSlot().itemQuantity;
         if (itemQuantity > 1)
-            uiSlotDisplay.GetComponent<UIItemSlot>().amountItemInSlotText.text = player.ItemInHand.itemSlot.itemQuantity.ToString();
+            uiSlotDisplay.GetComponent<UIItemSlot>().amountItemInSlotText.text = player.ItemInHand.GetSlot().itemQuantity.ToString();
         else
             uiSlotDisplay.GetComponent<UIItemSlot>().amountItemInSlotText.text = "";
     }

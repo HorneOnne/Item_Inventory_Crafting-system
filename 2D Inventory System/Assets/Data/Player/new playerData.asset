@@ -16,7 +16,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2147483648
   roundCheckRadius: 0.85
-  autoJumpHeight: 1.05
   movementSpeed: 1000
   movementForceInAir: 15
   airDragMultiplier: 0.1
@@ -28,3 +27,8 @@ MonoBehaviour:
   maxMovementSpeed: 50
   maxJumpVelocity: 50
   maxFallVelocity: -50
+  currentHealth: 0
+  maxHealth: 0
+  attackDamage: 0
+  attackSpeed: 0
+  armor: 0

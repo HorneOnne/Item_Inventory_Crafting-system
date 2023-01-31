@@ -69,7 +69,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -3264,7 +3264,6 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Shileds_148: 84255659
       Shileds_149: 195025519
       Shileds_16: 1823450706
       Shileds_40: -663708562
@@ -3304,8 +3303,8 @@ TextureImporter:
       Shileds_109: 398596402
       Shileds_64: -862152063
       Shileds_127: 525340844
-      Shileds_86: -266532080
       Shileds_93: -311147801
+      Shileds_86: -266532080
       Shileds_12: 904605905
       Shileds_84: -284021358
       Shileds_27: -436379555
@@ -3409,11 +3408,12 @@ TextureImporter:
       Shileds_113: -289201094
       Shileds_97: 130883715
       Shileds_7: -404434941
+      Shileds_115: -1152714809
       Shileds_50: 2056341654
       Shileds_85: -384696067
+      Shileds_148: 84255659
       Shileds_49: -567927968
       Shileds_130: -452463200
-      Shileds_115: -1152714809
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

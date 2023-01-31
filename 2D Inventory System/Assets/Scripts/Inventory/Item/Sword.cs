@@ -18,8 +18,9 @@ public class Sword : Item, IUpgradeable
     }
 
     public bool IsMaxLevel()
-        => currentLevel <= maxLevel ? true : false; 
+        => currentLevel <= maxLevel ? true : false;
 
+  
     public void Upgrade()
     {
         /*if(CanUpgrade())

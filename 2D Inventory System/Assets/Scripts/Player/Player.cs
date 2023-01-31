@@ -11,15 +11,26 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerEquipment))]  
 public class Player : MonoBehaviour
 {
+    [Header("Character Body")]
+    [SerializeField] Transform handPart;
+
+
+    [Header("Character Data")]
+    public PlayerData playerData;
+
+
     #region Properties
     [HideInInspector] public PlayerInventory PlayerInventory { get; private set; }
     [HideInInspector] public ItemInHand ItemInHand { get; private set; }
     [HideInInspector] public PlayerMovement PlayerMovement { get; private set; }
     [HideInInspector] public PlayerInputHandler PlayerInputHandler { get; private set; }
     [HideInInspector] public PlayerEquipment PlayerEquipment { get; private set; }
+    [HideInInspector] public Transform HandPart { get => handPart; }
+
     #endregion
 
-    public PlayerData playerData;
+
+    
 
 
     private void Awake()

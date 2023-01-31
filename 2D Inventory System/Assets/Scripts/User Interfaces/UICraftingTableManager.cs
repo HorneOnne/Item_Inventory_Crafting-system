@@ -208,7 +208,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
 
     private void OnLeftClick(int index)
     {
-        if (itemInHand.HasItem() == false)
+        if (itemInHand.HasItemData() == false)
         {
             if (craftingTableManager.craftingGridData[index].HasItem() == false)
             {
@@ -227,7 +227,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
                 //craftingTable.craftingGridData[index] = new ItemContainerSlot(itemInHand.itemSlot);
                 SwapItemInHandAndCraftingGridSlot(index);
-                ClearItemInHand();
+                itemInHand.RemoveItem();
             }
             else
             {
@@ -244,7 +244,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     {
         //if (currentPointerState != PointerState.RightClick) return;
 
-        if (itemInHand.itemSlot.HasItem() == false)
+        if (itemInHand.HasItemData() == false)
         {
             if (craftingTableManager.craftingGridData[index].HasItem() == false)
             {
@@ -261,7 +261,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             if (craftingTableManager.craftingGridData[index].HasItem() == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                craftingTableManager.AddItemIntoCraftingGridAtIndex(index, itemInHand.itemSlot.itemObject);
+                craftingTableManager.AddItemIntoCraftingGridAtIndex(index, itemInHand.GetItem());
                 itemInHand.RemoveItem();
             }
             else
@@ -290,13 +290,13 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     {
         if (currentPointerState != PointerState.RightPress) return;
 
-        if (itemInHand.HasItem() == true)
+        if (itemInHand.HasItemData() == true)
         {
 
             if (craftingTableManager.HasItem(index) == false && craftingTableManager.HasSlot(index))
             {
                 Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                craftingTableManager.AddItemIntoCraftingGridAtIndex(index, itemInHand.itemSlot.itemObject);
+                craftingTableManager.AddItemIntoCraftingGridAtIndex(index, itemInHand.GetItem());
                 itemInHand.RemoveItem();
 
             }
@@ -455,18 +455,11 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
 
 
 
-
-    private void ClearItemInHand()
-    {
-        itemInHand.itemSlot.ClearSlot();
-    }
-
-
     private void GetItemSlot(int index)
     {
         var chosenSlot = new ItemSlot(craftingTableManager.craftingGridData[index]);
         craftingTableManager.craftingGridData[index].ClearSlot();
-        itemInHand.itemSlot = chosenSlot;
+        itemInHand.Set(chosenSlot, StoredType.CraftingTable);
 
         ui_itemInHand.DisplayItemInHand(this.transform);
     }
@@ -480,7 +473,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
 
             var chosenSlot = new ItemSlot(craftingTableManager.craftingGridData[index]);
             chosenSlot.SetItemQuantity(splitItemQuantity);
-            itemInHand.itemSlot = chosenSlot;
+            itemInHand.Set(chosenSlot, StoredType.CraftingTable);
 
             ui_itemInHand.DisplayItemInHand();
         }
@@ -502,7 +495,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     /// <param name="index">Index used in itemSlotList at specific itemSlot you want to get</param>
     private void CombineItemSlotQuantity(int index)
     {
-        if (IsSameItem(craftingTableManager.craftingGridData[index].itemObject, itemInHand.itemSlot.itemObject))
+        if (IsSameItem(craftingTableManager.craftingGridData[index].itemObject, itemInHand.GetItem()))
         {
             //Debug.Log("Same Object here");
             
@@ -520,7 +513,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
                 ClearItemInHand();
             }*/
 
-            itemInHand.itemSlot = craftingTableManager.craftingGridData[index].AddItemsFromAnotherSlot(itemInHand.GetSlot());
+            itemInHand.Set(craftingTableManager.craftingGridData[index].AddItemsFromAnotherSlot(itemInHand.GetSlot()), StoredType.CraftingTable);
             ui_itemInHand.DisplayItemInHand();
         }
         else
@@ -531,26 +524,26 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     }
     private void SwapItemInHandAndCraftingGridSlot(int index)
     {
-        if (itemInHand.itemSlot.HasItem() &&
+        if (itemInHand.HasItemData() &&
            craftingTableManager.craftingGridData[index].HasItem())
         {
-            var itemToSwap_01 = itemInHand.itemSlot;
+            var itemToSwap_01 = itemInHand.GetSlot();
             var itemToSwap_02 = new ItemSlot(craftingTableManager.craftingGridData[index]);
             craftingTableManager.craftingGridData[index].ClearSlot();
-            itemInHand.itemSlot = itemToSwap_02;
+            itemInHand.Set(itemToSwap_02, StoredType.CraftingTable);
             craftingTableManager.craftingGridData[index] = itemToSwap_01;
 
             ui_itemInHand.DisplayItemInHand(this.transform);
         }
 
 
-        if (itemInHand.itemSlot.HasItem() &&
+        if (itemInHand.HasItemData() &&
            craftingTableManager.craftingGridData[index].HasItem() == false)
         {
-            var itemToSwap_01 = itemInHand.itemSlot;
+            var itemToSwap_01 = itemInHand.GetSlot();
             var itemToSwap_02 = new ItemSlot(craftingTableManager.craftingGridData[index]);
             craftingTableManager.craftingGridData[index].ClearSlot();
-            itemInHand.itemSlot = itemToSwap_02;
+            itemInHand.Set(itemToSwap_02, StoredType.CraftingTable);
             craftingTableManager.craftingGridData[index] = itemToSwap_01;
         }
     }

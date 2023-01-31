@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Arrow_001
   m_EditorClassIdentifier: 
   icon: {fileID: -548652779, guid: 0804b8f0cd3b81241862b9b94a207c61, type: 3}
-  itemType: 12
+  itemType: 10
   max_quantity: 999
   description: 
   damage: 15

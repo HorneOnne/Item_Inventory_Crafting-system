@@ -105,9 +105,23 @@ public class PlayerInventory : MonoBehaviour
      
         foreach(var e in sortedDict)
         {
-            itemInHand.itemSlot.AddItemsFromAnotherSlot(inventory[e.Key]);
+            itemInHand.GetSlot().AddItemsFromAnotherSlot(inventory[e.Key]);
             UIItemInHand.Instance.DisplayItemInHand();
             UIPlayerInventory.Instance.UpdateInventoryUIAt(e.Key);
         }
+    }
+
+    public int? FindArrowSlotIndex()
+    {
+        for(int i = 0; i < inventory.Count;i++)
+        {
+            if (inventory[i].HasItem() == false)
+                continue;
+
+            if (inventory[i].GetItemType() == ItemType.Arrow)
+                return i;
+        }
+
+        return null;
     }
 }

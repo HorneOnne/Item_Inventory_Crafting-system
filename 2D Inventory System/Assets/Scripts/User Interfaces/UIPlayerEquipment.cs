@@ -90,7 +90,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
         if (equipmentType == ItemType.Null)
             return;
 
-        if (itemInHand.HasItem() == false)
+        if (itemInHand.HasItemData() == false)
         {
             if (equipmentSlot.HasItem() == false)
             {
@@ -145,21 +145,21 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
         {
             var copyEquipmentSlot = new ItemSlot(equipmentSlot);
 
-            bool canEquip = playerEquipment.Equip(equipmentType, itemInHand.itemSlot);
+            bool canEquip = playerEquipment.Equip(equipmentType, itemInHand.GetSlot());
 
             if (canEquip)
             {
-                itemInHand.itemSlot = copyEquipmentSlot;
+                itemInHand.Set(copyEquipmentSlot, StoredType.Another);
                 uiItemInHand.DisplayItemInHand();
                 
             }                
         }
         else
         {
-            bool canEquip = playerEquipment.Equip(equipmentType, itemInHand.itemSlot);
+            bool canEquip = playerEquipment.Equip(equipmentType, itemInHand.GetSlot());
 
             if (canEquip)
-                itemInHand.RemoveItem();
+                itemInHand.ClearSlot();
         }
     }
 
@@ -174,7 +174,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
     {
         ItemSlot itemSlot = new ItemSlot(equipmentSlot);
         equipmentSlot.ClearSlot();
-        itemInHand.itemSlot = itemSlot;
+        itemInHand.Set(itemSlot, StoredType.Another);
 
         uiItemInHand.DisplayItemInHand();
     }
