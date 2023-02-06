@@ -1,13 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Sword : Item, IUpgradeable
 {
     private int currentLevel = 1;
     private int maxLevel = 3;
 
-   
+    GameObject swordProjectilePrefab;
+    GameObject swordProjectileObject;
 
     public int CurrentLevel { get => currentLevel; set => currentLevel = value; }
     public int MaxLevel { get => maxLevel; set => maxLevel= value; }
@@ -20,7 +22,14 @@ public class Sword : Item, IUpgradeable
     public bool IsMaxLevel()
         => currentLevel <= maxLevel ? true : false;
 
-  
+
+
+    protected override void Start()
+    {
+        base.Start();
+        swordProjectilePrefab = ItemContainerManager.Instance.GetItemPrefab("SwordProjectile_001");
+    }
+
     public void Upgrade()
     {
         /*if(CanUpgrade())
@@ -31,5 +40,33 @@ public class Sword : Item, IUpgradeable
             base.UpdateData();       
         }*/
         
+    }
+
+
+    public override bool Use(Player player)
+    {       
+        swordProjectilePrefab = ItemContainerManager.Instance.GetItemPrefab("SwordProjectile_001");
+        swordProjectileObject = Instantiate(swordProjectilePrefab, transform.position, transform.rotation, player.transform);
+        swordProjectileObject.transform.localScale = new Vector3(4,4,1);
+        swordProjectileObject.SetActive(true);
+        swordProjectileObject.GetComponent<Item>().SetData(this.ItemSlot);
+        swordProjectileObject.GetComponent<Item>().SetOffsetPosition();
+        
+
+        return true;
+    }
+
+    public void Update()
+    {
+        if (swordProjectilePrefab == null) return;
+        
+        swordProjectilePrefab.transform.Rotate(new Vector3(0, 0, -360) * Time.deltaTime);
+
+        if(swordProjectilePrefab.transform.rotation == Quaternion.Euler(0,0,-80))
+        {
+            Destroy(swordProjectilePrefab);
+        }
+        Destroy(swordProjectilePrefab, 1f);
+
     }
 }

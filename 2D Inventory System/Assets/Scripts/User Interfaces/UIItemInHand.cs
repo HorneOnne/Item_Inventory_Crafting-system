@@ -1,21 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIItemInHand : Singleton<UIItemInHand>
 {
     [Header("References")]
     public Player player;
+    private ItemInHand itemInHand;
     [SerializeField] GameObject uiSlotPrefab;
-    private GameObject uiSlotDisplay;
+    [HideInInspector] public GameObject uiSlotDisplay;
+    
+    
+    public Image UISlotImage { get; private set; }
+
 
     // Cached
     Camera mainCamera;
     Vector2 mainCameraPosition;
 
-    private void Awake()
+    private void OnEnable()
+    {
+        ItemInHand.OnItemInHandChanged += ResetUIItemInHandColor;
+    }
+
+    private void OnDisable()
+    {
+        ItemInHand.OnItemInHandChanged -= ResetUIItemInHandColor;
+    }
+
+
+    private void Start()
     {
         mainCamera = Camera.main;
+        itemInHand = player.ItemInHand;
     }
 
 
@@ -24,7 +43,7 @@ public class UIItemInHand : Singleton<UIItemInHand>
         if(player.ItemInHand.HasItemData() && uiSlotDisplay != null)
         {
             mainCameraPosition = (Vector2)mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            uiSlotDisplay.GetComponent<RectTransform>().transform.position = mainCameraPosition;
+            uiSlotDisplay.GetComponent<RectTransform>().transform.position = mainCameraPosition;                    
         }
         else
         {
@@ -38,21 +57,22 @@ public class UIItemInHand : Singleton<UIItemInHand>
 
     public void DisplayItemInHand(Transform parent = null)
     {
-        if (player.ItemInHand.HasItemData() == false)
+        if (itemInHand.HasItemData() == false)
         {
-            player.ItemInHand.ClearSlot();
+            itemInHand.ClearSlot();
             return;
         }
 
-        if(uiSlotDisplay != null)
+        if(uiSlotDisplay != null || UISlotImage != null)
         {
-            uiSlotDisplay.GetComponent<UIItemSlot>().slotImage.sprite = player.ItemInHand.GetItem().icon;
+            UISlotImage.sprite = itemInHand.GetItem().icon;
             SetItemQuantityText();
         }
         else
         {
             uiSlotDisplay = Instantiate(uiSlotPrefab, this.transform.parent.transform);
-            uiSlotDisplay.GetComponent<UIItemSlot>().slotImage.sprite = player.ItemInHand.GetItem().icon;
+            UISlotImage = uiSlotDisplay.GetComponent<UIItemSlot>().slotImage;
+            UISlotImage.sprite = itemInHand.GetItem().icon;
             SetItemQuantityText();
 
             if (parent != null)
@@ -67,10 +87,16 @@ public class UIItemInHand : Singleton<UIItemInHand>
 
     private void SetItemQuantityText()
     {
-        int itemQuantity = player.ItemInHand.GetSlot().itemQuantity;
+        int itemQuantity = itemInHand.GetSlot().itemQuantity;
         if (itemQuantity > 1)
-            uiSlotDisplay.GetComponent<UIItemSlot>().amountItemInSlotText.text = player.ItemInHand.GetSlot().itemQuantity.ToString();
+            uiSlotDisplay.GetComponent<UIItemSlot>().amountItemInSlotText.text = itemInHand.GetSlot().itemQuantity.ToString();
         else
             uiSlotDisplay.GetComponent<UIItemSlot>().amountItemInSlotText.text = "";
+    }
+
+    private void ResetUIItemInHandColor()
+    {
+        if(uiSlotDisplay != null || UISlotImage != null)
+            UISlotImage.color = new Color(1, 1, 1, 1);
     }
 }

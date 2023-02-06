@@ -12,6 +12,8 @@ public abstract class ItemData : ScriptableObject
     public ushort max_quantity;   
     [Multiline(5)]
     public string description;
+    [Tooltip("The length of time the item takes to become available again after each use")]
+    public float duration;
 
 
     public override bool Equals(object other)
@@ -21,13 +23,14 @@ public abstract class ItemData : ScriptableObject
         if (this.itemType != ((ItemData)other).itemType) return false;
         if (this.max_quantity != ((ItemData)other).max_quantity) return false;
         if (this.description != ((ItemData)other).description) return false;
+        if (this.duration != ((ItemData)other).duration) return false;
 
         return true;
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(ItemName, icon, itemType, max_quantity, description);
+        return HashCode.Combine(ItemName, icon, itemType, max_quantity, description, duration);
     }
 
     public string AddSpacesBeforeUpperCase(string input)

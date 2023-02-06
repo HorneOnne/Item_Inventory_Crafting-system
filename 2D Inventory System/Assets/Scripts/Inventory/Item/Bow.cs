@@ -7,11 +7,24 @@ public class Bow : Item, IUpgradeable
     public int CurrentLevel { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     public int MaxLevel { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
+    [Header("References")]
+    private PlayerInventory playerInventory;
 
-    public override void Start()
+    [Header("Bow Properties")]
+    private BowData bowData;
+    private Arrow arrowInPlayerInventory;
+    private int? arrowSlotIndex;
+    GameObject arrowPrefab;
+
+
+
+    protected override void Start()
     {
         base.Start();
         base.SetOffsetPosition();
+
+        bowData = (BowData)this.ItemData;
+        arrowPrefab = ItemContainerManager.Instance.GetItemPrefab("Arrow");
     }
 
    
@@ -29,29 +42,22 @@ public class Bow : Item, IUpgradeable
     }
 
 
-    public override void Use(Player player)
+    public override bool Use(Player player)
     {
-        PlayerInventory playerInventory = player.PlayerInventory;
-        var arrowSlotIndex = playerInventory.FindArrowSlotIndex();
+        playerInventory = player.PlayerInventory;
+        arrowSlotIndex = playerInventory.FindArrowSlotIndex();
 
-        if(arrowSlotIndex != null) 
-        {
-            /*Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 releaseDirection = mousePosition - (Vector2)player.transform.position;
+        if (arrowSlotIndex == null) return false;
+        if (arrowPrefab == null) return false;
 
-            var arrowObject = Instantiate(prefab, player.transform.position, Quaternion.identity);
-            arrowObject.AddComponent<Rigidbody2D>().velocity = releaseDirection * 5;
-            Destroy(arrowObject, 2f);*/
-
-            GameObject arrowPrefab = ItemContainerManager.Instance.GetItemPrefab("Arrow");
-            if(arrowPrefab != null)
-            {
-                GameObject arrowObject = Instantiate(arrowPrefab, player.transform.position, player.HandPart.rotation);
-                arrowObject.GetComponent<Item>().SetData(playerInventory.inventory[(int)arrowSlotIndex].itemObject);   
-                arrowObject.GetComponent<Item>().Use(player);   
-            }
-
-        }
+        
+        arrowInPlayerInventory = Instantiate(arrowPrefab, player.transform.position, player.HandHoldItem.rotation).GetComponent<Arrow>();
+        arrowInPlayerInventory.SetData(playerInventory.inventory[(int)arrowSlotIndex]);
+        
+        arrowInPlayerInventory.Shoot(bowData, bowData.releaseSpeed);
+        arrowInPlayerInventory.Consume(player);
+        
+        return true;
     }
 
 
@@ -59,6 +65,4 @@ public class Bow : Item, IUpgradeable
     {
         //throw new System.NotImplementedException();
     }
-
-    
 }

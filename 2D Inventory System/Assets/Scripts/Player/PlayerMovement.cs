@@ -54,6 +54,8 @@ public class PlayerMovement : MonoBehaviour
         // Pre-Calculate Physics
         AddGravityMultiplier();
         SetMaxVelocity();
+
+        FlipCharacterFace(playerInputHandler.MovementInput);
     }
 
 
@@ -127,6 +129,20 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity += Vector2.up * Physics2D.gravity * playerData.lowMultiplier * Time.deltaTime;
     }
 
+    public void FlipCharacterFace(float XInput)
+    {
+        if (XInput != 0 && XInput != FacingDirection)
+        {
+            Flip();
+        }
+
+    }
+
+    private void Flip()
+    {
+        FacingDirection *= -1;
+        //transform.Rotate(0f, 180f, 0f);
+    }
 
 
     /*private void OnTriggerEnter2D(Collider2D collision)

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1908887310472894552}
   m_Layer: 30
   m_Name: Arrow
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -32,6 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4351825424039850743}
+  - {fileID: 1453473010199561609}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -69,7 +70,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.57, y: 0.52523816}
+  m_Offset: {x: 0.39497444, y: 0.40683845}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -80,7 +81,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.88, y: 0.71759963}
+  m_Size: {x: 0.5299488, y: 0.48080033}
   m_EdgeRadius: 0
 --- !u!114 &1908887310472894552
 MonoBehaviour:
@@ -95,10 +96,47 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <ItemData>k__BackingField: {fileID: 0}
+  <ItemSlot>k__BackingField:
+    itemObject: {fileID: 0}
+    itemQuantity: 0
   <OffsetPosition>k__BackingField: {x: 0, y: 0}
   <OffsetZAngle>k__BackingField: 45
-  model: {fileID: 4351825423883117006}
+  <Model>k__BackingField: {fileID: 4351825423883117006}
+  canShow: 0
   explosionPrefab: {fileID: 7070060414050384019, guid: afa7d8e101f07904081040c98e567783, type: 3}
+  explosionPosition: {fileID: 1453473010199561609}
+  <Consumability>k__BackingField: 1
+--- !u!1 &2062927292146214438
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1453473010199561609}
+  m_Layer: 30
+  m_Name: Explosion Position
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1453473010199561609
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062927292146214438}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2774062216240610423}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4351825423883117006
 GameObject:
   m_ObjectHideFlags: 0

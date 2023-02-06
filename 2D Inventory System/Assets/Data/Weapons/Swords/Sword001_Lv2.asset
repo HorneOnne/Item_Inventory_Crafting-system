@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 1789040733, guid: 0804b8f0cd3b81241862b9b94a207c61, type: 3}
   itemType: 13
-  max_quantity: 3
+  max_quantity: 1
   description: 
+  duration: 0.5
   currentLevel: 2
   maxLevel: 2
   nextLvItemData: {fileID: 0}

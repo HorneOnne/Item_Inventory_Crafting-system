@@ -10,13 +10,17 @@ public class ItemContainerManager : Singleton<ItemContainerManager>
     public HashSet<ItemData> itemDataSet = new HashSet<ItemData>();
 
 
-    [SerializeField] List<GameObject> itemsPrefab = new List<GameObject>();
-    private Dictionary<string, GameObject> itemPrefabDict= new Dictionary<string, GameObject>();
+    [SerializeField] List<GameObject> prefabObject = new List<GameObject>();
+    private Dictionary<string, GameObject> prefabObjectDict= new Dictionary<string, GameObject>();
+
+
+    public Transform itemContainerParent;
+
 
     private void Awake()
     {
         GenerateItemDict();
-        GenerateItemPrefabDict();
+        GeneratePrefabObjectDict();
     }
 
     private void GenerateItemDict()
@@ -33,23 +37,23 @@ public class ItemContainerManager : Singleton<ItemContainerManager>
         }
     }
 
-    private void GenerateItemPrefabDict()
+    private void GeneratePrefabObjectDict()
     {
-        for (int i = 0; i < itemsPrefab.Count; i++)
+        for (int i = 0; i < prefabObject.Count; i++)
         {
-            if (itemsPrefab[i] != null && itemPrefabDict.ContainsKey(itemsPrefab[i].name))
+            if (prefabObject[i] != null && prefabObjectDict.ContainsKey(prefabObject[i].name))
                 Debug.LogError($"[ItemDictionary]: \tItem Prefab at {i} already exist.");
             else
             {
-                itemPrefabDict.Add(itemsPrefab[i].name, itemsPrefab[i]);
+                prefabObjectDict.Add(prefabObject[i].name, prefabObject[i]);
             }
         }
     }
 
     public GameObject GetItemPrefab(string name)
     {
-        if (itemPrefabDict.ContainsKey(name))
-            return itemPrefabDict[name];
+        if (prefabObjectDict.ContainsKey(name))
+            return prefabObjectDict[name];
         else
             return null;
     }

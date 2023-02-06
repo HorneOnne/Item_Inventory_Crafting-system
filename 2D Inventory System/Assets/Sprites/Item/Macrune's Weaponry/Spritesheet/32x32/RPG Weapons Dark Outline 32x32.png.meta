@@ -132,8 +132,8 @@ TextureImporter:
         y: 864
         width: 32
         height: 32
-      alignment: 6
-      pivot: {x: 0, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -16578,11 +16578,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      RPG Weapons Dark Outline 32x32_49: 1932176952
       RPG Weapons Dark Outline 32x32_349: -1721398821
       RPG Weapons Dark Outline 32x32_338: 1554691159
       RPG Weapons Dark Outline 32x32_718: -2055741277
       RPG Weapons Dark Outline 32x32_473: 2123495609
-      RPG Weapons Dark Outline 32x32_93: 57681615
       RPG Weapons Dark Outline 32x32_200: -1828811952
       RPG Weapons Dark Outline 32x32_203: -1926700885
       RPG Weapons Dark Outline 32x32_534: 415658268
@@ -17359,9 +17359,9 @@ TextureImporter:
       RPG Weapons Dark Outline 32x32_406: -937318157
       RPG Weapons Dark Outline 32x32_225: 1768018798
       RPG Weapons Dark Outline 32x32_450: 1756066656
-      RPG Weapons Dark Outline 32x32_49: 1932176952
       RPG Weapons Dark Outline 32x32_267: -524140057
       RPG Weapons Dark Outline 32x32_409: 1574657841
+      RPG Weapons Dark Outline 32x32_93: 57681615
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

@@ -6,8 +6,7 @@ using UnityEngine;
 public class BowData : UpgradeableItemData
 {
     [Header("Bow Properties")]
-    public float attackSpeed;
-    public int baseDamage;
-    public int numOfUseRemaining;
-
+    public int baseAttackDamage;    // used for add damage with arrow
+    public float releaseSpeed;  // Affect the arrow speed
 }
+

@@ -16,8 +16,9 @@ MonoBehaviour:
   itemType: 13
   max_quantity: 1
   description: 
+  duration: 0.35
   currentLevel: 1
   maxLevel: 2
   nextLvItemData: {fileID: 11400000, guid: 0b40bc1e6433f064e9e713726104b7ee, type: 2}
   damage: 30
-  numOfUseRemaining: 100
+  swingSwordIncreaseSize: 1.5

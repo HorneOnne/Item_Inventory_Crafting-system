@@ -16,4 +16,5 @@ MonoBehaviour:
   itemType: 10
   max_quantity: 999
   description: 
+  duration: 1
   damage: 15

@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
 {
@@ -11,31 +7,51 @@ public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
     [field: SerializeField]
     public ItemData ItemData { get; private set; }
     [field: SerializeField]
+    public ItemSlot ItemSlot { get; private set; }
+    [field: SerializeField]
     public Vector2 OffsetPosition { get; private set; }
     [field: SerializeField]
     public float OffsetZAngle { get; private set; }
+    [field: SerializeField]
+    public GameObject Model { get; private set; }
     #endregion
 
 
-    [Header("Referecnes")]
-    [SerializeField] private GameObject model;
+    [Header("References")] 
     private SpriteRenderer spriteRenderer;
 
+    [Header("Item Properties")]
+    [Tooltip("Indicate this item can be shown when held in hand.")]
+    public bool canShow;
 
-    public virtual void Start()
+
+    protected virtual void Start()
     {
-        LoadComponents();       
+        LoadComponents();
     }
+
+
+    /*public void Copy(Item other)
+    {
+        this.ItemData = other.ItemData;
+        this.ItemSlot = other.ItemSlot;
+        this.OffsetPosition = other.OffsetPosition;
+        this.OffsetZAngle= other.OffsetZAngle;
+        this.Model = other.Model;   
+        this.spriteRenderer = other.spriteRenderer;
+        this.canShow = other.canShow;
+    }*/
 
     private void LoadComponents()
     {
-        spriteRenderer = model.GetComponent<SpriteRenderer>();
+        spriteRenderer = Model.GetComponent<SpriteRenderer>();
     }
 
 
-    public void SetData(ItemData itemData)
+    public void SetData(ItemSlot itemSlot)
     {
-        this.ItemData = itemData;
+        this.ItemSlot = itemSlot;
+        this.ItemData = itemSlot.itemObject;
         UpdateData();
     }
 
@@ -51,7 +67,13 @@ public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
     
     public virtual void SetOffsetPosition()
     {
-        transform.localPosition = OffsetPosition;
+        Model.transform.localPosition += (Vector3)OffsetPosition;
+    }
+
+    public virtual void SetOffsetPosition(Vector3 offsetPosition)
+    {
+        this.OffsetPosition = offsetPosition;
+        Model.transform.localPosition += (Vector3)OffsetPosition;
     }
 
     public virtual void SetOffsetAngle()
@@ -70,8 +92,8 @@ public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
         
     }
 
-    public virtual void Use(Player player)
+    public virtual bool Use(Player player)
     {
-       
-    }
+        return true;
+    }  
 }

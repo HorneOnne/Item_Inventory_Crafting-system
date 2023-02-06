@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-
+using UnityEngine.EventSystems;
 
 public class ItemInHand : MonoBehaviour
 {
@@ -12,8 +12,12 @@ public class ItemInHand : MonoBehaviour
     [Header("References")]
     private Player player;
     private UIItemInHand uiItemInHand;
-    public Item itemObject;
+    private Item itemObject;
 
+
+    [Header("Settings")]
+    [Tooltip("Prevent using a selected item for the first time.")]
+    private bool firstGet = true;
 
     #region Properties
     public StoredType ItemGetFrom { get; private set; }
@@ -37,12 +41,18 @@ public class ItemInHand : MonoBehaviour
         itemSlot = takenSlot;
         ItemGetFrom = from;
 
+        firstGet = true;
         OnItemInHandChanged?.Invoke();
     }
 
     public void SetItemObject(Item item)
     {
-        itemObject = item;
+        itemObject = item;      
+    }
+
+    public Item GetItemObject()
+    {
+        return itemObject;
     }
 
 
@@ -102,13 +112,23 @@ public class ItemInHand : MonoBehaviour
     {
         itemSlot.ClearSlot();
         ItemGetFrom = StoredType.Another;
+
+        OnItemInHandChanged?.Invoke();
     }
 
 
-    public void UseItem()
+    public bool UseItem()
     {
-        if (HasItemData() == false || HasItemObject() == false) return;
-        itemObject.Use(player);
+        if (HasItemData() == false || HasItemObject() == false) return false;
+        if(IsMouseOverUI() == true) return false;
+
+        if (firstGet)
+        {
+            firstGet = false;
+            return false;
+        }
+
+        return itemObject.Use(player);
     }
 
 
@@ -119,9 +139,24 @@ public class ItemInHand : MonoBehaviour
     {
         itemSlot.RemoveItem();
         uiItemInHand.DisplayItemInHand();
+
+        OnItemInHandChanged?.Invoke();
     }
 
 
+    private bool IsMouseOverUI()
+    {
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            // mouse click is on a UI element
+            return true;
+        }
+        else
+        {
+            // mouse click is not on a UI element
+            return false;
+        }
+    }
 }
 
 public enum StoredType

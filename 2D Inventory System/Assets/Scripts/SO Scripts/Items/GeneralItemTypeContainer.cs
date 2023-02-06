@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEditor;
 
 public static class GeneralItemTypeContainer
 {
@@ -42,6 +43,21 @@ public static class GeneralItemTypeContainer
             default:
                 return null;   
         }
+    }
+
+    public static GeneralItemType GetGeneralItemType(ItemType itemType)
+    {
+        if (weapons.Contains(itemType))
+            return GeneralItemType.Weapons;
+        if (tools.Contains(itemType))
+            return GeneralItemType.Tools;
+        if (projectiles.Contains(itemType))
+            return GeneralItemType.Projectiles;
+        if (equipments.Contains(itemType))
+            return GeneralItemType.Equipments;
+
+
+        throw new System.Exception();
     }
 
 

@@ -16,6 +16,7 @@ MonoBehaviour:
   itemType: 13
   max_quantity: 1
   description: 
+  duration: 0.5
   currentLevel: 1
   maxLevel: 2
   nextLvItemData: {fileID: 11400000, guid: d331da4cd0fd7d943a83b652bda9fbbe, type: 2}

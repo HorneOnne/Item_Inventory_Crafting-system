@@ -7,5 +7,5 @@ public class SwordData : UpgradeableItemData
 {
     [Header("Sword Properties")]
     public int damage;
-    public int numOfUseRemaining;
+    public float swingSwordIncreaseSize;    // Used to increase swing sword size
 }

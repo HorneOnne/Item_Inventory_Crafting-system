@@ -31,9 +31,20 @@ public class PlayerData : ScriptableObject
 
     [Space(20)]
     [Header("Stats Properties")]
+    // Base properties
+    public int baseCurrentHealth;
+    public int baseMaxHealth;
+    public int baseAttackDamage;
+    public float baseAttackSpeed;
+    public float baseUseTimeItem;
+    public int baseArmor;
+
+ 
+    // CurrentProperties
     public int currentHealth;
-    public int maxHealth;
-    public int attackDamage;
-    public int attackSpeed;
-    public int armor;
+    public int currentmaxHealth;
+    public int currentAttackDamage;
+    public float currentAttackSpeed;
+    public int currentArmor;
+
 }

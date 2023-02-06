@@ -30,17 +30,15 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
 
     [Header("Logic References")]
     public Player player;
+    private ItemInHand itemInHand;
     private UIItemInHand uiItemInHand;
 
-
-    private void Awake()
-    {
-        uiItemInHand = UIItemInHand.Instance;
-    }
 
 
     private void Start()
     {
+        itemInHand = player.ItemInHand;
+        uiItemInHand = UIItemInHand.Instance;
         LoadAllItems();
     }
 
@@ -103,7 +101,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
     private void OnSlotClicked(BaseEventData baseEvent, GameObject clickedObj)
     {
         ItemData item = itemScriptableObjectList[clickedObj.GetComponent<UIItemSlot>().SlotIndex];
-        player.ItemInHand.Set(new ItemSlot(item, item.max_quantity), StoredType.Another);
+        itemInHand.Set(new ItemSlot(item, item.max_quantity), StoredType.Another);
         uiItemInHand.DisplayItemInHand();
     }
 

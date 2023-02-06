@@ -16,4 +16,6 @@
     Sword = 13,
     Axe = 14,
     Hammer = 15,
+    CombatDummy = 16,
+    Boomerang = 17,
 }

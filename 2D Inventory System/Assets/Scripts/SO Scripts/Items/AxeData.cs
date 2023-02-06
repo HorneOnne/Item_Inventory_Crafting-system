@@ -10,3 +10,4 @@ public class AxeData : UpgradeableItemData
     public byte axePower;
     public int attackDamage;
 }
+

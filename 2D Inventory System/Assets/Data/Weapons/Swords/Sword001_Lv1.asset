@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: -233859914, guid: 0804b8f0cd3b81241862b9b94a207c61, type: 3}
   itemType: 13
-  max_quantity: 3
+  max_quantity: 1
   description: 
+  duration: 0.5
   currentLevel: 1
   maxLevel: 2
   nextLvItemData: {fileID: 11400000, guid: cef6d1d1158119d4cb05ee659b6fe843, type: 2}
   damage: 10
-  numOfUseRemaining: 999
+  swingSwordIncreaseSize: 0.5

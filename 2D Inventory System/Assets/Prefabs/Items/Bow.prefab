@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 2349573720829118873}
   m_Layer: 30
   m_Name: Bow
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -130,6 +130,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <ItemData>k__BackingField: {fileID: 0}
+  <ItemSlot>k__BackingField:
+    itemObject: {fileID: 0}
+    itemQuantity: 0
   <OffsetPosition>k__BackingField: {x: 0.25, y: 0.25}
   <OffsetZAngle>k__BackingField: 45
-  model: {fileID: 1073745971335733352}
+  <Model>k__BackingField: {fileID: 1073745971335733352}
+  canShow: 1

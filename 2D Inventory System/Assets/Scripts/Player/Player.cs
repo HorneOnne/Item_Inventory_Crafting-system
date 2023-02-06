@@ -1,6 +1,4 @@
 using MyGame.Ultilities;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -9,10 +7,11 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerMovement))]  
 [RequireComponent(typeof(PlayerInputHandler))]  
 [RequireComponent(typeof(PlayerEquipment))]  
+[RequireComponent(typeof(PlayerBattle))]  
 public class Player : MonoBehaviour
 {
     [Header("Character Body")]
-    [SerializeField] Transform handPart;
+    [SerializeField] Transform handHoldItem;
 
 
     [Header("Character Data")]
@@ -25,8 +24,8 @@ public class Player : MonoBehaviour
     [HideInInspector] public PlayerMovement PlayerMovement { get; private set; }
     [HideInInspector] public PlayerInputHandler PlayerInputHandler { get; private set; }
     [HideInInspector] public PlayerEquipment PlayerEquipment { get; private set; }
-    [HideInInspector] public Transform HandPart { get => handPart; }
-
+    [HideInInspector] public PlayerBattle PlayerBattle { get; private set; }
+    [HideInInspector] public Transform HandHoldItem { get => handHoldItem; }  
     #endregion
 
 
@@ -40,6 +39,7 @@ public class Player : MonoBehaviour
         PlayerMovement = GetComponent<PlayerMovement>();
         PlayerInputHandler = GetComponent<PlayerInputHandler>();
         PlayerEquipment = GetComponent<PlayerEquipment>();
+        PlayerBattle = GetComponent<PlayerBattle>();
     }
 
 
@@ -88,6 +88,18 @@ public class Player : MonoBehaviour
         //itemObject.GetComponent<Item>().AddItemData(slot.itemObject);
     }
 
-
     
+
+    public void SetDefaultAttackSpeed()
+    {
+        playerData.currentAttackSpeed = playerData.baseAttackSpeed;
+    }
+
+    public void IncreaseAttackSpeed(float value)
+    {
+        playerData.currentAttackSpeed += value;
+    }
+
+
+
 }

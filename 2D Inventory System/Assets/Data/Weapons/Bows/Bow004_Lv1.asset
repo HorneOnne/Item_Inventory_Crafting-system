@@ -16,9 +16,9 @@ MonoBehaviour:
   itemType: 12
   max_quantity: 1
   description: 
+  duration: 0.4
   currentLevel: 1
   maxLevel: 3
   nextLvItemData: {fileID: 0}
-  attackSpeed: 0
-  baseDamage: 15
-  numOfUseRemaining: 100
+  baseAttackDamage: 9
+  releaseSpeed: 40

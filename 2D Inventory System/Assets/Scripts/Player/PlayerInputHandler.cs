@@ -9,6 +9,7 @@ public class PlayerInputHandler : MonoBehaviour
     private PlayerInventory playerInventory;
     private ItemInHand itemInHand;
     private PlayerMovement playerMovement;
+    private PlayerData playerData;
 
   
     private float movementInput;
@@ -25,6 +26,10 @@ public class PlayerInputHandler : MonoBehaviour
     float doubleClickTime = 0.2f; // time in seconds between clicks to register as a double click
     float lastClickTime = 0; // time of last click
     bool click = false; // variable to track if a click has occurred
+
+
+    private float elapsedTime = 0.0f;
+    private bool firstUseItem = true;   // Use item immediately if it is the first time use, not wait for elapsedTime
 
 
     private void OnEnable()
@@ -45,12 +50,15 @@ public class PlayerInputHandler : MonoBehaviour
         playerInventory = player.PlayerInventory;
         itemInHand = player.ItemInHand;
         playerMovement = player.PlayerMovement;
+        playerData = player.playerData;
     }
 
 
     private void Update()
-    {
+    {       
         movementInput = Input.GetAxisRaw("Horizontal");
+        elapsedTime += Time.deltaTime;
+
 
         // Calculate hang time (Time leave ground)
         if (playerMovement.IsGrounded())
@@ -79,14 +87,6 @@ public class PlayerInputHandler : MonoBehaviour
         LeftClickHandler(SingleLeftClick, DoubleLeftClick);
 
 
-        /*if(Input.GetKeyDown(KeyCode.G))
-        {
-            GameObject bowObject = ItemContainerManager.Instance.GetItemPrefab("Bow");
-            bowObject.GetComponent<Bow>().SetData(itemInHand.GetItem());
-            bowObject.GetComponent<Bow>().UpdateData();
-
-            Instantiate(bowObject, (Vector2)Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
-        }*/
 
         if(itemInHand.HasItemData() && itemInHand.GetItem().itemType == ItemType.Bow)
             RotateHoldItem();
@@ -96,6 +96,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void LeftClickHandler(Action singleClick, Action doubleClick = null)
     {
+       
         if (Input.GetMouseButtonDown(0))
         {
             // check if last click was within doubleClickTime
@@ -119,18 +120,18 @@ public class PlayerInputHandler : MonoBehaviour
             click = false;
 
             singleClick();
+            
+        }
+        else if(Input.GetMouseButton(0))
+        {
+            singleClick();
         }
     }
 
 
     private void SingleLeftClick()
     {
-        if(itemInHand.HasItemData() && itemInHand.itemObject != null)
-        {
-            itemInHand.UseItem();
-        }
-
-
+        UseItem();
     }
 
     private void DoubleLeftClick()
@@ -155,26 +156,28 @@ public class PlayerInputHandler : MonoBehaviour
         Vector3 mousePosition = Input.mousePosition;
         mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
         Vector2 direction = new Vector2(
-        mousePosition.x - player.HandPart.position.x,
-        mousePosition.y - player.HandPart.position.y
+        mousePosition.x - player.HandHoldItem.position.x,
+        mousePosition.y - player.HandHoldItem.position.y
         );
 
-        float offsetAngle = itemInHand.itemObject.OffsetZAngle;
+        float offsetAngle = itemInHand.GetItemObject().OffsetZAngle;
         direction = Quaternion.Euler(0, 0, offsetAngle) * direction;
-        player.HandPart.up = direction;
+        player.HandHoldItem.up = direction;
     }
 
 
     private void ReInstantiateItem()
     {
-        if (player.HandPart.childCount != 0)
+        firstUseItem = true;
+
+        if (player.HandHoldItem.childCount != 0)
         {
-            for(int i = 0; i < player.HandPart.childCount; i++)
+            for(int i = 0; i < player.HandHoldItem.childCount; i++)
             {
-                Destroy(player.HandPart.GetChild(i).gameObject);           
-            }
-      
+                Destroy(player.HandHoldItem.GetChild(i).gameObject);           
+            }   
         }
+
 
         itemInHand.SetItemObject(null);
         if (itemInHand.HasItemData())
@@ -183,14 +186,44 @@ public class PlayerInputHandler : MonoBehaviour
 
             if (itemPrefab != null)
             {
-                var itemObject = Instantiate(ItemContainerManager.Instance.GetItemPrefab(itemInHand.GetItem().itemType.ToString()), player.HandPart.transform);
-                itemObject.GetComponent<Item>().SetData(itemInHand.GetItem());
+                var itemObject = Instantiate(ItemContainerManager.Instance.GetItemPrefab(itemInHand.GetItem().itemType.ToString()), player.HandHoldItem.transform);
+                itemObject.GetComponent<Item>().SetData(itemInHand.GetSlot());
                 itemInHand.SetItemObject(itemObject.GetComponent<Item>());
+
+                if (itemObject.GetComponent<Item>().canShow == false)
+                {
+                    itemObject.SetActive(false);
+                }
             }
         }
         
     }
 
+
+    private void UseItem()
+    {
+       
+        if (itemInHand.HasItemData() && itemInHand.GetItemObject() != null)
+        {
+            // Check if it's time to attack
+            if (elapsedTime >= itemInHand.GetItem().duration)
+            {               
+                elapsedTime = 0;
+                itemInHand.UseItem();
+            }        
+            else if(firstUseItem)
+            {             
+                bool canUseItem = itemInHand.UseItem();
+                if(canUseItem)
+                {
+                    firstUseItem = false;
+                    elapsedTime = 0;
+                }              
+            }
+        }
+    }
+
+ 
 
     public void ResetJumpInput() => TriggerJump = false;
 

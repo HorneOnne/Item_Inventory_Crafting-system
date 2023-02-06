@@ -84,6 +84,19 @@ public class PlayerInventory : MonoBehaviour
         return false;
     }
 
+    public int? GetSlotIndex(ItemSlot itemSlot)
+    {
+        for(int i = 0; i < inventory.Count; i++)
+        {
+            if (inventory[i].Equals(itemSlot))
+            {
+                return i;
+            }
+        }
+
+        return null;
+    }
+
 
     public void StackItem()
     {
