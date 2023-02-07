@@ -18,3 +18,4 @@ MonoBehaviour:
   description: 
   duration: 1
   damage: 50
+  particle: 3

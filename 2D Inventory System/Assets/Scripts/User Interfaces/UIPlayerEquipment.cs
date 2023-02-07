@@ -54,7 +54,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
     private void UpdateHelmEquipmentUI()
     {
         if (player.PlayerEquipment.helmSlot.HasItem())
-            uiHelmSlot.Set(player.PlayerEquipment.helmSlot.itemObject.icon);
+            uiHelmSlot.Set(player.PlayerEquipment.helmSlot.ItemObject.icon);
         else
             uiHelmSlot.SetDefault();
     }
@@ -62,7 +62,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
     private void UpdateChestEquipmentUI()
     {
         if (player.PlayerEquipment.chestSlot.HasItem())
-            uiChestSlot.Set(player.PlayerEquipment.chestSlot.itemObject.icon);
+            uiChestSlot.Set(player.PlayerEquipment.chestSlot.ItemObject.icon);
         else
             uiChestSlot.SetDefault();
     }
@@ -70,7 +70,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
     private void UpdateShieldEquipmentUI()
     {
         if (player.PlayerEquipment.shieldSlot.HasItem())
-            uiShieldSlot.Set(player.PlayerEquipment.shieldSlot.itemObject.icon);
+            uiShieldSlot.Set(player.PlayerEquipment.shieldSlot.ItemObject.icon);
         else
             uiShieldSlot.SetDefault();
     }

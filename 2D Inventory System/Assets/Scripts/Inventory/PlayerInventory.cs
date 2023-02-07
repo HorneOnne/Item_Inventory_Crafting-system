@@ -32,7 +32,7 @@ public class PlayerInventory : MonoBehaviour
     {
         if(HasSlot(slotIndex))
         {
-            return inventory[slotIndex].itemObject;
+            return inventory[slotIndex].ItemObject;
         }
         return null;
     }
@@ -106,7 +106,7 @@ public class PlayerInventory : MonoBehaviour
 
         for (int i = 0; i < inventory.Count; i++)
         {
-            if (inventory[i].itemObject == itemInHand.GetItem())
+            if (inventory[i].ItemObject == itemInHand.GetItem())
             {
                 dict.Add(i, inventory[i].ItemQuantity);
             }

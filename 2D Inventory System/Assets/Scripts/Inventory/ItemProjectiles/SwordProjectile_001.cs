@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class SwordProjectile_001 : Item, ICanCauseDamage
+public class SwordProjectile_001 : Projectile, ICanCauseDamage
 {
     private SwordData swordData;
     private Vector3 startRotationAngle;

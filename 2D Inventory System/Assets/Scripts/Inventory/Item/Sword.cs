@@ -8,8 +8,8 @@ public class Sword : Item, IUpgradeable
     private int currentLevel = 1;
     private int maxLevel = 3;
 
-    GameObject swordProjectilePrefab;
-    GameObject swordProjectileObject;
+    private GameObject swordProjectilePrefab;
+    private GameObject swordProjectileObject;
 
     public int CurrentLevel { get => currentLevel; set => currentLevel = value; }
     public int MaxLevel { get => maxLevel; set => maxLevel= value; }
@@ -49,8 +49,8 @@ public class Sword : Item, IUpgradeable
         swordProjectileObject = Instantiate(swordProjectilePrefab, transform.position, transform.rotation, player.transform);
         swordProjectileObject.transform.localScale = new Vector3(4,4,1);
         swordProjectileObject.SetActive(true);
-        swordProjectileObject.GetComponent<Item>().SetData(this.ItemSlot);
-        swordProjectileObject.GetComponent<Item>().SetOffsetPosition();
+        swordProjectileObject.GetComponent<Projectile>().SetData(this.ItemSlot.ItemObject);
+        swordProjectileObject.GetComponent<Projectile>().SetOffsetPosition();
         
 
         return true;

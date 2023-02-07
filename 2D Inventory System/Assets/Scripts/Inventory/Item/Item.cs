@@ -51,7 +51,7 @@ public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
     public void SetData(ItemSlot itemSlot)
     {
         this.ItemSlot = itemSlot;
-        this.ItemData = itemSlot.itemObject;
+        this.ItemData = itemSlot.ItemObject;
         UpdateData();
     }
 

@@ -25,10 +25,10 @@ public class Player : MonoBehaviour
     [HideInInspector] public PlayerInputHandler PlayerInputHandler { get; private set; }
     [HideInInspector] public PlayerEquipment PlayerEquipment { get; private set; }
     [HideInInspector] public PlayerBattle PlayerBattle { get; private set; }
-    [HideInInspector] public Transform HandHoldItem { get => handHoldItem; }  
+    [HideInInspector] public Transform HandHoldItem { get => handHoldItem; }
     #endregion
 
-
+    public ChestInventory currentOpenChest;
     
 
 
@@ -74,7 +74,7 @@ public class Player : MonoBehaviour
         GameObject itemObject = new GameObject();
         itemObject.transform.position = Utilities.GetMousPosition();
 
-        itemObject.name = $"{slot.itemObject.name}";
+        itemObject.name = $"{slot.ItemObject.name}";
         itemObject.AddComponent<BoxCollider2D>();
         itemObject.AddComponent<SpriteRenderer>();
         itemObject.AddComponent<Rigidbody2D>();
@@ -82,7 +82,7 @@ public class Player : MonoBehaviour
 
         itemObject.layer = LayerMask.NameToLayer("Item");
         itemObject.tag = "Item";
-        itemObject.GetComponent<SpriteRenderer>().sprite = slot.itemObject.icon;
+        itemObject.GetComponent<SpriteRenderer>().sprite = slot.ItemObject.icon;
 
         Debug.Log("Fix here");
         //itemObject.GetComponent<Item>().AddItemData(slot.itemObject);

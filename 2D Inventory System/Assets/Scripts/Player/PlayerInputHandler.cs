@@ -32,6 +32,11 @@ public class PlayerInputHandler : MonoBehaviour
     private bool firstUseItem = true;   // Use item immediately if it is the first time use, not wait for elapsedTime
 
 
+    // Cached
+    private Vector3 mousePosition;
+    private Vector2 direction;
+    private float offsetAngle;
+
     private void OnEnable()
     {
         ItemInHand.OnItemInHandChanged += ReInstantiateItem;
@@ -88,7 +93,7 @@ public class PlayerInputHandler : MonoBehaviour
 
 
 
-        if(itemInHand.HasItemData() && itemInHand.GetItem().itemType == ItemType.Bow)
+        if(itemInHand.HasItemObject() && itemInHand.GetItemObject().canShow == true)
             RotateHoldItem();
     }
 
@@ -141,6 +146,10 @@ public class PlayerInputHandler : MonoBehaviour
             case StoredType.PlayerInventory:
                 playerInventory.StackItem();
                 break;
+            case StoredType.ChestInventory:
+                Debug.Log("Chest Stack Item");
+                player.currentOpenChest.StackItem();
+                break;
             case StoredType.CraftingTable:
                 CraftingTableManager.Instance.StackItem();
                 break;
@@ -153,14 +162,14 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void RotateHoldItem()
     {
-        Vector3 mousePosition = Input.mousePosition;
+        mousePosition = Input.mousePosition;
         mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
-        Vector2 direction = new Vector2(
+        direction = new Vector2(
         mousePosition.x - player.HandHoldItem.position.x,
         mousePosition.y - player.HandHoldItem.position.y
         );
 
-        float offsetAngle = itemInHand.GetItemObject().OffsetZAngle;
+        offsetAngle = itemInHand.GetItemObject().OffsetZAngle;
         direction = Quaternion.Euler(0, 0, offsetAngle) * direction;
         player.HandHoldItem.up = direction;
     }

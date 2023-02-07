@@ -86,7 +86,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
         UIItemSlot uiSlot = craftingGridSlot[index].GetComponent<UIItemSlot>();
         if (craftingTableManager.craftingGridData[index].HasItem())
         {
-            uiSlot.slotImage.sprite = craftingTableManager.craftingGridData[index].itemObject.icon;
+            uiSlot.slotImage.sprite = craftingTableManager.craftingGridData[index].ItemObject.icon;
             uiSlot.slotImage.GetComponent<RectTransform>().SetAsLastSibling();
             uiSlot.amountItemInSlotText.text = craftingTableManager.craftingGridData[index].itemQuantity.ToString();
         }
@@ -105,7 +105,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
         {
             if (craftingTableManager.outputItemSlot.HasItem())
             {
-                uiSlot.slotImage.sprite = craftingTableManager.outputItemSlot.itemObject.icon;
+                uiSlot.slotImage.sprite = craftingTableManager.outputItemSlot.ItemObject.icon;
                 uiSlot.amountItemInSlotText.text = craftingTableManager.outputItemSlot.itemQuantity.ToString();
                 uiSlot.slotImage.GetComponent<RectTransform>().SetAsLastSibling();
             }
@@ -495,7 +495,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     /// <param name="index">Index used in itemSlotList at specific itemSlot you want to get</param>
     private void CombineItemSlotQuantity(int index)
     {
-        if (IsSameItem(craftingTableManager.craftingGridData[index].itemObject, itemInHand.GetItem()))
+        if (IsSameItem(craftingTableManager.craftingGridData[index].ItemObject, itemInHand.GetItem()))
         {
             //Debug.Log("Same Object here");
             

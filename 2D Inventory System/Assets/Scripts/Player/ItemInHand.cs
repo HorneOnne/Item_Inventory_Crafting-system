@@ -33,7 +33,7 @@ public class ItemInHand : MonoBehaviour
 
     public ItemData GetItem()
     {
-        return itemSlot.itemObject;
+        return itemSlot.ItemObject;
     }
 
     public void Set(ItemSlot takenSlot, StoredType from)
@@ -69,7 +69,7 @@ public class ItemInHand : MonoBehaviour
         }
         else
         {
-            if(itemSlot.itemObject.Equals(itemContainerSlot.itemObject))
+            if(itemSlot.ItemObject.Equals(itemContainerSlot.ItemObject))
             {
                 if(itemSlot.TryAddItem(itemContainerSlot) == true)
                 {
@@ -162,6 +162,7 @@ public class ItemInHand : MonoBehaviour
 public enum StoredType
 {
     PlayerInventory,
+    ChestInventory,
     CraftingTable,
     Another
 }

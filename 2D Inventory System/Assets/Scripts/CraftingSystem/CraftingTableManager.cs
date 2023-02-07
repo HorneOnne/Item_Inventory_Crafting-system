@@ -90,17 +90,17 @@ public class CraftingTableManager : Singleton<CraftingTableManager>
     public RecipeData CreateRecipe()
     {
         RecipeData newRecipe = ScriptableObject.CreateInstance<RecipeData>();
-        newRecipe.item00 = craftingGridData[0].itemObject;
-        newRecipe.item10 = craftingGridData[1].itemObject;
-        newRecipe.item20 = craftingGridData[2].itemObject;
+        newRecipe.item00 = craftingGridData[0].ItemObject;
+        newRecipe.item10 = craftingGridData[1].ItemObject;
+        newRecipe.item20 = craftingGridData[2].ItemObject;
 
-        newRecipe.item01 = craftingGridData[3].itemObject;
-        newRecipe.item11 = craftingGridData[4].itemObject;
-        newRecipe.item21 = craftingGridData[5].itemObject;
+        newRecipe.item01 = craftingGridData[3].ItemObject;
+        newRecipe.item11 = craftingGridData[4].ItemObject;
+        newRecipe.item21 = craftingGridData[5].ItemObject;
 
-        newRecipe.item02 = craftingGridData[6].itemObject;
-        newRecipe.item12 = craftingGridData[7].itemObject;
-        newRecipe.item22 = craftingGridData[8].itemObject;
+        newRecipe.item02 = craftingGridData[6].ItemObject;
+        newRecipe.item12 = craftingGridData[7].ItemObject;
+        newRecipe.item22 = craftingGridData[8].ItemObject;
 
         return newRecipe;
     }
@@ -137,7 +137,7 @@ public class CraftingTableManager : Singleton<CraftingTableManager>
     public ItemData GetItem(int index)
     {
         if (HasItem(index) == false) return null;
-        return craftingGridData[index].itemObject;
+        return craftingGridData[index].ItemObject;
     }
 
     public bool AddItem(int index)
@@ -154,7 +154,7 @@ public class CraftingTableManager : Singleton<CraftingTableManager>
 
         for (int i = 0; i < craftingGridData.Length; i++)
         {
-            if (craftingGridData[i].itemObject == itemInHand.GetItem())
+            if (craftingGridData[i].ItemObject == itemInHand.GetItem())
             {
                 dict.Add(i, craftingGridData[i].ItemQuantity);
             }

@@ -125,7 +125,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
         UIItemSlot uiSlot = itemSlotList[index].GetComponent<UIItemSlot>();
         if (playerInventory.inventory[index].HasItem())
         {
-            uiSlot.slotImage.sprite = playerInventory.inventory[index].itemObject.icon;
+            uiSlot.slotImage.sprite = playerInventory.inventory[index].ItemObject.icon;
             uiSlot.slotImage.GetComponent<RectTransform>().SetAsLastSibling();
 
             int itemQuantity = playerInventory.inventory[index].itemQuantity;
@@ -225,7 +225,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
 
             if (playerInventory.HasItem(index))
             {
-                if (IsSameItem(playerInventory.inventory[index].itemObject, itemInHand.GetItem()))
+                if (IsSameItem(playerInventory.inventory[index].ItemObject, itemInHand.GetItem()))
                 {
                     CombineItemSlotQuantity(index);
                 }
@@ -460,7 +460,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     private void CombineItemSlotQuantity(int index)
     {
         //Debug.Log("CombineItemSlotQuantity");
-        if (IsSameItem(playerInventory.inventory[index].itemObject, itemInHand.GetItem()))
+        if (IsSameItem(playerInventory.inventory[index].ItemObject, itemInHand.GetItem()))
         {
             Debug.Log("Same Object");
             itemInHand.Set(playerInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot()), StoredType.PlayerInventory);

@@ -1,22 +1,29 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bow : Item, IUpgradeable
+public class Bow : Item, IUpgradeable, IConsumability
 {
     public int CurrentLevel { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     public int MaxLevel { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+    public bool Consumability { get => consumeArrow; set => consumeArrow = value; }
 
     [Header("References")]
     private PlayerInventory playerInventory;
 
     [Header("Bow Properties")]
     private BowData bowData;
-    private Arrow arrowInPlayerInventory;
+    [SerializeField] private bool consumeArrow;
+
+
+    private ArrowData arrowData;
     private int? arrowSlotIndex;
-    GameObject arrowPrefab;
+    private ItemSlot arrowSlotInPlayerInventory;
+    private GameObject arrowProjectilePrefab;
+    private ArrowProjectile_001 arrowProjectileObject;
 
-
+    // Cached
 
     protected override void Start()
     {
@@ -24,7 +31,8 @@ public class Bow : Item, IUpgradeable
         base.SetOffsetPosition();
 
         bowData = (BowData)this.ItemData;
-        arrowPrefab = ItemContainerManager.Instance.GetItemPrefab("Arrow");
+        arrowProjectilePrefab = ItemContainerManager.Instance.GetItemPrefab("ArrowProjectile_001");
+        
     }
 
    
@@ -48,15 +56,15 @@ public class Bow : Item, IUpgradeable
         arrowSlotIndex = playerInventory.FindArrowSlotIndex();
 
         if (arrowSlotIndex == null) return false;
-        if (arrowPrefab == null) return false;
+        if (arrowProjectilePrefab == null) return false;
+        
+        arrowProjectileObject = Instantiate(arrowProjectilePrefab, transform.position, transform.rotation).GetComponent<ArrowProjectile_001>();
+        arrowSlotInPlayerInventory = playerInventory.inventory[(int)arrowSlotIndex];      
+        arrowData = (ArrowData)arrowSlotInPlayerInventory.ItemObject;
+        arrowProjectileObject.SetData(arrowData);    
+        arrowProjectileObject.Shoot(bowData, arrowData);
 
-        
-        arrowInPlayerInventory = Instantiate(arrowPrefab, player.transform.position, player.HandHoldItem.rotation).GetComponent<Arrow>();
-        arrowInPlayerInventory.SetData(playerInventory.inventory[(int)arrowSlotIndex]);
-        
-        arrowInPlayerInventory.Shoot(bowData, bowData.releaseSpeed);
-        arrowInPlayerInventory.Consume(player);
-        
+        Consume(player);
         return true;
     }
 
@@ -64,5 +72,14 @@ public class Bow : Item, IUpgradeable
     public void Upgrade()
     {
         //throw new System.NotImplementedException();
+    }
+
+    public void Consume(Player fromPlayer)
+    {
+        if (Consumability)
+        {
+            arrowSlotInPlayerInventory.RemoveItem();
+            UIPlayerInventory.Instance.UpdateInventoryUIAt((int)arrowSlotIndex);
+        }
     }
 }

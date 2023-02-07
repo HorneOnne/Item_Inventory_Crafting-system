@@ -1,37 +1,42 @@
-﻿using System.Collections.Concurrent;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.VFX;
 
-[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
-public class Arrow : Item, IConsumability, ICanCauseDamage
+public class ArrowProjectile_001 : Projectile, ICanCauseDamage
 {
     [Header("References")]
     [SerializeField] private GameObject explosionPrefab;
     [SerializeField] private Transform explosionPosition;
-    private Rigidbody2D rb;
+
+    private BowData bowData;
+    private ArrowData arrowData;
 
 
+    private BoxCollider2D boxCollider2D;
 
-    [field:SerializeField]
-    public bool Consumability { get; set; }
-
-    public BowData bowData;
+    
 
     protected override void Start()
     {
         base.Start();
-        rb = GetComponent<Rigidbody2D>();
+
+        boxCollider2D = GetComponent<BoxCollider2D>();
+
+        this.arrowData = (ArrowData)ItemData;
+        SetDust(arrowData.particle);
     }
 
-    public void Shoot(BowData bowData, float shootSpeed)
+
+
+    public void Shoot(BowData bowData, ArrowData arrowData)
     {
         this.bowData = bowData;
+        this.arrowData = arrowData; 
 
         if (rb == null)
             rb = GetComponent<Rigidbody2D>();
 
-        rb.velocity = Quaternion.Euler(0, 0, OffsetZAngle) * transform.right * shootSpeed;
+        rb.velocity = Quaternion.Euler(0, 0, OffsetZAngle) * transform.right * bowData.releaseSpeed;
     }
 
 
@@ -49,27 +54,25 @@ public class Arrow : Item, IConsumability, ICanCauseDamage
         Destroy(this.gameObject, 10f);
     }
 
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        rb.isKinematic = true;
+        spriteRenderer.enabled = false;    
+        rb.velocity = Vector2.zero;
+        boxCollider2D.enabled = false;
+
         var explosionObject = Instantiate(explosionPrefab, explosionPosition.position, Quaternion.identity);
-        Destroy(this.gameObject);
         Destroy(explosionObject, 0.5f);
+        Destroy(gameObject, 3.0f);
     }
 
-    public void Consume(Player player)
-    {
-        if (Consumability)
-        {
-            ItemSlot.RemoveItem();
-            var playerInventory = player.PlayerInventory;
-            var slotIndex = playerInventory.GetSlotIndex(ItemSlot);
-            UIPlayerInventory.Instance.UpdateInventoryUIAt((int)slotIndex);
-
-        }
-    }
+  
 
     public int GetDamage()
     {
-        return ((ArrowData)ItemData).damage + bowData.baseAttackDamage;
+        return arrowData.damage + bowData.baseAttackDamage;
     }
+
+    
 }

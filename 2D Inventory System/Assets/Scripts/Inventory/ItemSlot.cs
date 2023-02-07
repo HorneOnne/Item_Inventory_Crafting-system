@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public class ItemSlot
 {
-    public ItemData itemObject;
+    private ItemData itemObject;
     public int itemQuantity;
 
 
@@ -22,11 +22,11 @@ public class ItemSlot
         this.itemQuantity = other.itemQuantity;
     }
 
-
-    public string GetItemName() => itemObject.name;
-    public Sprite GetItemIcon() => itemObject.icon;
-    public ItemType GetItemType() => itemObject.itemType;
-    public int GetItemMaxQuantity() => itemObject.max_quantity;
+    public ItemData ItemObject { get { return this.itemObject; }}
+    public string GetItemName() => ItemObject.name;
+    public Sprite GetItemIcon() => ItemObject.icon;
+    public ItemType GetItemType() => ItemObject.itemType;
+    public int GetItemMaxQuantity() => ItemObject.max_quantity;
     public int ItemQuantity
     { 
         get { return itemQuantity; } 

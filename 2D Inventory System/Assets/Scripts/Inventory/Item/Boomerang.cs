@@ -6,17 +6,24 @@ public class Boomerang : Item, ICanCauseDamage
 {
     private Rigidbody2D rb;
     private EdgeCollider2D edgeCollider2D;
-    Player player;
+    
     private BoomerangData boomerangData;
 
 
+    private const float scopeRecall = 1.0f;
+    private Vector3 rotateVector = new Vector3(0,0,360);
+
+    // Cached
+    private Player player;
     private bool isCollide = false;
-
-
     private bool isReturning = true;
     private float timeRelease;
     private float timeToReturn;
     private float rotateSpeed;
+    private float currentBoomerangSpeed;
+    private Vector2 mousePosition;
+    private Vector2 direction;
+    private Vector2 currentVelocity;
 
     protected override void Start()
     {
@@ -35,13 +42,7 @@ public class Boomerang : Item, ICanCauseDamage
     {
         if (isReturning == false) return false;
 
-        isReturning = false;
-        gameObject.SetActive(true);
-        
-        Debug.Log("Use");
-        Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = mousePosition - (Vector2)transform.position;
-
+        // Rereference if null
         if (rb == null)
             rb = GetComponent<Rigidbody2D>();
         if (edgeCollider2D == null)
@@ -49,9 +50,15 @@ public class Boomerang : Item, ICanCauseDamage
         if(boomerangData == null)
             boomerangData = (BoomerangData)ItemData;
 
-        rb.velocity = direction.normalized * boomerangData.releaseSpeed;
+
+        isReturning = false;
         this.player = player;
-   
+        gameObject.SetActive(true);
+        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        direction = mousePosition - (Vector2)transform.position;
+        rb.velocity = direction.normalized * boomerangData.releaseSpeed;
+        
+
         return true;
     }
 
@@ -59,27 +66,17 @@ public class Boomerang : Item, ICanCauseDamage
     private void Update()
     {
         if (isReturning == true) return;
-        if (player == null)
-        {
-            Debug.Log("Player == null");
-            return;
-        }
+        if (player == null) return;
         
-        RotateBoomerang();
-
         
 
         timeRelease += Time.deltaTime;
-
         if (timeRelease > timeToReturn)
         {
             BoomerangReturn();
-            if (Vector2.Distance(player.transform.position, transform.position) < 1.0f)
+            if (Vector2.Distance(player.transform.position, transform.position) < scopeRecall)
             {
-                isReturning = true;
-                isCollide = false;             
-                timeRelease = 0f;
-                gameObject.SetActive(false);
+                ResetBoomerangState();
             }
 
         }
@@ -87,43 +84,49 @@ public class Boomerang : Item, ICanCauseDamage
         if(isCollide && timeRelease > 0.1f)
         {
             BoomerangReturn();
-            if (Vector2.Distance(player.transform.position, transform.position) < 1.0f)
+            if (Vector2.Distance(player.transform.position, transform.position) < scopeRecall)
             {
-                isCollide = false;
-                isReturning = true;      
-                timeRelease = 0f;
-                gameObject.SetActive(false);
+                ResetBoomerangState();
             }
         }
-        
 
+
+        RotateBoomerang();
     }
 
 
     private void FixedUpdate()
     {
-        Vector2 velocity = rb.velocity;
-        float speed = velocity.magnitude;
-        if (speed > boomerangData.releaseSpeed)
+        // Clamp velocity not larger boomerang release speed.
+        currentVelocity = rb.velocity;
+        currentBoomerangSpeed = currentVelocity.magnitude;
+        if (currentBoomerangSpeed > boomerangData.releaseSpeed)
         {
-            velocity = velocity.normalized * boomerangData.releaseSpeed;
-            rb.velocity = velocity;
+            currentVelocity = currentVelocity.normalized * boomerangData.releaseSpeed;
+            rb.velocity = currentVelocity;
         }
     }
 
     private void RotateBoomerang()
     {
-        this.transform.Rotate(new Vector3(0, 0, 360) * Time.deltaTime * rotateSpeed);
+        this.transform.Rotate(rotateVector * Time.deltaTime * rotateSpeed);
     }
 
 
     private void BoomerangReturn()
     {
-        Vector2 direction = player.transform.position - transform.position;
+        direction = player.transform.position - transform.position;
         rb.velocity = direction.normalized * boomerangData.releaseSpeed * 2f;
     }
 
-
+    private void ResetBoomerangState()
+    {
+        isCollide = false;
+        isReturning = true;
+        timeRelease = 0f;
+        gameObject.SetActive(false);
+    }
+    
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
