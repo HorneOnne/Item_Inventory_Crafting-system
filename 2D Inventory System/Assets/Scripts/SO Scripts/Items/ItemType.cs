@@ -18,5 +18,6 @@
     Hammer = 15,
     CombatDummy = 16,
     Boomerang = 17,
-    MagicStaff = 18
+    MagicStaff = 18,
+    Chest = 19,
 }

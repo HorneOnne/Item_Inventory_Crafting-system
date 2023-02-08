@@ -12,18 +12,26 @@ public class ChestInventory : MonoBehaviour
 
 
     [Header("Inventory Settings")]
-    public int capacity;
+    private const int MAX_NORMAL_CHEST_SLOT = 36;
     public List<ItemSlot> inventory = new List<ItemSlot>();
 
 
     private void Start()
     {
-        itemInHand = player.ItemInHand;
-
-        for (int i = 0; i < capacity; i++)
+        for (int i = 0; i < MAX_NORMAL_CHEST_SLOT; i++)
         {
             inventory.Add(new ItemSlot());
         }
+    }
+
+    public void Set(Player player)
+    {
+        this.player = player;
+
+        if (player != null)
+            itemInHand = this.player.ItemInHand;
+        else
+            itemInHand = null;
     }
 
     public ItemData GetItem(int slotIndex)
@@ -118,7 +126,7 @@ public class ChestInventory : MonoBehaviour
         {
             itemInHand.GetSlot().AddItemsFromAnotherSlot(inventory[e.Key]);
             UIItemInHand.Instance.DisplayItemInHand();
-            UIPlayerInventory.Instance.UpdateInventoryUIAt(e.Key);
+            UIChestInventory.Instance.UpdateInventoryUIAt(e.Key);
         }
     }
 }

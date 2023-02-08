@@ -12,8 +12,7 @@ public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
     public Vector2 OffsetPosition { get; private set; }
     [field: SerializeField]
     public float OffsetZAngle { get; private set; }
-    [field: SerializeField]
-    public GameObject Model { get; private set; }
+    protected GameObject Model { get; private set; }
     #endregion
 
 
@@ -44,6 +43,7 @@ public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
 
     private void LoadComponents()
     {
+        Model = GetComponentInChildren<SpriteRenderer>().gameObject;
         spriteRenderer = Model.GetComponent<SpriteRenderer>();
     }
 

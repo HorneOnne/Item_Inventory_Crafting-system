@@ -33,7 +33,7 @@ public class PlayerInputHandler : MonoBehaviour
 
 
     // Cached
-    private Vector3 mousePosition;
+    private Vector2 mousePosition;
     private Vector2 direction;
     private float offsetAngle;
 
@@ -89,7 +89,7 @@ public class PlayerInputHandler : MonoBehaviour
         }
 
 
-        LeftClickHandler(SingleLeftClick, DoubleLeftClick);
+        LeftClickHandler();
 
 
 
@@ -99,7 +99,7 @@ public class PlayerInputHandler : MonoBehaviour
 
 
 
-    private void LeftClickHandler(Action singleClick, Action doubleClick = null)
+    private void LeftClickHandler()
     {
        
         if (Input.GetMouseButtonDown(0))
@@ -110,7 +110,7 @@ public class PlayerInputHandler : MonoBehaviour
                 //Debug.Log("Double click detected");                
                 click = false;
 
-                doubleClick();
+                DoubleLeftClick();
             }
             else
             {
@@ -124,18 +124,19 @@ public class PlayerInputHandler : MonoBehaviour
             //Debug.Log("Single click detected");           
             click = false;
 
-            singleClick();
-            
+            SingleLeftClick();
         }
         else if(Input.GetMouseButton(0))
         {
-            singleClick();
+            UseItem();
+            //SingleLeftClick();
         }
     }
 
 
     private void SingleLeftClick()
     {
+        OpenCloseChest();
         UseItem();
     }
 
@@ -162,8 +163,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void RotateHoldItem()
     {
-        mousePosition = Input.mousePosition;
-        mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         direction = new Vector2(
         mousePosition.x - player.HandHoldItem.position.x,
         mousePosition.y - player.HandHoldItem.position.y
@@ -233,6 +233,27 @@ public class PlayerInputHandler : MonoBehaviour
     }
 
  
+    private void OpenCloseChest()
+    {
+        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
+
+        if (hit.collider != null)
+        {
+            var chestObject = hit.collider.GetComponent<Chest>();
+            if (chestObject != null)
+            {
+                Debug.Log("This is chest");
+                if(chestObject.FirstPlaced == false)
+                {
+                    chestObject.SetPlayerOpenChest(this.player);
+                    player.currentOpenChest = chestObject.Inventory;
+                }
+                    
+            }
+        }
+    }
+
 
     public void ResetJumpInput() => TriggerJump = false;
 

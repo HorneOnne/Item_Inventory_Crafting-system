@@ -10,8 +10,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
     //private PlayerInventory playerInventory;
     private UIItemInHand uiItemInHand;
     private ItemInHand itemInHand;
-
-    public ChestInventory chestInventory;
+    private ChestInventory chestInventory;
 
 
     [Header("Containers")]
@@ -36,6 +35,18 @@ public class UIChestInventory : Singleton<UIChestInventory>
     // =================================
     PointerState currentPointerState = PointerState.Null;
 
+
+    private bool hasChestInventoryData;
+
+    private const int MAX_NORMAL_CHEST_SLOT = 36;
+
+
+
+    #region Properties
+    public int SlotCount { get => transform.childCount; }
+
+    #endregion
+
     private void OnEnable()
     {
         ChestInventory.OnChestInventoryUpdate += UpdateInventoryUI;
@@ -46,14 +57,11 @@ public class UIChestInventory : Singleton<UIChestInventory>
         ChestInventory.OnChestInventoryUpdate -= UpdateInventoryUI;
     }
 
-
     private void Start()
     {
-        itemInHand = player.ItemInHand;
-        uiItemInHand = UIItemInHand.Instance;
+        hasChestInventoryData = false;
 
-
-        for (int i = 0; i < chestInventory.capacity; i++)
+        for (int i = 0; i < MAX_NORMAL_CHEST_SLOT; i++)
         {
             GameObject slotObject = Instantiate(itemSlotPrefab, this.transform);
             slotObject.GetComponent<UIItemSlot>().Set(null, null, (short)i);
@@ -68,14 +76,38 @@ public class UIChestInventory : Singleton<UIChestInventory>
 
         // Update Inventory UI at the first time when start game.
         Invoke("UpdateInventoryUI", .1f);
+        gameObject.GetComponentInParent<UIDragPanel>().gameObject.SetActive(false);
     }
 
+    public void SetChestInventoryData(ChestInventory chestInventory)
+    {
+        this.chestInventory = chestInventory;
+        hasChestInventoryData = true;
+
+        this.player = chestInventory.player;
+        itemInHand = this.player.ItemInHand;
+        uiItemInHand = UIItemInHand.Instance;
+
+        UpdateInventoryUI();     
+    }
+
+
+    public void RemoveChestInventoryData()
+    {
+        this.chestInventory = null;
+        hasChestInventoryData = false;
+
+        this.player = null;
+        itemInHand = null;
+        uiItemInHand = null;
+    }
 
 
     private void Update()
     {
-        currentPointerState = GetPointerState();
+        if (hasChestInventoryData == false) return;
 
+        currentPointerState = GetPointerState();
 
         if (player.ItemInHand.HasItemData())
         {
@@ -111,7 +143,9 @@ public class UIChestInventory : Singleton<UIChestInventory>
 
     public void UpdateInventoryUI()
     {
-        for (int i = 0; i < chestInventory.capacity; i++)
+        if (chestInventory == null) return;
+
+        for (int i = 0; i < MAX_NORMAL_CHEST_SLOT; i++)
         {
             UpdateInventoryUIAt(i);
         }
@@ -119,6 +153,8 @@ public class UIChestInventory : Singleton<UIChestInventory>
 
     public void UpdateInventoryUIAt(int index)
     {
+        if (chestInventory == null) return;
+
         UIItemSlot uiSlot = itemSlotList[index].GetComponent<UIItemSlot>();
         if (chestInventory.inventory[index].HasItem())
         {

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Rendering;
 
+
 public class CombatDummy : Item, ICanBeAttacked, IPlaceable, IShowDamage
 {
     [Header("References")]
@@ -173,8 +174,6 @@ public class CombatDummy : Item, ICanBeAttacked, IPlaceable, IShowDamage
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        
-
         if (canTrigger)
         {
             if (collision.collider.CompareTag("Item"))
