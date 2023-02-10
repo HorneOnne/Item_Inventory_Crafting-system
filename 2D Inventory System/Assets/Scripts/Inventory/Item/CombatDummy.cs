@@ -108,7 +108,9 @@ public class CombatDummy : Item, ICanBeAttacked, IPlaceable, IShowDamage
 
         if (textPrefab != null)
         {
-            textObject = Instantiate(textPrefab, transform.position, Quaternion.identity);
+            //textObject = Instantiate(textPrefab, transform.position, Quaternion.identity);
+            textObject = DamagePopupSpawner.Instance.Pool.Get();
+            textObject.transform.position = transform.position;
 
             moveTextObjectVector = new Vector3(Random.Range(-1f, 1f), Random.Range(0.5f, 1f));
 

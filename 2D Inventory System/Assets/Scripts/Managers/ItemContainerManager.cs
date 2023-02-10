@@ -6,8 +6,9 @@ using UnityEngine;
 
 public class ItemContainerManager : Singleton<ItemContainerManager>
 {
-    [SerializeField] List<ItemData> itemList;
-    public HashSet<ItemData> itemDataSet = new HashSet<ItemData>();
+    [SerializeField] List<ItemData> itemData;
+    public Dictionary<ItemData, int> itemDataDict = new Dictionary<ItemData, int>();
+    public Dictionary<int, ItemData> itemDataIDDict = new Dictionary<int, ItemData>();
 
 
     [SerializeField] List<GameObject> prefabObject = new List<GameObject>();
@@ -25,17 +26,29 @@ public class ItemContainerManager : Singleton<ItemContainerManager>
 
     private void GenerateItemDict()
     {
-        for (int i = 0; i < itemList.Count; i++)
+        for (int i = 0; i < itemData.Count; i++)
         {
-            if (itemList[i] != null && itemDataSet.Contains(itemList[i]))
+            if (itemData[i] != null && itemDataDict.ContainsKey(itemData[i]))
                 Debug.LogError($"[ItemDictionary]: \tItem at {i} already exist.");
             else
             {
-                itemDataSet.Add(itemList[i]);
+                itemDataDict.Add(itemData[i], i);
+                itemDataIDDict.Add(i, itemData[i]);
             }
-
         }
     }
+
+
+    public int GetItemID(ItemData itemData)
+    {
+        return itemDataDict[itemData];
+    }
+
+    public ItemData GetItemData(int id)
+    {
+        return itemDataIDDict[id];
+    }
+
 
     private void GeneratePrefabObjectDict()
     {

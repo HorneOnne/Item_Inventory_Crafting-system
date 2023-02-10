@@ -57,8 +57,12 @@ public class Bow : Item, IUpgradeable, IConsumability
 
         if (arrowSlotIndex == null) return false;
         if (arrowProjectilePrefab == null) return false;
-        
-        arrowProjectileObject = Instantiate(arrowProjectilePrefab, transform.position, transform.rotation).GetComponent<ArrowProjectile_001>();
+
+
+        arrowProjectileObject = ArrowSpawner.Instance.Pool.Get().GetComponent<ArrowProjectile_001>();
+        arrowProjectileObject.transform.position = transform.position;
+        arrowProjectileObject.transform.rotation = transform.rotation;
+      
         arrowSlotInPlayerInventory = playerInventory.inventory[(int)arrowSlotIndex];      
         arrowData = (ArrowData)arrowSlotInPlayerInventory.ItemObject;
         arrowProjectileObject.SetData(arrowData);    
@@ -67,6 +71,7 @@ public class Bow : Item, IUpgradeable, IConsumability
         Consume(player);
         return true;
     }
+
 
 
     public void Upgrade()

@@ -11,6 +11,8 @@ public class DamagePopup : MonoBehaviour
     private Vector3 moveVector;
     private TextMeshPro textMesh;
 
+    private bool wasReturnToPool;
+
     private void Awake()
     {
         textMesh = GetComponent<TextMeshPro>();
@@ -18,6 +20,8 @@ public class DamagePopup : MonoBehaviour
 
     public void SetUp(int damage, Color color, float size, Vector3 moveVector, Vector3 rotation)
     {
+        wasReturnToPool = false;
+
         this.textColor = color;
         textMesh.color = textColor;
         textMesh.fontSize = size;
@@ -57,8 +61,25 @@ public class DamagePopup : MonoBehaviour
             textMesh.color = textColor;
             if (textColor.a < 0)
             {
-                Destroy(gameObject);
+                //Destroy(gameObject);
+                ReturnToPool();
             }
         }
+    }
+
+
+    private void ReturnToPool()
+    {
+        if (wasReturnToPool == true) return;
+
+        ResetProperties();
+        DamagePopupSpawner.Instance.Pool.Release(this.gameObject);
+        wasReturnToPool = true;
+    }
+
+    private void ResetProperties()
+    {
+        transform.localScale = Vector3.one;
+        transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 }

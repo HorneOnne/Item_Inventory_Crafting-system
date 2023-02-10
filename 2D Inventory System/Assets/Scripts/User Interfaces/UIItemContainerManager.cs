@@ -56,7 +56,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
         itemScriptableObjectList.Clear();
 
         int index = 0;
-        foreach(var item in ItemContainerManager.Instance.itemDataSet)
+        foreach(var item in ItemContainerManager.Instance.itemDataDict.Keys)
         {
             GameObject slotObject = Instantiate(itemSlotPrefab, contentPanel);
             Utilities.AddEvent(slotObject, EventTriggerType.PointerClick, (baseEvent) => OnSlotClicked(baseEvent, slotObject));
@@ -79,7 +79,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
         itemScriptableObjectList.Clear();
 
         int index = 0;
-        foreach (var item in ItemContainerManager.Instance.itemDataSet)
+        foreach (var item in ItemContainerManager.Instance.itemDataDict.Keys)
         {
             if (GeneralItemTypeContainer.GetAllItemInType(generalItemType).Contains(item.itemType))
             {
