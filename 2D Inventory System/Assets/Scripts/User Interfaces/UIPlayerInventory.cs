@@ -125,7 +125,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
         UIItemSlot uiSlot = itemSlotList[index].GetComponent<UIItemSlot>();
         if (playerInventory.inventory[index].HasItem())
         {
-            uiSlot.slotImage.sprite = playerInventory.inventory[index].ItemObject.icon;
+            uiSlot.slotImage.sprite = playerInventory.inventory[index].ItemData.icon;
             uiSlot.slotImage.GetComponent<RectTransform>().SetAsLastSibling();
 
             int itemQuantity = playerInventory.inventory[index].itemQuantity;
@@ -225,7 +225,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
 
             if (playerInventory.HasItem(index))
             {
-                if (IsSameItem(playerInventory.inventory[index].ItemObject, itemInHand.GetItem()))
+                if (IsSameItem(playerInventory.inventory[index].ItemData, itemInHand.GetItemData()))
                 {
                     CombineItemSlotQuantity(index);
                 }
@@ -312,7 +312,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
             if (playerInventory.inventory[index].HasItem() == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                playerInventory.AddNewItemIntoInventoryAtIndex(index, itemInHand.GetItem());
+                playerInventory.AddNewItemAt(index, itemInHand.GetItemData());
                 itemInHand.RemoveItem();
 
             }
@@ -320,10 +320,10 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
 
-                if(IsSameItem(itemInHand.GetItem(), playerInventory.GetItem(index)))
+                if(IsSameItem(itemInHand.GetItemData(), playerInventory.GetItem(index)))
                 {
                     //Debug.Log("Same item");
-                    bool isSlotNotFull = playerInventory.AddItem(index);
+                    bool isSlotNotFull = playerInventory.AddItemAt(index);
 
                     if(isSlotNotFull)
                     {
@@ -344,7 +344,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
             if (playerInventory.inventory[index].HasItem() == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                playerInventory.AddNewItemIntoInventoryAtIndex(index, itemInHand.GetItem());
+                playerInventory.AddNewItemAt(index, itemInHand.GetItemData());
                 itemInHand.RemoveItem();
 
             }
@@ -352,10 +352,10 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
 
-                if (IsSameItem(itemInHand.GetItem(), playerInventory.GetItem(index)))
+                if (IsSameItem(itemInHand.GetItemData(), playerInventory.GetItem(index)))
                 {
                     //Debug.Log("Same item");
-                    bool isSlotNotFull = playerInventory.AddItem(index);
+                    bool isSlotNotFull = playerInventory.AddItemAt(index);
 
                     if (isSlotNotFull)
                     {
@@ -460,9 +460,8 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     private void CombineItemSlotQuantity(int index)
     {
         //Debug.Log("CombineItemSlotQuantity");
-        if (IsSameItem(playerInventory.inventory[index].ItemObject, itemInHand.GetItem()))
+        if (IsSameItem(playerInventory.inventory[index].ItemData, itemInHand.GetItemData()))
         {
-            Debug.Log("Same Object");
             itemInHand.Set(playerInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot()), StoredType.PlayerInventory);
             uiItemInHand.DisplayItemInHand();
             

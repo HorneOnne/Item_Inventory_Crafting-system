@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
@@ -32,13 +33,62 @@ public class PlayerInventory : MonoBehaviour
     {
         if(HasSlot(slotIndex))
         {
-            return inventory[slotIndex].ItemObject;
+            return inventory[slotIndex].ItemData;
         }
         return null;
     }
 
 
-    public bool AddItem(int index)
+    public bool AddItem(ItemData itemData)
+    {
+        bool canAddItem = false;
+
+        for(int i = 0; i < inventory.Count;i++) 
+        {
+            if (inventory[i].HasItem() == false)
+            {
+                inventory[i].AddNewItem(itemData);
+                canAddItem = true;
+                break;
+            }
+            else
+            {
+                if(inventory[i].ItemData == itemData)
+                {
+                    bool canAdd = inventory[i].AddItem();
+
+                    if(canAdd == true)
+                    {
+                        canAddItem = true;
+                        break;
+                    }
+                }
+            }          
+        }
+
+        return canAddItem;
+    }
+
+    public ItemSlot AddItem(ItemSlot itemSlot)
+    {
+        ItemSlot copyItemSlot = new ItemSlot(itemSlot);
+        ItemSlot returnItemSlot = new ItemSlot(itemSlot);
+
+        for (int i = 0; i < inventory.Count; i++)
+        {
+            returnItemSlot = inventory[i].AddItemsFromAnotherSlot(copyItemSlot);
+
+            if (returnItemSlot.HasItem() == false)
+            {
+                break;
+            }
+
+        }
+        return returnItemSlot;
+    }
+
+
+    public bool AddItemAt(int index)
     {
         bool isSlotNotFull = inventory[index].AddItem();
         OnInventoryUpdate?.Invoke();
@@ -47,13 +97,13 @@ public class PlayerInventory : MonoBehaviour
     }
 
 
-    public void AddNewItemIntoInventoryAtIndex(int index, ItemData item)
+    public void AddNewItemAt(int index, ItemData item)
     {
         inventory[index].AddNewItem(item);
         OnInventoryUpdate?.Invoke();
     }
 
-    public void RemoveItemFromInventoryAtIndex(int index)
+    public void RemoveItemAt(int index)
     {
         inventory[index].RemoveItem();
         OnInventoryUpdate?.Invoke();
@@ -100,13 +150,13 @@ public class PlayerInventory : MonoBehaviour
 
     public void StackItem()
     {
-        if (itemInHand.GetItem() == null) return;
+        if (itemInHand.GetItemData() == null) return;
         Dictionary<int, int> dict = new Dictionary<int, int>();
         Dictionary<int, int> sortedDict = new Dictionary<int, int>();
 
         for (int i = 0; i < inventory.Count; i++)
         {
-            if (inventory[i].ItemObject == itemInHand.GetItem())
+            if (inventory[i].ItemData == itemInHand.GetItemData())
             {
                 dict.Add(i, inventory[i].ItemQuantity);
             }

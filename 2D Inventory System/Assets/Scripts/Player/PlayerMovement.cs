@@ -105,7 +105,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (playerInputHandler.TriggerJump)
         {
-            Debug.Log("Trigger Jump");
             rb.velocity = new Vector2(rb.velocity.x, playerData.jumpForce * Time.fixedDeltaTime);
             playerInputHandler.ResetJumpInput();
         }

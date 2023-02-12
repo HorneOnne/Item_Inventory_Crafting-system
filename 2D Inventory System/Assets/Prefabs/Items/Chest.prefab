@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6094155233834646153}
   - component: {fileID: 8038181425775904794}
   - component: {fileID: 6404370885783017357}
-  m_Layer: 30
+  m_Layer: 27
   m_Name: Chest
   m_TagString: Item
   m_Icon: {fileID: 0}
@@ -67,7 +67,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -96,7 +96,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  capacity: 32
   inventory: []
 --- !u!114 &6404370885783017357
 MonoBehaviour:
@@ -132,7 +131,7 @@ GameObject:
   - component: {fileID: 6094155235270631156}
   - component: {fileID: 6094155235270631158}
   - component: {fileID: 7402595292785146131}
-  m_Layer: 30
+  m_Layer: 27
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}

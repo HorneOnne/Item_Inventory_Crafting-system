@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class Bow : Item, IUpgradeable, IConsumability
 {
     public int CurrentLevel { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
@@ -64,7 +63,7 @@ public class Bow : Item, IUpgradeable, IConsumability
         arrowProjectileObject.transform.rotation = transform.rotation;
       
         arrowSlotInPlayerInventory = playerInventory.inventory[(int)arrowSlotIndex];      
-        arrowData = (ArrowData)arrowSlotInPlayerInventory.ItemObject;
+        arrowData = (ArrowData)arrowSlotInPlayerInventory.ItemData;
         arrowProjectileObject.SetData(arrowData);    
         arrowProjectileObject.Shoot(bowData, arrowData);
 

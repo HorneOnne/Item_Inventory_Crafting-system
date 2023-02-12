@@ -21,7 +21,7 @@ public class PlayerEquipment : MonoBehaviour
     {
         bool canEquip = false;
 
-        if(equipItemSlot.ItemObject.itemType == ItemType.Helm)
+        if(equipItemSlot.ItemData.itemType == ItemType.Helm)
         {
             canEquip = true;
             helmSlot = new ItemSlot(equipItemSlot);
@@ -34,7 +34,7 @@ public class PlayerEquipment : MonoBehaviour
     {
         bool canEquip = false;
 
-        if (equipItemSlot.ItemObject.itemType == ItemType.ChestArmor)
+        if (equipItemSlot.ItemData.itemType == ItemType.ChestArmor)
         {
             canEquip = true;
             chestSlot = new ItemSlot(equipItemSlot);
@@ -47,7 +47,7 @@ public class PlayerEquipment : MonoBehaviour
     {
         bool canEquip = false;
 
-        if (equipItemSlot.ItemObject.itemType == ItemType.Shield)
+        if (equipItemSlot.ItemData.itemType == ItemType.Shield)
         {
             canEquip = true;
             shieldSlot = new ItemSlot(equipItemSlot);

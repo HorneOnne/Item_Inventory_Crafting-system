@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Player))]
@@ -89,9 +90,17 @@ public class PlayerInputHandler : MonoBehaviour
         }
 
 
+        if(Input.GetKeyDown(KeyCode.T))
+        {
+            if (itemInHand.GetItemObject() != null)
+            {
+                mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                itemInHand.GetItemObject().Drop(player, mousePosition, Vector3.zero);
+            }
+        }
+
+
         LeftClickHandler();
-
-
 
         if(itemInHand.HasItemObject() && itemInHand.GetItemObject().canShow == true)
             RotateHoldItem();
@@ -191,11 +200,11 @@ public class PlayerInputHandler : MonoBehaviour
         itemInHand.SetItemObject(null);
         if (itemInHand.HasItemData())
         {
-            var itemPrefab = ItemContainerManager.Instance.GetItemPrefab(itemInHand.GetItem().itemType.ToString());
+            var itemPrefab = ItemContainerManager.Instance.GetItemPrefab(itemInHand.GetItemData().itemType.ToString());
 
             if (itemPrefab != null)
             {
-                var itemObject = Instantiate(ItemContainerManager.Instance.GetItemPrefab(itemInHand.GetItem().itemType.ToString()), player.HandHoldItem.transform);
+                var itemObject = Instantiate(ItemContainerManager.Instance.GetItemPrefab(itemInHand.GetItemData().itemType.ToString()), player.HandHoldItem.transform);
                 itemObject.GetComponent<Item>().SetData(itemInHand.GetSlot());
                 itemInHand.SetItemObject(itemObject.GetComponent<Item>());
 
@@ -215,7 +224,7 @@ public class PlayerInputHandler : MonoBehaviour
         if (itemInHand.HasItemData() && itemInHand.GetItemObject() != null)
         {
             // Check if it's time to attack
-            if (elapsedTime >= itemInHand.GetItem().duration)
+            if (elapsedTime >= itemInHand.GetItemData().duration)
             {               
                 elapsedTime = 0;
                 itemInHand.UseItem();

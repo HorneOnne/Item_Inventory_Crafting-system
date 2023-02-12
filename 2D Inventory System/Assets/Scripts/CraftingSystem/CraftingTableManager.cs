@@ -90,17 +90,17 @@ public class CraftingTableManager : Singleton<CraftingTableManager>
     public RecipeData CreateRecipe()
     {
         RecipeData newRecipe = ScriptableObject.CreateInstance<RecipeData>();
-        newRecipe.item00 = craftingGridData[0].ItemObject;
-        newRecipe.item10 = craftingGridData[1].ItemObject;
-        newRecipe.item20 = craftingGridData[2].ItemObject;
+        newRecipe.item00 = craftingGridData[0].ItemData;
+        newRecipe.item10 = craftingGridData[1].ItemData;
+        newRecipe.item20 = craftingGridData[2].ItemData;
 
-        newRecipe.item01 = craftingGridData[3].ItemObject;
-        newRecipe.item11 = craftingGridData[4].ItemObject;
-        newRecipe.item21 = craftingGridData[5].ItemObject;
+        newRecipe.item01 = craftingGridData[3].ItemData;
+        newRecipe.item11 = craftingGridData[4].ItemData;
+        newRecipe.item21 = craftingGridData[5].ItemData;
 
-        newRecipe.item02 = craftingGridData[6].ItemObject;
-        newRecipe.item12 = craftingGridData[7].ItemObject;
-        newRecipe.item22 = craftingGridData[8].ItemObject;
+        newRecipe.item02 = craftingGridData[6].ItemData;
+        newRecipe.item12 = craftingGridData[7].ItemData;
+        newRecipe.item22 = craftingGridData[8].ItemData;
 
         return newRecipe;
     }
@@ -137,7 +137,7 @@ public class CraftingTableManager : Singleton<CraftingTableManager>
     public ItemData GetItem(int index)
     {
         if (HasItem(index) == false) return null;
-        return craftingGridData[index].ItemObject;
+        return craftingGridData[index].ItemData;
     }
 
     public bool AddItem(int index)
@@ -148,13 +148,13 @@ public class CraftingTableManager : Singleton<CraftingTableManager>
 
     public void StackItem()
     {
-        if (itemInHand.GetItem() == null) return;
+        if (itemInHand.GetItemData() == null) return;
         Dictionary<int, int> dict = new Dictionary<int, int>();
         Dictionary<int, int> sortedDict = new Dictionary<int, int>();
 
         for (int i = 0; i < craftingGridData.Length; i++)
         {
-            if (craftingGridData[i].ItemObject == itemInHand.GetItem())
+            if (craftingGridData[i].ItemData == itemInHand.GetItemData())
             {
                 dict.Add(i, craftingGridData[i].ItemQuantity);
             }

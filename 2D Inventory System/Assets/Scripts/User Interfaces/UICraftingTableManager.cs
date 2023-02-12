@@ -86,7 +86,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
         UIItemSlot uiSlot = craftingGridSlot[index].GetComponent<UIItemSlot>();
         if (craftingTableManager.craftingGridData[index].HasItem())
         {
-            uiSlot.slotImage.sprite = craftingTableManager.craftingGridData[index].ItemObject.icon;
+            uiSlot.slotImage.sprite = craftingTableManager.craftingGridData[index].ItemData.icon;
             uiSlot.slotImage.GetComponent<RectTransform>().SetAsLastSibling();
             uiSlot.amountItemInSlotText.text = craftingTableManager.craftingGridData[index].itemQuantity.ToString();
         }
@@ -105,7 +105,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
         {
             if (craftingTableManager.outputItemSlot.HasItem())
             {
-                uiSlot.slotImage.sprite = craftingTableManager.outputItemSlot.ItemObject.icon;
+                uiSlot.slotImage.sprite = craftingTableManager.outputItemSlot.ItemData.icon;
                 uiSlot.amountItemInSlotText.text = craftingTableManager.outputItemSlot.itemQuantity.ToString();
                 uiSlot.slotImage.GetComponent<RectTransform>().SetAsLastSibling();
             }
@@ -261,14 +261,14 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             if (craftingTableManager.craftingGridData[index].HasItem() == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                craftingTableManager.AddItemIntoCraftingGridAtIndex(index, itemInHand.GetItem());
+                craftingTableManager.AddItemIntoCraftingGridAtIndex(index, itemInHand.GetItemData());
                 itemInHand.RemoveItem();
             }
             else
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
 
-                if (IsSameItem(itemInHand.GetItem(), craftingTableManager.GetItem(index)))
+                if (IsSameItem(itemInHand.GetItemData(), craftingTableManager.GetItem(index)))
                 {
                     //Debug.Log("Same item");
                     bool isSlotNotFull = craftingTableManager.AddItem(index);
@@ -296,7 +296,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             if (craftingTableManager.HasItem(index) == false && craftingTableManager.HasSlot(index))
             {
                 Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                craftingTableManager.AddItemIntoCraftingGridAtIndex(index, itemInHand.GetItem());
+                craftingTableManager.AddItemIntoCraftingGridAtIndex(index, itemInHand.GetItemData());
                 itemInHand.RemoveItem();
 
             }
@@ -304,7 +304,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
 
-                if (IsSameItem(itemInHand.GetItem(), craftingTableManager.GetItem(index)))
+                if (IsSameItem(itemInHand.GetItemData(), craftingTableManager.GetItem(index)))
                 {
                     //Debug.Log("Same item");
                     bool isSlotNotFull = craftingTableManager.AddItem(index);
@@ -495,7 +495,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     /// <param name="index">Index used in itemSlotList at specific itemSlot you want to get</param>
     private void CombineItemSlotQuantity(int index)
     {
-        if (IsSameItem(craftingTableManager.craftingGridData[index].ItemObject, itemInHand.GetItem()))
+        if (IsSameItem(craftingTableManager.craftingGridData[index].ItemData, itemInHand.GetItemData()))
         {
             //Debug.Log("Same Object here");
             

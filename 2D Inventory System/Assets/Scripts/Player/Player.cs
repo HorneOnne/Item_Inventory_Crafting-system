@@ -74,7 +74,7 @@ public class Player : MonoBehaviour
         GameObject itemObject = new GameObject();
         itemObject.transform.position = Utilities.GetMousPosition();
 
-        itemObject.name = $"{slot.ItemObject.name}";
+        itemObject.name = $"{slot.ItemData.name}";
         itemObject.AddComponent<BoxCollider2D>();
         itemObject.AddComponent<SpriteRenderer>();
         itemObject.AddComponent<Rigidbody2D>();
@@ -82,7 +82,7 @@ public class Player : MonoBehaviour
 
         itemObject.layer = LayerMask.NameToLayer("Item");
         itemObject.tag = "Item";
-        itemObject.GetComponent<SpriteRenderer>().sprite = slot.ItemObject.icon;
+        itemObject.GetComponent<SpriteRenderer>().sprite = slot.ItemData.icon;
 
         Debug.Log("Fix here");
         //itemObject.GetComponent<Item>().AddItemData(slot.itemObject);
@@ -102,4 +102,5 @@ public class Player : MonoBehaviour
 
 
 
+   
 }

@@ -26,7 +26,7 @@ public class MagicStaff : Item
         magicStaffProjectileObject = Instantiate(magicStaffProjectilePrefab, transform.position, transform.rotation);
         magicStaffProjectileObject.transform.localScale = new Vector3(1, 1, 1);
         magicStaffProjectileObject.SetActive(true);
-        magicStaffProjectileObject.GetComponent<Projectile>().SetData(this.ItemSlot.ItemObject, magicStaffData.projectile, UseGravity);
+        magicStaffProjectileObject.GetComponent<Projectile>().SetData(this.ItemSlot.ItemData, magicStaffData.projectile, UseGravity);
 
 
         return true;

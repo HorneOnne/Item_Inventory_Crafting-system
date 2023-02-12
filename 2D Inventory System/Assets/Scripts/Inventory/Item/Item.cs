@@ -1,8 +1,8 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
 {
-
     #region Properties
     [field: SerializeField]
     public ItemData ItemData { get; private set; }
@@ -51,7 +51,7 @@ public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
     public void SetData(ItemSlot itemSlot)
     {
         this.ItemSlot = itemSlot;
-        this.ItemData = itemSlot.ItemObject;
+        this.ItemData = itemSlot.ItemData;
         UpdateData();
     }
 
@@ -83,14 +83,40 @@ public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
 
     public virtual void Collect(Player player)
     {
-        Vector2 displacment = player.transform.position - this.transform.position;
-        float distance = displacment.magnitude;
-    }
-
-    public virtual void Drop(Player player)
-    {
         
     }
+
+    /*public virtual void Drop(Player player, Vector2 position, Vector3 rotation)
+    {
+        if (ItemData == null) return;
+
+        var itemPrefab = ItemContainerManager.Instance.GetItemPrefab($"DropItem");
+        var itemObject = Instantiate(itemPrefab, position, Quaternion.Euler(rotation), SaveManager.Instance.itemContainerParent);
+        itemObject.GetComponent<DropItem>().Set(ItemSlot);
+        itemObject.transform.localScale = new Vector3(2, 2, 1);
+
+        player.ItemInHand.RemoveItem();
+        UIItemInHand.Instance.DisplayItemInHand();
+        Debug.Log(ItemData.itemType);
+    }*/
+
+    public virtual void Drop(Player player, Vector2 position, Vector3 rotation)
+    {
+        var itemInHand = player.ItemInHand;
+        if (itemInHand.HasItemData() == false) return;
+        var itemSlotDrop = new ItemSlot(itemInHand.GetSlot());
+        var itemPrefab = ItemContainerManager.Instance.GetItemPrefab($"DropItem");
+        var itemObject = Instantiate(itemPrefab, position, Quaternion.Euler(rotation), SaveManager.Instance.itemContainerParent);
+
+        
+        itemObject.GetComponent<DropItem>().Set(itemSlotDrop);
+        itemObject.transform.localScale = new Vector3(2, 2, 1);
+
+        itemInHand.ClearSlot();
+        UIItemInHand.Instance.DisplayItemInHand();
+    }
+
+
 
     public virtual bool Use(Player player)
     {

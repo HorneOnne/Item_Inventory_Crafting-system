@@ -31,9 +31,9 @@ public class ItemInHand : MonoBehaviour
     }
 
 
-    public ItemData GetItem()
+    public ItemData GetItemData()
     {
-        return itemSlot.ItemObject;
+        return itemSlot.ItemData;
     }
 
     public void Set(ItemSlot takenSlot, StoredType from)
@@ -69,7 +69,7 @@ public class ItemInHand : MonoBehaviour
         }
         else
         {
-            if(itemSlot.ItemObject.Equals(itemContainerSlot.ItemObject))
+            if(itemSlot.ItemData.Equals(itemContainerSlot.ItemData))
             {
                 if(itemSlot.TryAddItem(itemContainerSlot) == true)
                 {
@@ -148,7 +148,7 @@ public class ItemInHand : MonoBehaviour
     {
         if (EventSystem.current.IsPointerOverGameObject())
         {
-            // mouse click is on a UI element
+            // mouse click is on a UI element.
             return true;
         }
         else

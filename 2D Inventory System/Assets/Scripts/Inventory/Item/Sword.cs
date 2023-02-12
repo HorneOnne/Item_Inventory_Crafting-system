@@ -49,7 +49,7 @@ public class Sword : Item, IUpgradeable
         swordProjectileObject = Instantiate(swordProjectilePrefab, transform.position, transform.rotation, player.transform);
         swordProjectileObject.transform.localScale = new Vector3(4,4,1);
         swordProjectileObject.SetActive(true);
-        swordProjectileObject.GetComponent<Projectile>().SetData(this.ItemSlot.ItemObject);
+        swordProjectileObject.GetComponent<Projectile>().SetData(this.ItemSlot.ItemData);
         swordProjectileObject.GetComponent<Projectile>().SetOffsetPosition();
         
 

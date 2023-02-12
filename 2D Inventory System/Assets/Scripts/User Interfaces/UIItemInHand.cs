@@ -65,14 +65,14 @@ public class UIItemInHand : Singleton<UIItemInHand>
 
         if(uiSlotDisplay != null || UISlotImage != null)
         {
-            UISlotImage.sprite = itemInHand.GetItem().icon;
+            UISlotImage.sprite = itemInHand.GetItemData().icon;
             SetItemQuantityText();
         }
         else
         {
             uiSlotDisplay = Instantiate(uiSlotPrefab, this.transform.parent.transform);
             UISlotImage = uiSlotDisplay.GetComponent<UIItemSlot>().slotImage;
-            UISlotImage.sprite = itemInHand.GetItem().icon;
+            UISlotImage.sprite = itemInHand.GetItemData().icon;
             SetItemQuantityText();
 
             if (parent != null)

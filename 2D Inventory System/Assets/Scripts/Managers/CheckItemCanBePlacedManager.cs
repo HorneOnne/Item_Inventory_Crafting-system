@@ -99,7 +99,7 @@ public class CheckItemCanBePlacedManager : Singleton<CheckItemCanBePlacedManager
     {
         if (itemInHand.HasItemData())
         {
-            var itemObject = ItemContainerManager.Instance.GetItemPrefab(itemInHand.GetItem().itemType.ToString());
+            var itemObject = ItemContainerManager.Instance.GetItemPrefab(itemInHand.GetItemData().itemType.ToString());
             if (itemObject == null) return;
             
             if (itemObject.GetComponent<Item>() is IPlaceable)

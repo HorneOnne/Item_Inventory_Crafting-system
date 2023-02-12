@@ -158,7 +158,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
         UIItemSlot uiSlot = itemSlotList[index].GetComponent<UIItemSlot>();
         if (chestInventory.inventory[index].HasItem())
         {
-            uiSlot.slotImage.sprite = chestInventory.inventory[index].ItemObject.icon;
+            uiSlot.slotImage.sprite = chestInventory.inventory[index].ItemData.icon;
             uiSlot.slotImage.GetComponent<RectTransform>().SetAsLastSibling();
 
             int itemQuantity = chestInventory.inventory[index].itemQuantity;
@@ -258,7 +258,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
 
             if (chestInventory.HasItem(index))
             {
-                if (IsSameItem(chestInventory.inventory[index].ItemObject, itemInHand.GetItem()))
+                if (IsSameItem(chestInventory.inventory[index].ItemData, itemInHand.GetItemData()))
                 {
                     CombineItemSlotQuantity(index);
                 }
@@ -345,7 +345,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
             if (chestInventory.inventory[index].HasItem() == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                chestInventory.AddNewItemIntoInventoryAtIndex(index, itemInHand.GetItem());
+                chestInventory.AddNewItemIntoInventoryAtIndex(index, itemInHand.GetItemData());
                 itemInHand.RemoveItem();
 
             }
@@ -353,7 +353,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
 
-                if (IsSameItem(itemInHand.GetItem(), chestInventory.GetItem(index)))
+                if (IsSameItem(itemInHand.GetItemData(), chestInventory.GetItem(index)))
                 {
                     //Debug.Log("Same item");
                     bool isSlotNotFull = chestInventory.AddItem(index);
@@ -377,7 +377,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
             if (chestInventory.inventory[index].HasItem() == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                chestInventory.AddNewItemIntoInventoryAtIndex(index, itemInHand.GetItem());
+                chestInventory.AddNewItemIntoInventoryAtIndex(index, itemInHand.GetItemData());
                 itemInHand.RemoveItem();
 
             }
@@ -385,7 +385,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
 
-                if (IsSameItem(itemInHand.GetItem(), chestInventory.GetItem(index)))
+                if (IsSameItem(itemInHand.GetItemData(), chestInventory.GetItem(index)))
                 {
                     //Debug.Log("Same item");
                     bool isSlotNotFull = chestInventory.AddItem(index);
@@ -493,10 +493,17 @@ public class UIChestInventory : Singleton<UIChestInventory>
     private void CombineItemSlotQuantity(int index)
     {
         //Debug.Log("CombineItemSlotQuantity");
-        if (IsSameItem(chestInventory.inventory[index].ItemObject, itemInHand.GetItem()))
+        if (IsSameItem(chestInventory.inventory[index].ItemData, itemInHand.GetItemData()))
         {
-            Debug.Log("Same Object");
+            /*Debug.Log("Same Object");           
             itemInHand.Set(chestInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot()), StoredType.ChestInventory);
+            uiItemInHand.DisplayItemInHand();*/
+
+
+            Debug.Log("Same Object");
+
+            var returnSlot = chestInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot());
+            itemInHand.Set(returnSlot, StoredType.ChestInventory);
             uiItemInHand.DisplayItemInHand();
 
         }

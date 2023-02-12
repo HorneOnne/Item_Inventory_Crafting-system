@@ -99,11 +99,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <ItemData>k__BackingField: {fileID: 0}
   <ItemSlot>k__BackingField:
-    itemObject: {fileID: 0}
     itemQuantity: 0
   <OffsetPosition>k__BackingField: {x: 0, y: 0}
   <OffsetZAngle>k__BackingField: 0
-  <Model>k__BackingField: {fileID: 7827290819402221463}
   canShow: 0
 --- !u!1 &7827290819402221463
 GameObject:

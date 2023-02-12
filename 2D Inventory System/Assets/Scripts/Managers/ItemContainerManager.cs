@@ -41,11 +41,17 @@ public class ItemContainerManager : Singleton<ItemContainerManager>
 
     public int GetItemID(ItemData itemData)
     {
+        if (itemData == null)
+            return -1;
+
         return itemDataDict[itemData];
     }
 
     public ItemData GetItemData(int id)
     {
+        if (id == -1)
+            return null;
+
         return itemDataIDDict[id];
     }
 

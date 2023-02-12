@@ -38,7 +38,7 @@ public class ChestInventory : MonoBehaviour
     {
         if (HasSlot(slotIndex))
         {
-            return inventory[slotIndex].ItemObject;
+            return inventory[slotIndex].ItemData;
         }
         return null;
     }
@@ -106,13 +106,13 @@ public class ChestInventory : MonoBehaviour
 
     public void StackItem()
     {
-        if (itemInHand.GetItem() == null) return;
+        if (itemInHand.GetItemData() == null) return;
         Dictionary<int, int> dict = new Dictionary<int, int>();
         Dictionary<int, int> sortedDict = new Dictionary<int, int>();
 
         for (int i = 0; i < inventory.Count; i++)
         {
-            if (inventory[i].ItemObject == itemInHand.GetItem())
+            if (inventory[i].ItemData == itemInHand.GetItemData())
             {
                 dict.Add(i, inventory[i].ItemQuantity);
             }
