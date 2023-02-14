@@ -1,13 +1,12 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
 
 [CreateAssetMenu(fileName = "New Recipe Object", menuName = "ScriptableObject/Recipe", order = 51)]
 public class RecipeData : ScriptableObject
 {
     public ItemData outputItem;
-    public ushort quantityItemOutput;
+    public int quantityItemOutput;
 
     public ItemData item00;
     public ItemData item10;

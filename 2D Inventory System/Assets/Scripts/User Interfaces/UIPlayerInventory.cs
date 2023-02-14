@@ -27,6 +27,8 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     private GameObject startingSlotDrag;
     private GameObject currentSlotClicked;
 
+
+
     // right press
     [SerializeField] float pressIntervalTime = 1.0f;
     private float pressIntervalTimeCount = 0.0f;
@@ -40,12 +42,12 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
 
     private void OnEnable()
     {
-        PlayerInventory.OnInventoryUpdate += UpdateInventoryUI;
+        EventManager.OnInventoryUpdate += UpdateInventoryUI;
     }
 
     private void OnDisable()
     {
-        PlayerInventory.OnInventoryUpdate -= UpdateInventoryUI;
+        EventManager.OnInventoryUpdate -= UpdateInventoryUI;
     }
 
 
@@ -396,7 +398,11 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
             var itemSlotToSwap_01 = itemInHand.GetSlot();
             var itemSlotToSwap_02 = new ItemSlot(playerInventory.inventory[index]);
             playerInventory.inventory[index].ClearSlot();
-            itemInHand.Set(itemSlotToSwap_02, StoredType.PlayerInventory);
+            itemInHand.Set(itemSlotToSwap_02, new ItemSlotData
+            {
+                slotStoredType = StoredType.PlayerInventory,
+                slotIndex = index
+            });
             playerInventory.inventory[index] = itemSlotToSwap_01;
 
             uiItemInHand.DisplayItemInHand();    
@@ -409,7 +415,11 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
             var itemSlotToSwap_01 = itemInHand.GetSlot();
             var itemSlotToSwap_02 = new ItemSlot(playerInventory.inventory[index]);
             playerInventory.inventory[index].ClearSlot();
-            itemInHand.Set(itemSlotToSwap_02, StoredType.PlayerInventory);
+            itemInHand.Set(itemSlotToSwap_02, new ItemSlotData
+            {
+                slotStoredType = StoredType.PlayerInventory,
+                slotIndex = index
+            });
             playerInventory.inventory[index] = itemSlotToSwap_01;
         }
     }
@@ -425,7 +435,11 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     {
         var chosenSlot = new ItemSlot(playerInventory.inventory[index]);
         playerInventory.inventory[index].ClearSlot();
-        itemInHand.Set(chosenSlot, StoredType.PlayerInventory);
+        itemInHand.Set(chosenSlot, new ItemSlotData
+        {
+            slotStoredType = StoredType.PlayerInventory,
+            slotIndex = index
+        });
 
         uiItemInHand.DisplayItemInHand();
     }
@@ -443,7 +457,11 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
 
             var chosenSlot = new ItemSlot(playerInventory.inventory[index]);
             chosenSlot.SetItemQuantity(splitItemQuantity);
-            itemInHand.Set(chosenSlot, StoredType.PlayerInventory);
+            itemInHand.Set(chosenSlot, new ItemSlotData
+            {
+                slotStoredType = StoredType.PlayerInventory,
+                slotIndex = index
+            });
 
             uiItemInHand.DisplayItemInHand();
         }
@@ -462,7 +480,11 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
         //Debug.Log("CombineItemSlotQuantity");
         if (IsSameItem(playerInventory.inventory[index].ItemData, itemInHand.GetItemData()))
         {
-            itemInHand.Set(playerInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot()), StoredType.PlayerInventory);
+            itemInHand.Set(playerInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot()), new ItemSlotData
+            {
+                slotStoredType = StoredType.PlayerInventory,
+                slotIndex = index
+            });
             uiItemInHand.DisplayItemInHand();
             
         }

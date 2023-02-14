@@ -19,7 +19,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
     public UIEquipSlot uiShieldSlot;
 
 
-
+  
     private void Start()
     {
         playerEquipment = player.PlayerEquipment;
@@ -31,7 +31,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
         AddUIItemSLotEvent(uiChestSlot);
         AddUIItemSLotEvent(uiShieldSlot);
 
-        UpdateEquipmentUI();
+        //UpdateEquipmentUI();
     }
 
 
@@ -44,7 +44,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
     }
 
     #region UPDATE CRAFTINGTABLE DISPLAY UI REGION.
-    private void UpdateEquipmentUI()
+    public void UpdateEquipmentUI()
     {
         UpdateHelmEquipmentUI();
         UpdateChestEquipmentUI();
@@ -53,24 +53,24 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
 
     private void UpdateHelmEquipmentUI()
     {
-        if (player.PlayerEquipment.helmSlot.HasItem())
-            uiHelmSlot.Set(player.PlayerEquipment.helmSlot.ItemData.icon);
+        if (player.PlayerEquipment.Helm.HasItem())
+            uiHelmSlot.Set(player.PlayerEquipment.Helm.GetItemIcon());
         else
             uiHelmSlot.SetDefault();
     }
 
     private void UpdateChestEquipmentUI()
     {
-        if (player.PlayerEquipment.chestSlot.HasItem())
-            uiChestSlot.Set(player.PlayerEquipment.chestSlot.ItemData.icon);
+        if (player.PlayerEquipment.Chest.HasItem())
+            uiChestSlot.Set(player.PlayerEquipment.Chest.GetItemIcon());
         else
             uiChestSlot.SetDefault();
     }
 
     private void UpdateShieldEquipmentUI()
     {
-        if (player.PlayerEquipment.shieldSlot.HasItem())
-            uiShieldSlot.Set(player.PlayerEquipment.shieldSlot.ItemData.icon);
+        if (player.PlayerEquipment.Shield.HasItem())
+            uiShieldSlot.Set(player.PlayerEquipment.Shield.GetItemIcon());
         else
             uiShieldSlot.SetDefault();
     }
@@ -117,6 +117,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
         }
 
         UpdateEquipmentUI();
+        EventManager.PlayerEquipmentChanged();
     }
 
     
@@ -149,7 +150,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
 
             if (canEquip)
             {
-                itemInHand.Set(copyEquipmentSlot, StoredType.Another);
+                itemInHand.Set(copyEquipmentSlot, new ItemSlotData());
                 uiItemInHand.DisplayItemInHand();
                 
             }                
@@ -160,7 +161,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
 
             if (canEquip)
                 itemInHand.ClearSlot();
-        }
+        }       
     }
 
 
@@ -174,7 +175,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
     {
         ItemSlot itemSlot = new ItemSlot(equipmentSlot);
         equipmentSlot.ClearSlot();
-        itemInHand.Set(itemSlot, StoredType.Another);
+        itemInHand.Set(itemSlot, new ItemSlotData());
 
         uiItemInHand.DisplayItemInHand();
     }

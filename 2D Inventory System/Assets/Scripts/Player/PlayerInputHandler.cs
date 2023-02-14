@@ -1,5 +1,6 @@
 using System;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(Player))]
@@ -8,6 +9,7 @@ public class PlayerInputHandler : MonoBehaviour
     [Header("References")]
     private Player player;
     private PlayerInventory playerInventory;
+    private PlayerEquipment playerEquipment;
     private ItemInHand itemInHand;
     private PlayerMovement playerMovement;
     private PlayerData playerData;
@@ -20,6 +22,10 @@ public class PlayerInputHandler : MonoBehaviour
     #region Properties
     public float MovementInput { get { return movementInput; }}
     public bool TriggerJump { get; private set; }
+    public bool PressUtilityKeyInput { get; private set; }
+    public bool JumpInput { get; private set; }
+    public bool DoubleLeftClickInput { get; private set; }
+    public bool SingleLeftClickInput { get; private set; }
     #endregion Properties
 
 
@@ -38,14 +44,21 @@ public class PlayerInputHandler : MonoBehaviour
     private Vector2 direction;
     private float offsetAngle;
 
+
+    public KeyCode utilityKeyBinding = KeyCode.LeftShift;
+    public KeyCode dropItemKey = KeyCode.T;
+
+
     private void OnEnable()
     {
-        ItemInHand.OnItemInHandChanged += ReInstantiateItem;
+        EventManager.OnItemInHandChanged += ReInstantiateItem;
+        EventManager.OnItemInHandChanged += FastEquipItem;
     }
 
     private void OnDisable()
     {
-        ItemInHand.OnItemInHandChanged -= ReInstantiateItem;
+        EventManager.OnItemInHandChanged -= ReInstantiateItem;
+        EventManager.OnItemInHandChanged -= FastEquipItem;
     }
 
 
@@ -54,6 +67,7 @@ public class PlayerInputHandler : MonoBehaviour
     {
         player = GetComponent<Player>();
         playerInventory = player.PlayerInventory;
+        playerEquipment = player.PlayerEquipment;
         itemInHand = player.ItemInHand;
         playerMovement = player.PlayerMovement;
         playerData = player.playerData;
@@ -63,8 +77,11 @@ public class PlayerInputHandler : MonoBehaviour
     private void Update()
     {       
         movementInput = Input.GetAxisRaw("Horizontal");
-        elapsedTime += Time.deltaTime;
+        PressUtilityKeyInput = Input.GetKey(utilityKeyBinding);
+        JumpInput = Input.GetButtonDown("Jump");
 
+        elapsedTime += Time.deltaTime;
+        
 
         // Calculate hang time (Time leave ground)
         if (playerMovement.IsGrounded())
@@ -74,7 +91,7 @@ public class PlayerInputHandler : MonoBehaviour
 
 
         // calculate Jump Buffer
-        if (Input.GetButtonDown("Jump"))
+        if (JumpInput)
         {
             jumpBufferCount = player.playerData.jumpBufferLength;
         }         
@@ -90,7 +107,7 @@ public class PlayerInputHandler : MonoBehaviour
         }
 
 
-        if(Input.GetKeyDown(KeyCode.T))
+        if(Input.GetKeyDown(dropItemKey))
         {
             if (itemInHand.GetItemObject() != null)
             {
@@ -102,6 +119,7 @@ public class PlayerInputHandler : MonoBehaviour
 
         LeftClickHandler();
 
+
         if(itemInHand.HasItemObject() && itemInHand.GetItemObject().canShow == true)
             RotateHoldItem();
     }
@@ -109,8 +127,7 @@ public class PlayerInputHandler : MonoBehaviour
 
 
     private void LeftClickHandler()
-    {
-       
+    {  
         if (Input.GetMouseButtonDown(0))
         {
             // check if last click was within doubleClickTime
@@ -151,14 +168,13 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void DoubleLeftClick()
     {
-        switch (itemInHand.ItemGetFrom)
+        switch (itemInHand.ItemGetFrom.slotStoredType)
         {
             case StoredType.PlayerInventory:
                 playerInventory.StackItem();
                 break;
             case StoredType.ChestInventory:
-                Debug.Log("Chest Stack Item");
-                player.currentOpenChest.StackItem();
+                player.currentOpenChest.Inventory.StackItem();
                 break;
             case StoredType.CraftingTable:
                 CraftingTableManager.Instance.StackItem();
@@ -218,6 +234,54 @@ public class PlayerInputHandler : MonoBehaviour
     }
 
 
+    private void FastEquipItem()
+    {
+        if(PressUtilityKeyInput)
+        {
+            if (itemInHand.HasItemData() == false) return;
+            if (itemInHand.ItemGetFrom.slotStoredType == StoredType.PlayerInventory)
+            {
+                ItemSlot equipItemSlot = itemInHand.GetSlot();
+                ItemSlot currentEquipmentSlot = null;
+                bool canEquip;
+
+                switch(itemInHand.GetItemData().itemType)
+                {
+                    case ItemType.Helm:
+                        if(playerEquipment.Helm.HasItem() == true)
+                            currentEquipmentSlot = new ItemSlot(playerEquipment.Helm);
+                        canEquip = playerEquipment.Equip(ItemType.Helm, equipItemSlot);
+                        break;
+                    case ItemType.ChestArmor:
+                        if (playerEquipment.Chest.HasItem() == true)
+                            currentEquipmentSlot = new ItemSlot(playerEquipment.Chest);
+                        canEquip = playerEquipment.Equip(ItemType.ChestArmor, equipItemSlot);
+                        break;
+                    case ItemType.Shield:
+                        if (playerEquipment.Shield.HasItem() == true)
+                            currentEquipmentSlot = new ItemSlot(playerEquipment.Shield);
+                        canEquip = playerEquipment.Equip(ItemType.Shield, equipItemSlot);
+                        break;
+                    default:
+                        canEquip = false;
+                        break;
+                }
+
+                if (canEquip)
+                {
+                    if (currentEquipmentSlot != null)
+                    {
+                        playerInventory.AddNewItemAt(itemInHand.ItemGetFrom.slotIndex, currentEquipmentSlot.ItemData);          
+                    }
+                    itemInHand.RemoveItem();
+                    UIPlayerEquipment.Instance.UpdateEquipmentUI();
+                    EventManager.PlayerEquipmentChanged();
+
+                }                                          
+            }
+        }  
+    }
+
     private void UseItem()
     {
        
@@ -248,18 +312,20 @@ public class PlayerInputHandler : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero);
 
         if (hit.collider != null)
-        {
-            var chestObject = hit.collider.GetComponent<Chest>();
-            if (chestObject != null)
+        {           
+            var chest = hit.collider.GetComponent<Chest>();
+            if (chest == null) return;
+
+            if (player.currentOpenChest != null && chest.ChestState != Chest.ChestStateEnum.Placed)
             {
-                Debug.Log("This is chest");
-                if(chestObject.FirstPlaced == false)
+                if (player.currentOpenChest != chest)
                 {
-                    chestObject.SetPlayerOpenChest(this.player);
-                    player.currentOpenChest = chestObject.Inventory;
+                    player.currentOpenChest.Close(player);
+                    chest.Open(player);
+                    return;
                 }
-                    
             }
+            chest.Toggle(player);
         }
     }
 

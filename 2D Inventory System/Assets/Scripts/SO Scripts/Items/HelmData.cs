@@ -6,4 +6,3 @@ public class HelmData : UpgradeableItemData
     [Header("Helm Properties")]
     public int armor;
 }
-

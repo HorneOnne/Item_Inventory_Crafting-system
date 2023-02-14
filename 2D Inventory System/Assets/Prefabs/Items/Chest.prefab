@@ -81,7 +81,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 4, y: 4}
+  m_Size: {x: 3, y: 3}
   m_EdgeRadius: 0
 --- !u!114 &8038181425775904794
 MonoBehaviour:
@@ -115,8 +115,7 @@ MonoBehaviour:
   <OffsetPosition>k__BackingField: {x: 0, y: 0}
   <OffsetZAngle>k__BackingField: 0
   canShow: 0
-  uiChestInventoryCanvas: {fileID: 0}
-  playerWhoOpenChest: {fileID: 0}
+  <ShowRay>k__BackingField: 0
   <PlacedLayer>k__BackingField:
     serializedVersion: 2
     m_Bits: 2147483648
@@ -147,7 +146,7 @@ Transform:
   m_GameObject: {fileID: 6094155235270631155}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6094155233834646155}

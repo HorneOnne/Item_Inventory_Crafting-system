@@ -1,18 +1,14 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using MyGame.Ultilities;
+using UnityEditor;
 
 [RequireComponent(typeof(CraftingTableManager))]
 public class UICraftingTableManager : Singleton<UICraftingTableManager>
 {
-    public static event System.Action OnGridChanged;
-    public static event System.Action OnGetOutputItem;
-
     [Header("References")]
     public Player player;
+    private PlayerInputHandler playerInput;
     private CraftingTableManager craftingTableManager;
     private ItemInHand itemInHand;
     private UIItemInHand ui_itemInHand;
@@ -38,6 +34,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     {
         craftingTableManager = CraftingTableManager.Instance;
         itemInHand = player.ItemInHand;
+        playerInput = player.PlayerInputHandler;
         ui_itemInHand = UIItemInHand.Instance;
 
 
@@ -136,7 +133,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
        
         if (pointerEventData.pointerId == -1)   // Mouse Left Event
         {
-            if (Input.GetKey(KeyCode.LeftShift))
+            if (playerInput.PressUtilityKeyInput)
             {
                 QuickGetAllOutputItem();
             }
@@ -146,11 +143,12 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
 
                 if (canPickup == true)
                 {
-                    OnGetOutputItem?.Invoke();
-                    OnGridChanged?.Invoke();
+                    EventManager.GetOutputItem();
+                    EventManager.GridChanged();
                     UpdateCraftingTableDisplayUI();
+                }        
+                
 
-                }              
             }
         }
     }
@@ -166,10 +164,11 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
 
                 if (canPickup == true)
                 {
-                    OnGetOutputItem?.Invoke();
-                    OnGridChanged?.Invoke();
+                    EventManager.GetOutputItem();
+                    EventManager.GridChanged();
                     UpdateCraftingTableDisplayUI();
 
+                    Debug.Log("Pick up all item");
                 }
                 else
                 {
@@ -236,7 +235,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             }
         }
 
-        OnGridChanged?.Invoke();
+        EventManager.GridChanged();
         UpdateCraftingTableDisplayUI();
     }
 
@@ -282,7 +281,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             }
         }
 
-        OnGridChanged?.Invoke();
+        EventManager.GridChanged();
         UpdateCraftingTableDisplayUI();
     }
 
@@ -318,7 +317,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             }
         }
 
-        OnGridChanged?.Invoke();
+        EventManager.GridChanged();
         UpdateCraftingTableDisplayUI();
     }
 
@@ -459,7 +458,11 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     {
         var chosenSlot = new ItemSlot(craftingTableManager.craftingGridData[index]);
         craftingTableManager.craftingGridData[index].ClearSlot();
-        itemInHand.Set(chosenSlot, StoredType.CraftingTable);
+        itemInHand.Set(chosenSlot, new ItemSlotData 
+        {
+            slotStoredType = StoredType.CraftingTable, 
+            slotIndex = index
+        });
 
         ui_itemInHand.DisplayItemInHand(this.transform);
     }
@@ -473,7 +476,11 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
 
             var chosenSlot = new ItemSlot(craftingTableManager.craftingGridData[index]);
             chosenSlot.SetItemQuantity(splitItemQuantity);
-            itemInHand.Set(chosenSlot, StoredType.CraftingTable);
+            itemInHand.Set(chosenSlot, new ItemSlotData
+            {
+                slotStoredType = StoredType.CraftingTable,
+                slotIndex = index
+            });
 
             ui_itemInHand.DisplayItemInHand();
         }
@@ -513,7 +520,11 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
                 ClearItemInHand();
             }*/
 
-            itemInHand.Set(craftingTableManager.craftingGridData[index].AddItemsFromAnotherSlot(itemInHand.GetSlot()), StoredType.CraftingTable);
+            itemInHand.Set(craftingTableManager.craftingGridData[index].AddItemsFromAnotherSlot(itemInHand.GetSlot()), new ItemSlotData
+            {
+                slotStoredType = StoredType.CraftingTable,
+                slotIndex = index
+            });
             ui_itemInHand.DisplayItemInHand();
         }
         else
@@ -530,7 +541,11 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             var itemToSwap_01 = itemInHand.GetSlot();
             var itemToSwap_02 = new ItemSlot(craftingTableManager.craftingGridData[index]);
             craftingTableManager.craftingGridData[index].ClearSlot();
-            itemInHand.Set(itemToSwap_02, StoredType.CraftingTable);
+            itemInHand.Set(itemToSwap_02, new ItemSlotData
+            {
+                slotStoredType = StoredType.CraftingTable,
+                slotIndex = index
+            });
             craftingTableManager.craftingGridData[index] = itemToSwap_01;
 
             ui_itemInHand.DisplayItemInHand(this.transform);
@@ -543,7 +558,11 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             var itemToSwap_01 = itemInHand.GetSlot();
             var itemToSwap_02 = new ItemSlot(craftingTableManager.craftingGridData[index]);
             craftingTableManager.craftingGridData[index].ClearSlot();
-            itemInHand.Set(itemToSwap_02, StoredType.CraftingTable);
+            itemInHand.Set(itemToSwap_02, new ItemSlotData
+            {
+                slotStoredType = StoredType.CraftingTable,
+                slotIndex = index
+            });;
             craftingTableManager.craftingGridData[index] = itemToSwap_01;
         }
     }

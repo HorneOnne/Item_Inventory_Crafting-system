@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 878672ad0e70b604687037934151c4ee, type: 3}
+  m_Name: CR_Axe002_ver2
+  m_EditorClassIdentifier: 
+  outputItem: {fileID: 11400000, guid: f8e8549885f8fcc458ff27f642f162d5, type: 2}
+  quantityItemOutput: 1
+  item00: {fileID: 0}
+  item10: {fileID: 11400000, guid: 08394696e7684ae43b7551b9c0d0538a, type: 2}
+  item20: {fileID: 11400000, guid: 08394696e7684ae43b7551b9c0d0538a, type: 2}
+  item01: {fileID: 0}
+  item11: {fileID: 11400000, guid: 08394696e7684ae43b7551b9c0d0538a, type: 2}
+  item21: {fileID: 11400000, guid: f0335258f4bb11d4397e7cdb8f85066a, type: 2}
+  item02: {fileID: 0}
+  item12: {fileID: 0}
+  item22: {fileID: 11400000, guid: f0335258f4bb11d4397e7cdb8f85066a, type: 2}

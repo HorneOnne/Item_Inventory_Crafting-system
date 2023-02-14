@@ -30,12 +30,14 @@ public class CheckItemCanBePlacedManager : Singleton<CheckItemCanBePlacedManager
 
     private void OnEnable()
     {
-        ItemInHand.OnItemInHandChanged += SetBoxCollider2D;
+        //ItemInHand.OnItemInHandChanged += SetBoxCollider2D;
+        EventManager.OnItemInHandChanged += SetBoxCollider2D;
     }
 
     private void OnDisable()
     {
-        ItemInHand.OnItemInHandChanged -= SetBoxCollider2D;
+        //ItemInHand.OnItemInHandChanged -= SetBoxCollider2D;
+        EventManager.OnItemInHandChanged -= SetBoxCollider2D;
     }
 
 

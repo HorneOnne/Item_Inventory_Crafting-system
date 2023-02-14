@@ -101,7 +101,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
     private void OnSlotClicked(BaseEventData baseEvent, GameObject clickedObj)
     {
         ItemData item = itemScriptableObjectList[clickedObj.GetComponent<UIItemSlot>().SlotIndex];
-        itemInHand.Set(new ItemSlot(item, item.max_quantity), StoredType.Another);
+        itemInHand.Set(new ItemSlot(item, item.max_quantity), new ItemSlotData());
         uiItemInHand.DisplayItemInHand();
     }
 

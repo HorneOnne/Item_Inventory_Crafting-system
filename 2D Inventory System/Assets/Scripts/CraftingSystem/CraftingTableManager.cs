@@ -19,25 +19,16 @@ public class CraftingTableManager : Singleton<CraftingTableManager>
 
     private void OnEnable()
     {
-        UICraftingTableManager.OnGridChanged += LookupItemFromRecipe;
+        EventManager.OnGridChanged += LookupItemFromRecipe;
+        EventManager.OnGetOutputItem += ComsumeCrafingMaterial;
 
-        //UI_DisplayCraftingTable.OnGetOutputItem += RemoveOutputItemSlot;
-        //UI_DisplayCraftingTable.OnGetOutputItem += GetOutputItemSlot;
-        
-        UICraftingTableManager.OnGetOutputItem += ComsumeCrafingMaterial;
     }
 
     private void OnDisable()
     {
-        UICraftingTableManager.OnGridChanged -= LookupItemFromRecipe;
-
-        //UI_DisplayCraftingTable.OnGetOutputItem -= RemoveOutputItemSlot;
-        //UI_DisplayCraftingTable.OnGetOutputItem -= GetOutputItemSlot;
-        
-        UICraftingTableManager.OnGetOutputItem -= ComsumeCrafingMaterial;
+        EventManager.OnGridChanged -= LookupItemFromRecipe;
+        EventManager.OnGetOutputItem -= ComsumeCrafingMaterial;
     }
-
-
 
 
     private void Start()
@@ -52,16 +43,6 @@ public class CraftingTableManager : Singleton<CraftingTableManager>
         outputItemSlot = craftingSystem.GetRecipeOutput(currentRecipe);
     }
 
-    private void RemoveOutputItemSlot()
-    {
-        //outputItemSlot.ClearSlot();      
-    }
-
-    private void GetOutputItemSlot()
-    {
-        //Debug.Log("Get output Itemslot");
-        //itemInHand.itemSlot.AddItemsFromAnotherSlot(outputItemSlot);
-    }
 
 
     private void ComsumeCrafingMaterial()

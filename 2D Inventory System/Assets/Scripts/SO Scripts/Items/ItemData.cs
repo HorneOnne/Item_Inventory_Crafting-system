@@ -9,7 +9,7 @@ public abstract class ItemData : ScriptableObject
     [Header("Item Properties")]
     public Sprite icon;
     public ItemType itemType;
-    public ushort max_quantity;   
+    public int max_quantity;   
     [Multiline(5)]
     public string description;
     [Tooltip("The length of time the item takes to become available again after each use")]

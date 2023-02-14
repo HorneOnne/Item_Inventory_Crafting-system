@@ -20,4 +20,5 @@
     Boomerang = 17,
     MagicStaff = 18,
     Chest = 19,
+    Workbench = 20,
 }

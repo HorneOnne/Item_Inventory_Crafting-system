@@ -1,55 +1,56 @@
-﻿using System;
-using System.Collections;
-using Unity.VisualScripting.Antlr3.Runtime;
-using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(ChestInventory))]
-public class Chest : Item, IPlaceable, IPointerClickHandler
-{
+public class Chest : Item, IPlaceable
+{  
     [Header("References")]
-    public GameObject uiChestInventoryCanvas;
+    private GameObject uiChestInventoryCanvas;
     private Animator anim;
-    private ChestInventory chestInventory;      // Data
-    //private UIChestInventory uiChestInventory;  // UI and logic
-    private Rigidbody2D rb;
-    private BoxCollider2D boxCollider2D;
+    private ChestInventory chestInventory; 
+
+
+    public enum ChestStateEnum
+    {
+        Placed,
+        OpenClose,
+    }
 
 
     [Header("Chest Properties")]
-    [SerializeField] private Player playerWhoOpenChest;
     private bool isOpen;
 
 
     #region Properties
     [field: SerializeField]
+    public bool ShowRay { get; set; }
+    [field: SerializeField]
     public LayerMask PlacedLayer { get; set; }
-    #endregion
-    public bool FirstPlaced { get; private set; }
+    public ChestStateEnum ChestState { get; private set; }
     public ChestInventory Inventory { get => chestInventory; }
+    
+    #endregion
+
+
+
 
     protected override void Start()
     {
         base.Start();
-        rb = GetComponent<Rigidbody2D>();
-        boxCollider2D = GetComponent<BoxCollider2D>();
         anim = base.Model.GetComponent<Animator>();
         isOpen = false;
-        anim.enabled = false;
-        chestInventory = GetComponent<ChestInventory>();    
+        chestInventory = GetComponent<ChestInventory>();
         uiChestInventoryCanvas = GameObject.FindGameObjectWithTag("UIChestInventoryCanvas");
-        //uiChestInventory = UIChestInventory.Instance;
-        //uiChestInventoryCanvas = uiChestInventory.gameObject.GetComponentInParent<Canvas>().gameObject;
-        DisableChestInventoryUI();
     }
 
 
-    public bool IsAboveGround(Player player)
+    public bool IsAboveGround(Player player, bool showRay = false)
     {
         bool canBePlaced = false;
-        RaycastHit2D hit = Physics2D.Raycast(UIItemInHand.Instance.uiSlotDisplay.transform.position, Vector2.down, 2.5f, PlacedLayer);
+        RaycastHit2D hit = Physics2D.Raycast(UIItemInHand.Instance.uiSlotDisplay.transform.position, Vector2.down, 2.0f, PlacedLayer);
 
-        Debug.DrawRay(UIItemInHand.Instance.uiSlotDisplay.transform.position, Vector2.down * 2.5f, Color.blue, 1);
+        if(showRay)
+            Debug.DrawRay(UIItemInHand.Instance.uiSlotDisplay.transform.position, Vector2.down * 2.0f, Color.blue, 1);
+        
         if (hit.collider != null)
         {
             canBePlaced = true;
@@ -60,7 +61,7 @@ public class Chest : Item, IPlaceable, IPointerClickHandler
 
     public void Placed(Vector3 placedPosition, Player player = null, Transform parent = null)
     {
-        FirstPlaced = true;
+        ChestState = ChestStateEnum.Placed;
 
         Vector3 cachedLocalScale = transform.localScale;
 
@@ -77,79 +78,101 @@ public class Chest : Item, IPlaceable, IPointerClickHandler
     }
 
 
-    
+   
 
-
-    private void TurnOffAnimation()
-    {
-        anim.enabled = false;
-    }
-
-    private void TurnOnAnimation()
-    {
-        anim.enabled = true;
-    }
-
-    private void EnableChestInventoryUI()
+    private void ShowChestInventoryUI()
     {
         uiChestInventoryCanvas.transform.GetChild(0).gameObject.SetActive(true);
     }
 
-    private void DisableChestInventoryUI()
+    private void HideChestInventoryUI()
     {
         uiChestInventoryCanvas.transform.GetChild(0).gameObject.SetActive(false);
     }
 
-    public void SetPlayerOpenChest(Player player)
+  
+
+    /// <summary>
+    /// Toggle open and close this chest.
+    /// IF this chest is already open -> close.
+    /// IF this chest is already close -> open.
+    /// </summary>
+    /// <param name="player"></param>
+    public void Toggle(Player player)
     {
-        if (playerWhoOpenChest != null) return;
-        if (isOpen == false) return;
-
-        this.playerWhoOpenChest = player;
-        this.chestInventory.Set(playerWhoOpenChest);
-
-        UIChestInventory.Instance.SetChestInventoryData(chestInventory);
-
-    }
-
-
-    public void OpenChest()
-    {
-        TurnOnAnimation();
-        EnableChestInventoryUI();     // Display Chest Inventory UI     
-    }
-
-    public void CloseChest()
-    {
-        Debug.Log("Close Chest");
-        this.playerWhoOpenChest = null;
-        this.chestInventory.Set(null);
-        
-        //Invoke("TurnOffAnimation", 1f);
-        DisableChestInventoryUI();
-
-        this.playerWhoOpenChest = null;
-        this.chestInventory.Set(null);
-        UIChestInventory.Instance.RemoveChestInventoryData();
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {      
-        isOpen = !isOpen;
-        FirstPlaced = false;
-
-        if (isOpen)
+        if(ChestState== ChestStateEnum.Placed)
         {
-            OpenChest();
-        }            
-        else
-        {
-            CloseChest();
+            ChestState = ChestStateEnum.OpenClose;
+            return;
         }
 
+        isOpen = !isOpen;
+
+     
+        if (isOpen)
+        {
+            Open(player, forceOpenUI: true);
+
+        }
+        else
+        {
+            Close(player, forceCloseUI: true);
+        }
 
         anim.SetBool("isOpen", isOpen);
+    }
+
+    /// <summary>
+    /// Open chest.
+    /// </summary>
+    /// <param name="player">Player who opens this chest.</param>
+    /// <param name="forceOpenUI"></param>
+    public void Open(Player player, bool forceOpenUI = false)
+    {
+        if(forceOpenUI)
+            ShowChestInventoryUI();
         
+        if (ChestState == ChestStateEnum.Placed)
+        {
+            ChestState = ChestStateEnum.OpenClose;
+            return;
+        }
+
+        isOpen = true;
+
+        player.currentOpenChest = this;
+        this.chestInventory.Set(player);
+        EventManager.OpenChest();
+        UIChestInventory.Instance.SetChestInventoryData(chestInventory);
+
+        anim.SetBool("isOpen", isOpen);
+    }
+
+
+    /// <summary>
+    /// Close chest.
+    /// </summary>
+    /// <param name="player"></param>
+    /// <param name="forceCloseUI">Player who closes this chest.</param>
+    public void Close(Player player, bool forceCloseUI = false)
+    {
+        if(forceCloseUI)
+            HideChestInventoryUI();
+        
+        if (ChestState == ChestStateEnum.Placed)
+        {
+            ChestState = ChestStateEnum.OpenClose;
+            return;
+        }
+
+        isOpen = false;
+
+        player.currentOpenChest = null;
+        this.chestInventory.Set(null);
+        EventManager.CloseChest();
+        UIChestInventory.Instance.RemoveChestInventoryData();
+
+        anim.SetBool("isOpen", isOpen);
     }
 }
 

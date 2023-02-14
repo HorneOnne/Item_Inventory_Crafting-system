@@ -7,7 +7,6 @@ public class UIChestInventory : Singleton<UIChestInventory>
 {
     [Header("Inventory References")]
     public Player player;
-    //private PlayerInventory playerInventory;
     private UIItemInHand uiItemInHand;
     private ItemInHand itemInHand;
     private ChestInventory chestInventory;
@@ -47,15 +46,16 @@ public class UIChestInventory : Singleton<UIChestInventory>
 
     #endregion
 
-    private void OnEnable()
+    private void Awake()
     {
-        ChestInventory.OnChestInventoryUpdate += UpdateInventoryUI;
+        EventManager.OnChestInventoryUpdate += UpdateInventoryUI;
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
-        ChestInventory.OnChestInventoryUpdate -= UpdateInventoryUI;
+        EventManager.OnChestInventoryUpdate -= UpdateInventoryUI;
     }
+
 
     private void Start()
     {
@@ -429,7 +429,11 @@ public class UIChestInventory : Singleton<UIChestInventory>
             var itemSlotToSwap_01 = itemInHand.GetSlot();
             var itemSlotToSwap_02 = new ItemSlot(chestInventory.inventory[index]);
             chestInventory.inventory[index].ClearSlot();
-            itemInHand.Set(itemSlotToSwap_02, StoredType.ChestInventory);
+            itemInHand.Set(itemSlotToSwap_02, new ItemSlotData
+            {
+                slotStoredType = StoredType.ChestInventory,
+                slotIndex = index
+            });
             chestInventory.inventory[index] = itemSlotToSwap_01;
 
             uiItemInHand.DisplayItemInHand();
@@ -442,7 +446,11 @@ public class UIChestInventory : Singleton<UIChestInventory>
             var itemSlotToSwap_01 = itemInHand.GetSlot();
             var itemSlotToSwap_02 = new ItemSlot(chestInventory.inventory[index]);
             chestInventory.inventory[index].ClearSlot();
-            itemInHand.Set(itemSlotToSwap_02, StoredType.ChestInventory);
+            itemInHand.Set(itemSlotToSwap_02, new ItemSlotData
+            {
+                slotStoredType = StoredType.ChestInventory,
+                slotIndex = index
+            });
             chestInventory.inventory[index] = itemSlotToSwap_01;
         }
     }
@@ -458,7 +466,11 @@ public class UIChestInventory : Singleton<UIChestInventory>
     {
         var chosenSlot = new ItemSlot(chestInventory.inventory[index]);
         chestInventory.inventory[index].ClearSlot();
-        itemInHand.Set(chosenSlot, StoredType.ChestInventory);
+        itemInHand.Set(chosenSlot, new ItemSlotData
+        {
+            slotStoredType = StoredType.ChestInventory,
+            slotIndex = index
+        });
 
         uiItemInHand.DisplayItemInHand();
     }
@@ -476,7 +488,11 @@ public class UIChestInventory : Singleton<UIChestInventory>
 
             var chosenSlot = new ItemSlot(chestInventory.inventory[index]);
             chosenSlot.SetItemQuantity(splitItemQuantity);
-            itemInHand.Set(chosenSlot, StoredType.ChestInventory);
+            itemInHand.Set(chosenSlot, new ItemSlotData
+            {
+                slotStoredType = StoredType.ChestInventory,
+                slotIndex = index
+            });
 
             uiItemInHand.DisplayItemInHand();
         }
@@ -503,7 +519,11 @@ public class UIChestInventory : Singleton<UIChestInventory>
             Debug.Log("Same Object");
 
             var returnSlot = chestInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot());
-            itemInHand.Set(returnSlot, StoredType.ChestInventory);
+            itemInHand.Set(returnSlot, new ItemSlotData
+            {
+                slotStoredType = StoredType.ChestInventory,
+                slotIndex = index
+            });
             uiItemInHand.DisplayItemInHand();
 
         }

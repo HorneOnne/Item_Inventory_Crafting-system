@@ -28,7 +28,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public Transform HandHoldItem { get => handHoldItem; }
     #endregion
 
-    public ChestInventory currentOpenChest;
+    public Chest currentOpenChest;
     
 
 

@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 public class ItemInHand : MonoBehaviour
 {
-    public static event Action OnItemInHandChanged;
+    //public static event Action OnItemInHandChanged;
 
 
     [SerializeField] private ItemSlot itemSlot;
@@ -20,7 +20,8 @@ public class ItemInHand : MonoBehaviour
     private bool firstGet = true;
 
     #region Properties
-    public StoredType ItemGetFrom { get; private set; }
+    //public StoredType ItemGetFrom { get; private set; }
+    public ItemSlotData ItemGetFrom { get; private set; }
 
     #endregion
 
@@ -31,18 +32,21 @@ public class ItemInHand : MonoBehaviour
     }
 
 
+
+
+
     public ItemData GetItemData()
     {
         return itemSlot.ItemData;
     }
 
-    public void Set(ItemSlot takenSlot, StoredType from)
+    public void Set(ItemSlot takenSlot, ItemSlotData from)
     {
         itemSlot = takenSlot;
         ItemGetFrom = from;
 
         firstGet = true;
-        OnItemInHandChanged?.Invoke();
+        EventManager.ItemInHandChanged();
     }
 
     public void SetItemObject(Item item)
@@ -58,14 +62,15 @@ public class ItemInHand : MonoBehaviour
 
     public bool PickupItem(ref ItemSlot itemContainerSlot)
     {
-        OnItemInHandChanged?.Invoke();
+        bool canPickupItem;
+        
 
         if (HasItemData() == false)
         {
             itemSlot = new ItemSlot(itemContainerSlot);
             itemContainerSlot.ClearSlot();
             uiItemInHand.DisplayItemInHand();
-            return true;
+            canPickupItem = true;
         }
         else
         {
@@ -75,20 +80,23 @@ public class ItemInHand : MonoBehaviour
                 {
                     itemContainerSlot = itemSlot.AddItemsFromAnotherSlot(itemContainerSlot);
                     uiItemInHand.DisplayItemInHand();
-                    return true;
+                    canPickupItem = true;
                 }
                 else
                 {
                     //Debug.Log("The item quantity > item maxquantity");
-                    return false;
+                    canPickupItem = false;
                 }
             }
             else
             {
                 //Debug.Log("Not same");
-                return false;
+                canPickupItem = false;
             }            
-        }      
+        }
+
+        EventManager.ItemInHandChanged();
+        return canPickupItem;
     }
 
     public bool HasItemData()
@@ -111,9 +119,13 @@ public class ItemInHand : MonoBehaviour
     public void ClearSlot()
     {
         itemSlot.ClearSlot();
-        ItemGetFrom = StoredType.Another;
+        ItemGetFrom = new ItemSlotData
+        {
+            slotStoredType = StoredType.Another,
+            slotIndex = -1
+        };
 
-        OnItemInHandChanged?.Invoke();
+        EventManager.ItemInHandChanged();
     }
 
 
@@ -140,7 +152,7 @@ public class ItemInHand : MonoBehaviour
         itemSlot.RemoveItem();
         uiItemInHand.DisplayItemInHand();
 
-        OnItemInHandChanged?.Invoke();
+        EventManager.ItemInHandChanged();
     }
 
 
@@ -165,4 +177,10 @@ public enum StoredType
     ChestInventory,
     CraftingTable,
     Another
+}
+
+public struct ItemSlotData
+{
+    public StoredType slotStoredType;
+    public int slotIndex;
 }

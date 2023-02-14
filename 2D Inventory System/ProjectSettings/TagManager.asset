@@ -7,6 +7,7 @@ TagManager:
   - Item
   - Enemy
   - UIChestInventoryCanvas
+  - UICraftingTableCanvas
   layers:
   - Default
   - TransparentFX
@@ -34,7 +35,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - ItemChecker
   - Chest
   - Enemy
   - Player

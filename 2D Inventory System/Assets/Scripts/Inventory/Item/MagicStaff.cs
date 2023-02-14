@@ -22,8 +22,13 @@ public class MagicStaff : Item
 
     public override bool Use(Player player)
     {
-        magicStaffProjectilePrefab = ItemContainerManager.Instance.GetItemPrefab("MagicStaffProjectile_001");
-        magicStaffProjectileObject = Instantiate(magicStaffProjectilePrefab, transform.position, transform.rotation);
+        //magicStaffProjectilePrefab = ItemContainerManager.Instance.GetItemPrefab("MagicStaffProjectile_001");
+        //magicStaffProjectileObject = Instantiate(magicStaffProjectilePrefab, transform.position, transform.rotation);
+
+        magicStaffProjectileObject = MagicStaffProjectileSpawner.Instance.Pool.Get();
+        magicStaffProjectileObject.transform.position = transform.position;
+        magicStaffProjectileObject.transform.rotation = transform.rotation;
+
         magicStaffProjectileObject.transform.localScale = new Vector3(1, 1, 1);
         magicStaffProjectileObject.SetActive(true);
         magicStaffProjectileObject.GetComponent<Projectile>().SetData(this.ItemSlot.ItemData, magicStaffData.projectile, UseGravity);

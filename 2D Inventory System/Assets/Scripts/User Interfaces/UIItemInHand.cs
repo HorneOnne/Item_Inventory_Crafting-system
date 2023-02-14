@@ -22,12 +22,12 @@ public class UIItemInHand : Singleton<UIItemInHand>
 
     private void OnEnable()
     {
-        ItemInHand.OnItemInHandChanged += ResetUIItemInHandColor;
+        EventManager.OnItemInHandChanged += ResetUIItemInHandColor;
     }
 
     private void OnDisable()
     {
-        ItemInHand.OnItemInHandChanged -= ResetUIItemInHandColor;
+        EventManager.OnItemInHandChanged -= ResetUIItemInHandColor;
     }
 
 

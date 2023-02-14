@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 [RequireComponent(typeof(CircleCollider2D))]
 public class MagicStaffProjectile_001 : Projectile, ICanCauseDamage
@@ -6,6 +7,11 @@ public class MagicStaffProjectile_001 : Projectile, ICanCauseDamage
     private MagicStaffData magicStaffData;
     private Vector2 startPosition;
 
+    private bool wasReturnToPool;
+    private float timeToReturnElapse = 0.0f;
+    private const float TIME_TO_RETURN = 5.0f;
+    private const float TIME_TO_RETURN_WHEN_COLLIDE = 3.0f;
+    private WaitForSeconds waitForReturnToPool;
 
     protected override void Start()
     {
@@ -18,7 +24,20 @@ public class MagicStaffProjectile_001 : Projectile, ICanCauseDamage
         Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = mousePosition - startPosition;
         rb.velocity = direction.normalized * magicStaffData.releaseProjectileSpeed;
-        Destroy(this.gameObject, 10f);
+        
+        waitForReturnToPool = new WaitForSeconds(TIME_TO_RETURN_WHEN_COLLIDE);      
+        //Destroy(this.gameObject, 10f);
+    }
+
+
+    private void Update()
+    {
+        timeToReturnElapse += Time.deltaTime;
+        if (timeToReturnElapse > TIME_TO_RETURN)
+        {
+            timeToReturnElapse = 0.0f;
+            ReturnToPool();
+        }
     }
 
 
@@ -26,4 +45,21 @@ public class MagicStaffProjectile_001 : Projectile, ICanCauseDamage
     {
         return magicStaffData.damage;
     }
+
+
+    private IEnumerator PerformReturnToPool()
+    {
+        yield return waitForReturnToPool;
+        ReturnToPool();
+    }
+
+    private void ReturnToPool()
+    {
+        if (wasReturnToPool == true) return;
+
+        //ResetArrowProperties();
+        ArrowSpawner.Instance.Pool.Release(this.gameObject);
+        wasReturnToPool = true;
+    }
+
 }

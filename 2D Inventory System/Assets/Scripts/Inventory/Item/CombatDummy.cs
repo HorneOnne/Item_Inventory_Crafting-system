@@ -10,12 +10,16 @@ public class CombatDummy : Item, ICanBeAttacked, IPlaceable, IShowDamage
     [Header("CombatDummy Properties")]
     private bool playerOnLeft;
 
+
+    #region Properties
+    [field: SerializeField]
+    public bool ShowRay { get; set; }
     [field:SerializeField]
     public LayerMask PlacedLayer { get; set; }
     [field: SerializeField]
     public float Cooldown { get; set; }
 
-
+    #endregion
 
 
     [Header("CombatDummy Properties")]
@@ -71,12 +75,13 @@ public class CombatDummy : Item, ICanBeAttacked, IPlaceable, IShowDamage
     }
 
 
-    public bool IsAboveGround(Player player)
+    public bool IsAboveGround(Player player, bool showRay = false)
     {
         bool canBePlaced = false;
         RaycastHit2D hit = Physics2D.Raycast(UIItemInHand.Instance.uiSlotDisplay.transform.position, Vector2.down , 2.5f ,PlacedLayer);
   
-        Debug.DrawRay(UIItemInHand.Instance.uiSlotDisplay.transform.position, Vector2.down * 2.5f, Color.blue, 1);
+        if(showRay)
+            Debug.DrawRay(UIItemInHand.Instance.uiSlotDisplay.transform.position, Vector2.down * 2.5f, Color.blue, 1);
         if (hit.collider != null)
         {
             canBePlaced = true;

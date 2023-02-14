@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.EventSystems;
 
 public class ChestInventory : MonoBehaviour
 {
-    public static event System.Action OnChestInventoryUpdate;
-
     [Header("References")]
     public Player player;
     private ItemInHand itemInHand;
@@ -47,8 +46,7 @@ public class ChestInventory : MonoBehaviour
     public bool AddItem(int index)
     {
         bool isSlotNotFull = inventory[index].AddItem();
-        OnChestInventoryUpdate?.Invoke();
-
+        EventManager.ChestInventoryUpdate();
         return isSlotNotFull;
     }
 
@@ -56,13 +54,13 @@ public class ChestInventory : MonoBehaviour
     public void AddNewItemIntoInventoryAtIndex(int index, ItemData item)
     {
         inventory[index].AddNewItem(item);
-        OnChestInventoryUpdate?.Invoke();
+        EventManager.ChestInventoryUpdate();
     }
 
     public void RemoveItemFromInventoryAtIndex(int index)
     {
         inventory[index].RemoveItem();
-        OnChestInventoryUpdate?.Invoke();
+        EventManager.ChestInventoryUpdate();
     }
 
 

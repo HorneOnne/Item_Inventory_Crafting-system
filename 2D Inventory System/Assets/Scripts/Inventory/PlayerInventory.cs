@@ -1,12 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
     // Events
-    public static event System.Action OnInventoryUpdate;
+    //public static event System.Action OnInventoryUpdate;
 
     [Header("References")]
     private Player player;
@@ -91,7 +92,7 @@ public class PlayerInventory : MonoBehaviour
     public bool AddItemAt(int index)
     {
         bool isSlotNotFull = inventory[index].AddItem();
-        OnInventoryUpdate?.Invoke();
+        EventManager.PlayerInventoryUpdate(); 
 
         return isSlotNotFull;
     }
@@ -100,13 +101,14 @@ public class PlayerInventory : MonoBehaviour
     public void AddNewItemAt(int index, ItemData item)
     {
         inventory[index].AddNewItem(item);
-        OnInventoryUpdate?.Invoke();
+        EventManager.PlayerInventoryUpdate();
     }
+
 
     public void RemoveItemAt(int index)
     {
         inventory[index].RemoveItem();
-        OnInventoryUpdate?.Invoke();
+        EventManager.PlayerInventoryUpdate();
     }
 
 
