@@ -19,6 +19,6 @@ MonoBehaviour:
   duration: 0.25
   currentLevel: 1
   maxLevel: 2
-  nextLvItemData: {fileID: 11400000, guid: c1ac0056f4b2b23469342cec64e2ed2c, type: 2}
+  upgradeRecipes: []
   damage: 100
   swingSwordIncreaseSize: 2.5

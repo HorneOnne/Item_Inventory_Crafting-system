@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using MyGame.Ultilities;
 using UnityEditor;
+using System;
 
 [RequireComponent(typeof(CraftingTableManager))]
 public class UICraftingTableManager : Singleton<UICraftingTableManager>
@@ -42,9 +43,10 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
         {
             // craftingGridSlot event
             GameObject slotObject = craftingGridSlot[i];
-            slotObject.GetComponent<UIItemSlot>().Set(null, null, (short)i);
-            Utilities.AddEvent(slotObject, EventTriggerType.PointerDown, (baseEvent) => OnPointerDown(baseEvent, slotObject));
+            slotObject.GetComponent<UIItemSlot>().SetIndex(i);
+            slotObject.GetComponent<UIItemSlot>().SetData(null);
 
+            Utilities.AddEvent(slotObject, EventTriggerType.PointerDown, (baseEvent) => OnPointerDown(baseEvent, slotObject));
             Utilities.AddEvent(slotObject, EventTriggerType.PointerEnter, delegate { OnEnter(slotObject); });
             Utilities.AddEvent(slotObject, EventTriggerType.PointerEnter, delegate { OnExit(slotObject); });
             /*Utilities.AddEvent(slotObject, EventTriggerType.BeginDrag, (baseEvent) => OnBeginDrag(baseEvent, slotObject));
@@ -59,8 +61,9 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
 
 
         // outputSlot Event
-        outputSlot.GetComponent<UIItemSlot>().Set(null, null);
+        //outputSlot.GetComponent<UIItemSlot>().Set(null, null);
         Utilities.AddEvent(outputSlot, EventTriggerType.PointerClick, (baseEvent) => OnOutputSlotClick(baseEvent, outputSlot));
+        UIManager.Instance.CraftingTableCanvas.SetActive(false);
     }
 
 
@@ -81,44 +84,14 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     public void UpdateCraftingTableDisplayUIAt(int index)
     {
         UIItemSlot uiSlot = craftingGridSlot[index].GetComponent<UIItemSlot>();
-        if (craftingTableManager.craftingGridData[index].HasItem())
-        {
-            uiSlot.slotImage.sprite = craftingTableManager.craftingGridData[index].ItemData.icon;
-            uiSlot.slotImage.GetComponent<RectTransform>().SetAsLastSibling();
-            uiSlot.amountItemInSlotText.text = craftingTableManager.craftingGridData[index].itemQuantity.ToString();
-        }
-        else
-        {
-            uiSlot.slotImage.sprite = null;
-            uiSlot.slotImage.GetComponent<RectTransform>().SetAsFirstSibling();
-            uiSlot.amountItemInSlotText.text = "";
-        }
+        uiSlot.SetData(craftingTableManager.craftingGridData[index]);
+ 
     }
 
     private void UpdateOutputSlotCraftingTalbeDisplay()
     {
         UIItemSlot uiSlot = outputSlot.GetComponent<UIItemSlot>();
-        if (craftingTableManager.outputItemSlot != null)
-        {
-            if (craftingTableManager.outputItemSlot.HasItem())
-            {
-                uiSlot.slotImage.sprite = craftingTableManager.outputItemSlot.ItemData.icon;
-                uiSlot.amountItemInSlotText.text = craftingTableManager.outputItemSlot.itemQuantity.ToString();
-                uiSlot.slotImage.GetComponent<RectTransform>().SetAsLastSibling();
-            }
-            else
-            {
-                uiSlot.slotImage.sprite = null;
-                uiSlot.amountItemInSlotText.text = "";
-                uiSlot.slotImage.GetComponent<RectTransform>().SetAsFirstSibling();
-            }
-        }
-        else
-        {
-            uiSlot.slotImage.sprite = null;
-            uiSlot.amountItemInSlotText.text = "";
-            uiSlot.slotImage.GetComponent<RectTransform>().SetAsFirstSibling();
-        }
+        uiSlot.SetData(craftingTableManager.outputItemSlot);      
     }
     #endregion UPDATE CRAFTINGTABLE DISPLAY UI REGION.
 
@@ -464,15 +437,15 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             slotIndex = index
         });
 
-        ui_itemInHand.DisplayItemInHand(this.transform);
+        ui_itemInHand.UpdateItemInHandUI(this.transform);
     }
 
     private void HalveItemSlotQuantity(int index)
     {
-        if (craftingTableManager.craftingGridData[index].itemQuantity > 1)
+        if (craftingTableManager.craftingGridData[index].ItemQuantity > 1)
         {
-            int splitItemQuantity = craftingTableManager.craftingGridData[index].itemQuantity / 2;
-            craftingTableManager.craftingGridData[index].SetItemQuantity(craftingTableManager.craftingGridData[index].itemQuantity - splitItemQuantity);
+            int splitItemQuantity = craftingTableManager.craftingGridData[index].ItemQuantity / 2;
+            craftingTableManager.craftingGridData[index].SetItemQuantity(craftingTableManager.craftingGridData[index].ItemQuantity - splitItemQuantity);
 
             var chosenSlot = new ItemSlot(craftingTableManager.craftingGridData[index]);
             chosenSlot.SetItemQuantity(splitItemQuantity);
@@ -482,7 +455,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
                 slotIndex = index
             });
 
-            ui_itemInHand.DisplayItemInHand();
+            ui_itemInHand.UpdateItemInHandUI();
         }
         else
         {
@@ -525,7 +498,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
                 slotStoredType = StoredType.CraftingTable,
                 slotIndex = index
             });
-            ui_itemInHand.DisplayItemInHand();
+            ui_itemInHand.UpdateItemInHandUI();
         }
         else
         {
@@ -548,7 +521,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             });
             craftingTableManager.craftingGridData[index] = itemToSwap_01;
 
-            ui_itemInHand.DisplayItemInHand(this.transform);
+            ui_itemInHand.UpdateItemInHandUI(this.transform);
         }
 
 

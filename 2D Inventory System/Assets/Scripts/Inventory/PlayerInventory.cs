@@ -171,7 +171,7 @@ public class PlayerInventory : MonoBehaviour
         foreach(var e in sortedDict)
         {
             itemInHand.GetSlot().AddItemsFromAnotherSlot(inventory[e.Key]);
-            UIItemInHand.Instance.DisplayItemInHand();
+            UIItemInHand.Instance.UpdateItemInHandUI();
             UIPlayerInventory.Instance.UpdateInventoryUIAt(e.Key);
         }
     }

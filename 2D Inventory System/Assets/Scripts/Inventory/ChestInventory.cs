@@ -123,7 +123,7 @@ public class ChestInventory : MonoBehaviour
         foreach (var e in sortedDict)
         {
             itemInHand.GetSlot().AddItemsFromAnotherSlot(inventory[e.Key]);
-            UIItemInHand.Instance.DisplayItemInHand();
+            UIItemInHand.Instance.UpdateItemInHandUI();
             UIChestInventory.Instance.UpdateInventoryUIAt(e.Key);
         }
     }

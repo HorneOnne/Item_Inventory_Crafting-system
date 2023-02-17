@@ -1,7 +1,6 @@
-﻿using Unity.VisualScripting.Antlr3.Runtime;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using static Chest;
+
 
 public class Workbench : Item, IPlaceable, IPointerClickHandler
 {
@@ -20,7 +19,7 @@ public class Workbench : Item, IPlaceable, IPointerClickHandler
     protected override void Start()
     {
         base.Start();
-        uiCraftingTableCanvas = GameObject.FindGameObjectWithTag("UICraftingTableCanvas");
+        uiCraftingTableCanvas = UIManager.Instance.CraftingTableCanvas;
     }
 
 
@@ -54,17 +53,17 @@ public class Workbench : Item, IPlaceable, IPointerClickHandler
         transform.localRotation = Quaternion.Euler(0, 0, 0);
 
         player.ItemInHand.RemoveItem();
-        UIItemInHand.Instance.DisplayItemInHand();
+        UIItemInHand.Instance.UpdateItemInHandUI();
     }
 
     private void ShowCraftingTableUI()
     {
-        uiCraftingTableCanvas.transform.GetChild(0).gameObject.SetActive(true);
+        uiCraftingTableCanvas.SetActive(true);
     }
 
     private void HideCraftingTableUI()
     {
-        uiCraftingTableCanvas.transform.GetChild(0).gameObject.SetActive(false);
+        uiCraftingTableCanvas.SetActive(false);
     }
 
 

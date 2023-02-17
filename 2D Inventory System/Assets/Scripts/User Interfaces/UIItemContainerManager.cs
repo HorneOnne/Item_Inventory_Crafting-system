@@ -60,7 +60,8 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
         {
             GameObject slotObject = Instantiate(itemSlotPrefab, contentPanel);
             Utilities.AddEvent(slotObject, EventTriggerType.PointerClick, (baseEvent) => OnSlotClicked(baseEvent, slotObject));
-            slotObject.GetComponent<UIItemSlot>().Set(item.icon, null, (short)index);
+            slotObject.GetComponent<UIItemSlot>().SetIndex(index);
+            slotObject.GetComponent<UIItemSlot>().SetData(new ItemSlot(item, 1));
 
             UI_SlotList.Add(slotObject);
             itemScriptableObjectList.Add(item);
@@ -85,7 +86,8 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
             {
                 GameObject slotObject = Instantiate(itemSlotPrefab, contentPanel);
                 Utilities.AddEvent(slotObject, EventTriggerType.PointerClick, (baseEvent) => OnSlotClicked(baseEvent, slotObject));
-                slotObject.GetComponent<UIItemSlot>().Set(item.icon, null, (short)index);
+                slotObject.GetComponent<UIItemSlot>().SetIndex(index);
+                slotObject.GetComponent<UIItemSlot>().SetData(new ItemSlot(item, 1));
 
                 UI_SlotList.Add(slotObject);
                 itemScriptableObjectList.Add(item);
@@ -102,7 +104,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
     {
         ItemData item = itemScriptableObjectList[clickedObj.GetComponent<UIItemSlot>().SlotIndex];
         itemInHand.Set(new ItemSlot(item, item.max_quantity), new ItemSlotData());
-        uiItemInHand.DisplayItemInHand();
+        uiItemInHand.UpdateItemInHandUI();
     }
 
     // =======================================================================

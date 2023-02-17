@@ -113,7 +113,7 @@ public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
         itemObject.transform.localScale = new Vector3(2, 2, 1);
 
         itemInHand.ClearSlot();
-        UIItemInHand.Instance.DisplayItemInHand();
+        UIItemInHand.Instance.UpdateItemInHandUI();
     }
 
 

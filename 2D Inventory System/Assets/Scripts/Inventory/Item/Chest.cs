@@ -39,7 +39,7 @@ public class Chest : Item, IPlaceable
         anim = base.Model.GetComponent<Animator>();
         isOpen = false;
         chestInventory = GetComponent<ChestInventory>();
-        uiChestInventoryCanvas = GameObject.FindGameObjectWithTag("UIChestInventoryCanvas");
+        uiChestInventoryCanvas = UIManager.Instance.ChestInventoryCanvas;
     }
 
 
@@ -74,7 +74,7 @@ public class Chest : Item, IPlaceable
         transform.localRotation = Quaternion.Euler(0, 0, 0);
 
         player.ItemInHand.RemoveItem();
-        UIItemInHand.Instance.DisplayItemInHand();
+        UIItemInHand.Instance.UpdateItemInHandUI();
     }
 
 
@@ -82,12 +82,12 @@ public class Chest : Item, IPlaceable
 
     private void ShowChestInventoryUI()
     {
-        uiChestInventoryCanvas.transform.GetChild(0).gameObject.SetActive(true);
+        uiChestInventoryCanvas.SetActive(true);
     }
 
     private void HideChestInventoryUI()
     {
-        uiChestInventoryCanvas.transform.GetChild(0).gameObject.SetActive(false);
+        uiChestInventoryCanvas.SetActive(false);
     }
 
   

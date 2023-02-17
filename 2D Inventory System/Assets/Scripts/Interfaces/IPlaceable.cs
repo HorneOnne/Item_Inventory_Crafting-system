@@ -6,6 +6,7 @@ public interface IPlaceable
     /// <summary>
     /// Layer for placing item on it.
     /// </summary>
+    /// 
     public LayerMask PlacedLayer { get; set; }
     
 

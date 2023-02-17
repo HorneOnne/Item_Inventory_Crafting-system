@@ -88,7 +88,7 @@ public struct PlayerInventorySaveData
         for (int i = 0; i < playerInventory.inventory.Count; i++)
         {
             var itemSlot = playerInventory.inventory[i];
-            itemDatas.Add(new ItemSlotSaveData(ItemContainerManager.Instance.GetItemID(itemSlot.ItemData), itemSlot.itemQuantity));
+            itemDatas.Add(new ItemSlotSaveData(ItemContainerManager.Instance.GetItemID(itemSlot.ItemData), itemSlot.ItemQuantity));
         }
     }
 }
@@ -172,7 +172,7 @@ public struct WorldChest
             for (int i = 0; i < 36; i++)
             {
                 var itemSlot = chestInventory.inventory[i];
-                itemSlotData.Add(new ItemSlotSaveData(ItemContainerManager.Instance.GetItemID(itemSlot.ItemData), itemSlot.itemQuantity));
+                itemSlotData.Add(new ItemSlotSaveData(ItemContainerManager.Instance.GetItemID(itemSlot.ItemData), itemSlot.ItemQuantity));
             }
         }
     }

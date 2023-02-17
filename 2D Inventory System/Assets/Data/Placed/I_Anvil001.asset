@@ -9,13 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8de2f2f36c031d24e84dfcab08764610, type: 3}
-  m_Name: I_Arrow_004
-  m_EditorClassIdentifier: 
-  icon: {fileID: -441877741, guid: 0804b8f0cd3b81241862b9b94a207c61, type: 3}
-  itemType: 10
-  max_quantity: 999
+  m_Script: {fileID: 11500000, guid: 6135f89bd6a14ff49b357863c06cd5e1, type: 3}
+  m_Name: I_Anvil001
+  m_EditorClassIdentifier: Assembly-CSharp::AnvilData
+  icon: {fileID: 1875713602, guid: e5f63e32b27050346a4a588ccf3cda14, type: 3}
+  itemType: 21
+  max_quantity: 1
   description: 
   duration: 1
-  damage: 23
-  particle: 4

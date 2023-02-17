@@ -61,7 +61,8 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
         for (int i = 0; i < playerInventory.capacity; i++)
         {
             GameObject slotObject = Instantiate(itemSlotPrefab, this.transform);
-            slotObject.GetComponent<UIItemSlot>().Set(null, null, (short)i);
+            slotObject.GetComponent<UIItemSlot>().SetIndex(i);
+            slotObject.GetComponent<UIItemSlot>().SetData(null);
             Utilities.AddEvent(slotObject, EventTriggerType.PointerClick, (baseEvent) => OnClick(baseEvent, slotObject));
             Utilities.AddEvent(slotObject, EventTriggerType.PointerEnter, delegate { OnEnter(slotObject); });
             Utilities.AddEvent(slotObject, EventTriggerType.PointerExit, delegate { OnExit(slotObject); });
@@ -125,24 +126,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     public void UpdateInventoryUIAt(int index)
     {
         UIItemSlot uiSlot = itemSlotList[index].GetComponent<UIItemSlot>();
-        if (playerInventory.inventory[index].HasItem())
-        {
-            uiSlot.slotImage.sprite = playerInventory.inventory[index].ItemData.icon;
-            uiSlot.slotImage.GetComponent<RectTransform>().SetAsLastSibling();
-
-            int itemQuantity = playerInventory.inventory[index].itemQuantity;
-            
-            if(itemQuantity > 1)
-                uiSlot.amountItemInSlotText.text = playerInventory.inventory[index].itemQuantity.ToString();
-            else
-                uiSlot.amountItemInSlotText.text = "";
-        }
-        else
-        {
-            uiSlot.slotImage.sprite = null;
-            uiSlot.slotImage.GetComponent<RectTransform>().SetAsFirstSibling();
-            uiSlot.amountItemInSlotText.text = "";
-        }
+        uiSlot.SetData(playerInventory.inventory[index]);
     }
 
     // LOGIC 
@@ -405,7 +389,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
             });
             playerInventory.inventory[index] = itemSlotToSwap_01;
 
-            uiItemInHand.DisplayItemInHand();    
+            uiItemInHand.UpdateItemInHandUI();    
         } 
 
 
@@ -441,7 +425,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
             slotIndex = index
         });
 
-        uiItemInHand.DisplayItemInHand();
+        uiItemInHand.UpdateItemInHandUI();
     }
 
     /// <summary>
@@ -450,10 +434,10 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     /// <param name="index">Index used in itemSlotList at specific itemSlot you want to get.</param>
     private void HalveItemSlotQuantity(int index)
     {
-        if (playerInventory.inventory[index].itemQuantity > 1)
+        if (playerInventory.inventory[index].ItemQuantity > 1)
         {
-            int splitItemQuantity = playerInventory.inventory[index].itemQuantity / 2;
-            playerInventory.inventory[index].SetItemQuantity(playerInventory.inventory[index].itemQuantity - splitItemQuantity);
+            int splitItemQuantity = playerInventory.inventory[index].ItemQuantity / 2;
+            playerInventory.inventory[index].SetItemQuantity(playerInventory.inventory[index].ItemQuantity - splitItemQuantity);
 
             var chosenSlot = new ItemSlot(playerInventory.inventory[index]);
             chosenSlot.SetItemQuantity(splitItemQuantity);
@@ -463,7 +447,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
                 slotIndex = index
             });
 
-            uiItemInHand.DisplayItemInHand();
+            uiItemInHand.UpdateItemInHandUI();
         }
         else
         {
@@ -477,7 +461,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     /// <param name="index">Index used in itemSlotList at specific itemSlot you want to get</param>
     private void CombineItemSlotQuantity(int index)
     {
-        //Debug.Log("CombineItemSlotQuantity");
+        Debug.Log("CombineItemSlotQuantity");
         if (IsSameItem(playerInventory.inventory[index].ItemData, itemInHand.GetItemData()))
         {
             itemInHand.Set(playerInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot()), new ItemSlotData
@@ -485,7 +469,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
                 slotStoredType = StoredType.PlayerInventory,
                 slotIndex = index
             });
-            uiItemInHand.DisplayItemInHand();
+            uiItemInHand.UpdateItemInHandUI();
             
         }
         else

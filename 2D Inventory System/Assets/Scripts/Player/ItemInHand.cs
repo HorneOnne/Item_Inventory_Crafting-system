@@ -69,7 +69,7 @@ public class ItemInHand : MonoBehaviour
         {
             itemSlot = new ItemSlot(itemContainerSlot);
             itemContainerSlot.ClearSlot();
-            uiItemInHand.DisplayItemInHand();
+            uiItemInHand.UpdateItemInHandUI();
             canPickupItem = true;
         }
         else
@@ -79,7 +79,7 @@ public class ItemInHand : MonoBehaviour
                 if(itemSlot.TryAddItem(itemContainerSlot) == true)
                 {
                     itemContainerSlot = itemSlot.AddItemsFromAnotherSlot(itemContainerSlot);
-                    uiItemInHand.DisplayItemInHand();
+                    uiItemInHand.UpdateItemInHandUI();
                     canPickupItem = true;
                 }
                 else
@@ -150,7 +150,7 @@ public class ItemInHand : MonoBehaviour
     public void RemoveItem()
     {
         itemSlot.RemoveItem();
-        uiItemInHand.DisplayItemInHand();
+        uiItemInHand.UpdateItemInHandUI();
 
         EventManager.ItemInHandChanged();
     }

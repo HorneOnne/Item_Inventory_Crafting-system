@@ -105,7 +105,7 @@ public class CombatDummy : Item, ICanBeAttacked, IPlaceable, IShowDamage
         transform.localRotation = Quaternion.Euler(0,0,0);
 
         player.ItemInHand.RemoveItem();
-        UIItemInHand.Instance.DisplayItemInHand();
+        UIItemInHand.Instance.UpdateItemInHandUI();
     }
 
     public void ShowDamage(int damaged)

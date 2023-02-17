@@ -10,14 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c25d29b88d9c6245964c87bba20c0ed, type: 3}
-  m_Name: I_Helmet03_Lv1
+  m_Name: I_Helmet001_Lv1
   m_EditorClassIdentifier: 
-  icon: {fileID: 1891314669, guid: 7acc6c0bb5d6fa34ea847c9a9980fc2b, type: 3}
+  icon: {fileID: -821284628, guid: 7acc6c0bb5d6fa34ea847c9a9980fc2b, type: 3}
   itemType: 2
   max_quantity: 1
   description: 
-  duration: 0
   currentLevel: 1
   maxLevel: 3
-  nextLvItemData: {fileID: 11400000, guid: aad1f1d45a673a5458867aa3947ee60b, type: 2}
+  nextLvItemData: {fileID: 11400000, guid: f3fbfc8f3fc5fbe479f879e62b4b4f6d, type: 2}
   armor: 5

@@ -1,49 +1,45 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 [System.Serializable]
 public class ItemSlot
 {
     public ItemData ItemData { get; private set; }
-    public int itemQuantity;
+    public int ItemQuantity { get; protected set; }
 
 
     public ItemSlot(ItemData itemData = null, int itemQuantity = 0)
     {
         this.ItemData = itemData;
-        this.itemQuantity = itemQuantity;
+        this.ItemQuantity = itemQuantity;
     }
 
     public ItemSlot(ItemSlot other)
     {
         this.ItemData = other.ItemData;
-        this.itemQuantity = other.itemQuantity;
+        this.ItemQuantity = other.ItemQuantity;
     }
 
 
     public string GetItemName() => ItemData.name;
-    public Sprite GetItemIcon() => ItemData.icon;
+    public Sprite GetItemIcon() 
+    {
+        if(ItemData == null) return null;
+        return ItemData.icon;
+    } 
     public ItemType GetItemType() => ItemData.itemType;
     public int GetItemMaxQuantity() => ItemData.max_quantity;
-    public int ItemQuantity
-    { 
-        get { return itemQuantity; } 
-        private set { itemQuantity = value; }
-    }
 
 
     public bool IsFullSlot()
     {
-        return this.itemQuantity >= ItemData.max_quantity;
+        return this.ItemQuantity >= ItemData.max_quantity;
     }
 
     public bool AddNewItem(ItemData itemObject)
     {
         this.ItemData = itemObject;
-        itemQuantity = 1;
+        ItemQuantity = 1;
         return false;
     }
 
@@ -51,10 +47,10 @@ public class ItemSlot
     {
         if (HasItem() == false) return false;
 
-        itemQuantity++;
-        if (itemQuantity > this.ItemData.max_quantity)
+        ItemQuantity++;
+        if (ItemQuantity > this.ItemData.max_quantity)
         {
-            itemQuantity = this.ItemData.max_quantity;
+            ItemQuantity = this.ItemData.max_quantity;
             return false;
         }
         return true;
@@ -67,9 +63,9 @@ public class ItemSlot
     /// <returns></returns>
     public bool RemoveItem()
     {
-        if (itemQuantity > 1)
+        if (ItemQuantity > 1)
         {
-            itemQuantity--;
+            ItemQuantity--;
             return true;
         }
         else
@@ -91,20 +87,20 @@ public class ItemSlot
         if (HasItem() == false)
         {
             this.ItemData = addedSlot.ItemData;
-            this.itemQuantity= addedSlot.itemQuantity;
+            this.ItemQuantity= addedSlot.ItemQuantity;
             addedSlot = new ItemSlot();
         }
         else
         {
             if(ItemData.Equals(addedSlot.ItemData))
             {
-                int totalOfItemQuantity = itemQuantity + addedSlot.itemQuantity;
+                int totalOfItemQuantity = ItemQuantity + addedSlot.ItemQuantity;
                 if (totalOfItemQuantity > this.ItemData.max_quantity)
                 {
                     this.ItemQuantity = this.ItemData.max_quantity;
-                    addedSlot.itemQuantity = totalOfItemQuantity - this.ItemData.max_quantity;
+                    addedSlot.ItemQuantity = totalOfItemQuantity - this.ItemData.max_quantity;
 
-                    addedSlot = new ItemSlot(addedSlot.ItemData, addedSlot.itemQuantity);
+                    addedSlot = new ItemSlot(addedSlot.ItemData, addedSlot.ItemQuantity);
                 }
                 else
                 {                   
@@ -131,22 +127,22 @@ public class ItemSlot
         if (ItemData != addedSlot.ItemData)
             Debug.LogError("Two item added not the same.");
 
-        return itemQuantity + addedSlot.ItemQuantity <= GetItemMaxQuantity();
+        return ItemQuantity + addedSlot.ItemQuantity <= GetItemMaxQuantity();
     }
 
 
     public void ClearSlot()
     {
         ItemData = null;
-        itemQuantity = 0;
+        ItemQuantity = 0;
     }
 
     public void SetItemQuantity(int value)
     {
         if (value > this.ItemData.max_quantity)
-            this.itemQuantity = this.ItemData.max_quantity;
+            this.ItemQuantity = this.ItemData.max_quantity;
         else
-            this.itemQuantity = value;
+            this.ItemQuantity = value;
     }
 
 
@@ -162,7 +158,7 @@ public class ItemSlot
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(ItemData, itemQuantity);
+        return HashCode.Combine(ItemData, ItemQuantity);
     }
 }
 

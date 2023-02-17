@@ -17,6 +17,11 @@ public static class EventManager
     public static event Action OnGridChanged;
     public static event Action OnGetOutputItem;
 
+
+    public static event Action OnInputUpgradeItemChanged;
+    public static event Action OnMaterialInputUpgradeItemChanged;
+
+
     public static void PlayerInventoryUpdate() => OnInventoryUpdate?.Invoke();
     public static void ChestInventoryUpdate() => OnChestInventoryUpdate?.Invoke();
 
@@ -30,4 +35,7 @@ public static class EventManager
 
     public static void GridChanged() => OnGridChanged?.Invoke();
     public static void GetOutputItem() => OnGetOutputItem?.Invoke();
+
+    public static void InputUpgradeItemChanged() => OnInputUpgradeItemChanged?.Invoke();
+    public static void MaterialInputUpgradeItemChanged() => OnMaterialInputUpgradeItemChanged?.Invoke();
 }

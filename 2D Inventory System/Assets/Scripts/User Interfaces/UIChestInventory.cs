@@ -64,7 +64,9 @@ public class UIChestInventory : Singleton<UIChestInventory>
         for (int i = 0; i < MAX_NORMAL_CHEST_SLOT; i++)
         {
             GameObject slotObject = Instantiate(itemSlotPrefab, this.transform);
-            slotObject.GetComponent<UIItemSlot>().Set(null, null, (short)i);
+            slotObject.GetComponent<UIItemSlot>().SetIndex(i);
+            slotObject.GetComponent<UIItemSlot>().SetData(null);
+
             Utilities.AddEvent(slotObject, EventTriggerType.PointerClick, (baseEvent) => OnClick(baseEvent, slotObject));
             Utilities.AddEvent(slotObject, EventTriggerType.PointerEnter, delegate { OnEnter(slotObject); });
             Utilities.AddEvent(slotObject, EventTriggerType.PointerExit, delegate { OnExit(slotObject); });
@@ -76,7 +78,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
 
         // Update Inventory UI at the first time when start game.
         Invoke("UpdateInventoryUI", .1f);
-        gameObject.GetComponentInParent<UIDragPanel>().gameObject.SetActive(false);
+        UIManager.Instance.ChestInventoryCanvas.SetActive(false);
     }
 
     public void SetChestInventoryData(ChestInventory chestInventory)
@@ -88,7 +90,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
         itemInHand = this.player.ItemInHand;
         uiItemInHand = UIItemInHand.Instance;
 
-        UpdateInventoryUI();     
+        UpdateInventoryUI();
     }
 
 
@@ -154,26 +156,8 @@ public class UIChestInventory : Singleton<UIChestInventory>
     public void UpdateInventoryUIAt(int index)
     {
         if (chestInventory == null) return;
-
         UIItemSlot uiSlot = itemSlotList[index].GetComponent<UIItemSlot>();
-        if (chestInventory.inventory[index].HasItem())
-        {
-            uiSlot.slotImage.sprite = chestInventory.inventory[index].ItemData.icon;
-            uiSlot.slotImage.GetComponent<RectTransform>().SetAsLastSibling();
-
-            int itemQuantity = chestInventory.inventory[index].itemQuantity;
-
-            if (itemQuantity > 1)
-                uiSlot.amountItemInSlotText.text = chestInventory.inventory[index].itemQuantity.ToString();
-            else
-                uiSlot.amountItemInSlotText.text = "";
-        }
-        else
-        {
-            uiSlot.slotImage.sprite = null;
-            uiSlot.slotImage.GetComponent<RectTransform>().SetAsFirstSibling();
-            uiSlot.amountItemInSlotText.text = "";
-        }
+        uiSlot.SetData(chestInventory.inventory[index]);
     }
 
     // LOGIC 
@@ -436,7 +420,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
             });
             chestInventory.inventory[index] = itemSlotToSwap_01;
 
-            uiItemInHand.DisplayItemInHand();
+            uiItemInHand.UpdateItemInHandUI();
         }
 
 
@@ -472,7 +456,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
             slotIndex = index
         });
 
-        uiItemInHand.DisplayItemInHand();
+        uiItemInHand.UpdateItemInHandUI();
     }
 
     /// <summary>
@@ -481,10 +465,10 @@ public class UIChestInventory : Singleton<UIChestInventory>
     /// <param name="index">Index used in itemSlotList at specific itemSlot you want to get.</param>
     private void HalveItemSlotQuantity(int index)
     {
-        if (chestInventory.inventory[index].itemQuantity > 1)
+        if (chestInventory.inventory[index].ItemQuantity > 1)
         {
-            int splitItemQuantity = chestInventory.inventory[index].itemQuantity / 2;
-            chestInventory.inventory[index].SetItemQuantity(chestInventory.inventory[index].itemQuantity - splitItemQuantity);
+            int splitItemQuantity = chestInventory.inventory[index].ItemQuantity / 2;
+            chestInventory.inventory[index].SetItemQuantity(chestInventory.inventory[index].ItemQuantity - splitItemQuantity);
 
             var chosenSlot = new ItemSlot(chestInventory.inventory[index]);
             chosenSlot.SetItemQuantity(splitItemQuantity);
@@ -494,7 +478,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
                 slotIndex = index
             });
 
-            uiItemInHand.DisplayItemInHand();
+            uiItemInHand.UpdateItemInHandUI();
         }
         else
         {
@@ -524,7 +508,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
                 slotStoredType = StoredType.ChestInventory,
                 slotIndex = index
             });
-            uiItemInHand.DisplayItemInHand();
+            uiItemInHand.UpdateItemInHandUI();
 
         }
         else

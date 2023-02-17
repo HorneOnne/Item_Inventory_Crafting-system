@@ -21,4 +21,5 @@
     MagicStaff = 18,
     Chest = 19,
     Workbench = 20,
+    Anvil = 21,
 }

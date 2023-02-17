@@ -55,7 +55,7 @@ public class UIItemInHand : Singleton<UIItemInHand>
     }
 
 
-    public void DisplayItemInHand(Transform parent = null)
+    public void UpdateItemInHandUI(Transform parent = null)
     {
         if (itemInHand.HasItemData() == false)
         {
@@ -71,7 +71,7 @@ public class UIItemInHand : Singleton<UIItemInHand>
         else
         {
             uiSlotDisplay = Instantiate(uiSlotPrefab, this.transform.parent.transform);
-            UISlotImage = uiSlotDisplay.GetComponent<UIItemSlot>().slotImage;
+            UISlotImage = uiSlotDisplay.GetComponent<UIItemSlot>().mainImage;
             UISlotImage.sprite = itemInHand.GetItemData().icon;
             SetItemQuantityText();
 
@@ -87,9 +87,9 @@ public class UIItemInHand : Singleton<UIItemInHand>
 
     private void SetItemQuantityText()
     {
-        int itemQuantity = itemInHand.GetSlot().itemQuantity;
+        int itemQuantity = itemInHand.GetSlot().ItemQuantity;
         if (itemQuantity > 1)
-            uiSlotDisplay.GetComponent<UIItemSlot>().amountItemInSlotText.text = itemInHand.GetSlot().itemQuantity.ToString();
+            uiSlotDisplay.GetComponent<UIItemSlot>().amountItemInSlotText.text = itemInHand.GetSlot().ItemQuantity.ToString();
         else
             uiSlotDisplay.GetComponent<UIItemSlot>().amountItemInSlotText.text = "";
     }

@@ -1,7 +1,4 @@
 using MyGame.Ultilities;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -151,7 +148,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
             if (canEquip)
             {
                 itemInHand.Set(copyEquipmentSlot, new ItemSlotData());
-                uiItemInHand.DisplayItemInHand();
+                uiItemInHand.UpdateItemInHandUI();
                 
             }                
         }
@@ -177,7 +174,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
         equipmentSlot.ClearSlot();
         itemInHand.Set(itemSlot, new ItemSlotData());
 
-        uiItemInHand.DisplayItemInHand();
+        uiItemInHand.UpdateItemInHandUI();
     }
 
     #endregion LOCGIC HANDLER
