@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 public class ItemInHand : MonoBehaviour
 {
@@ -32,22 +33,73 @@ public class ItemInHand : MonoBehaviour
     }
 
 
-
-
-
     public ItemData GetItemData()
     {
         return itemSlot.ItemData;
     }
 
-    public void Set(ItemSlot takenSlot, ItemSlotData from)
+    public void Set(ItemSlot takenSlot, int slotIndex = -1, StoredType storageType = StoredType.Another, bool forceUpdateUI = false, Transform parent = null)
     {
-        itemSlot = takenSlot;
-        ItemGetFrom = from;
+        itemSlot = new ItemSlot(takenSlot);
+        ItemGetFrom = new ItemSlotData 
+        { 
+            slotIndex= slotIndex,
+            slotStoredType= storageType
+        };
 
         firstGet = true;
         EventManager.ItemInHandChanged();
+
+        if (forceUpdateUI)
+        {
+            uiItemInHand.UpdateItemInHandUI(parent);
+        }
     }
+
+
+    public void Swap(ref List<ItemSlot> inventory, int slotIndex, StoredType storageType = StoredType.Another, bool forceUpdateUI = false, Transform parent = null)
+    {
+        var inHandSlotTemp = new ItemSlot(this.itemSlot);
+        var invSlotChoosen = inventory[slotIndex]; 
+
+        this.itemSlot = new ItemSlot(invSlotChoosen);
+        inventory[slotIndex] = new ItemSlot(inHandSlotTemp);
+
+        ItemGetFrom = new ItemSlotData
+        {
+            slotIndex = slotIndex,
+            slotStoredType = storageType
+        };
+
+
+        firstGet = true;
+        EventManager.ItemInHandChanged();
+
+        if(forceUpdateUI)
+        {
+            uiItemInHand.UpdateItemInHandUI(parent);
+        }
+    }
+
+
+    public void SplitItemSlotQuantityInInventoryAt(ref List<ItemSlot> inventory, int slotIndex)
+    {
+        int itemQuantity = inventory[slotIndex].ItemQuantity;
+        if (itemQuantity > 1)
+        {
+            int splitItemQuantity = itemQuantity / 2;
+            inventory[slotIndex].SetItemQuantity(itemQuantity - splitItemQuantity);
+
+            var chosenSlot = new ItemSlot(inventory[slotIndex]);
+            chosenSlot.SetItemQuantity(splitItemQuantity);
+            Set(chosenSlot, slotIndex, StoredType.PlayerInventory, true);
+        }
+        else
+        {
+            Swap(ref inventory, slotIndex, StoredType.PlayerInventory, true);
+        }
+    }
+
 
     public void SetItemObject(Item item)
     {

@@ -172,7 +172,7 @@ public class UIAnvil : Singleton<UIAnvil>
 
     private void PerformItemInputSlot_HandEmptySlotHasClick()
     {
-        itemInHand.Set(new ItemSlot(anvil.UpgradeItemInputSlot), new ItemSlotData());
+        itemInHand.Set(new ItemSlot(anvil.UpgradeItemInputSlot));
         anvil.UpgradeItemInputSlot.ClearSlot();
     }
 
@@ -271,7 +271,7 @@ public class UIAnvil : Singleton<UIAnvil>
         if (anvil == null) return;
         if (anvil.IsSufficient == false) return;
 
-        itemInHand.Set(new ItemSlot(anvil.UpgradeItemOutputSlot), new ItemSlotData());
+        itemInHand.Set(new ItemSlot(anvil.UpgradeItemOutputSlot));
         anvil.UpgradeItemOutputSlot.ClearSlot();
 
         // Remove itemInputUpgrade and materials need to upgrade.
@@ -373,7 +373,7 @@ public class UIAnvil : Singleton<UIAnvil>
     private void PerformMaterialInputSlot_HandEmptySlotHasClick(GameObject clickedObject)
     {
         int index = GetSlotIndex(clickedObject);
-        itemInHand.Set(new ItemSlot(anvil.MaterialsHasBeenFilled[index]), new ItemSlotData());
+        itemInHand.Set(new ItemSlot(anvil.MaterialsHasBeenFilled[index]));
         anvil.MaterialsHasBeenFilled[index].ClearSlot();
     }
 

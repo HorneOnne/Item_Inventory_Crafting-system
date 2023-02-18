@@ -431,13 +431,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     {
         var chosenSlot = new ItemSlot(craftingTableManager.craftingGridData[index]);
         craftingTableManager.craftingGridData[index].ClearSlot();
-        itemInHand.Set(chosenSlot, new ItemSlotData 
-        {
-            slotStoredType = StoredType.CraftingTable, 
-            slotIndex = index
-        });
-
-        ui_itemInHand.UpdateItemInHandUI(this.transform);
+        itemInHand.Set(chosenSlot, index, StoredType.CraftingTable, true, this.transform);
     }
 
     private void HalveItemSlotQuantity(int index)
@@ -449,13 +443,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
 
             var chosenSlot = new ItemSlot(craftingTableManager.craftingGridData[index]);
             chosenSlot.SetItemQuantity(splitItemQuantity);
-            itemInHand.Set(chosenSlot, new ItemSlotData
-            {
-                slotStoredType = StoredType.CraftingTable,
-                slotIndex = index
-            });
-
-            ui_itemInHand.UpdateItemInHandUI();
+            itemInHand.Set(chosenSlot, index, StoredType.CraftingTable, true);
         }
         else
         {
@@ -493,12 +481,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
                 ClearItemInHand();
             }*/
 
-            itemInHand.Set(craftingTableManager.craftingGridData[index].AddItemsFromAnotherSlot(itemInHand.GetSlot()), new ItemSlotData
-            {
-                slotStoredType = StoredType.CraftingTable,
-                slotIndex = index
-            });
-            ui_itemInHand.UpdateItemInHandUI();
+            itemInHand.Set(craftingTableManager.craftingGridData[index].AddItemsFromAnotherSlot(itemInHand.GetSlot()), index, StoredType.CraftingTable, true);
         }
         else
         {
@@ -514,14 +497,8 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             var itemToSwap_01 = itemInHand.GetSlot();
             var itemToSwap_02 = new ItemSlot(craftingTableManager.craftingGridData[index]);
             craftingTableManager.craftingGridData[index].ClearSlot();
-            itemInHand.Set(itemToSwap_02, new ItemSlotData
-            {
-                slotStoredType = StoredType.CraftingTable,
-                slotIndex = index
-            });
+            itemInHand.Set(itemToSwap_02, index, StoredType.CraftingTable, true, this.transform);
             craftingTableManager.craftingGridData[index] = itemToSwap_01;
-
-            ui_itemInHand.UpdateItemInHandUI(this.transform);
         }
 
 
@@ -531,11 +508,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             var itemToSwap_01 = itemInHand.GetSlot();
             var itemToSwap_02 = new ItemSlot(craftingTableManager.craftingGridData[index]);
             craftingTableManager.craftingGridData[index].ClearSlot();
-            itemInHand.Set(itemToSwap_02, new ItemSlotData
-            {
-                slotStoredType = StoredType.CraftingTable,
-                slotIndex = index
-            });;
+            itemInHand.Set(itemToSwap_02, index, StoredType.CraftingTable);
             craftingTableManager.craftingGridData[index] = itemToSwap_01;
         }
     }

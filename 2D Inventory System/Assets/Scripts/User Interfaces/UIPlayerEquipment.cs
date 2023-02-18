@@ -147,9 +147,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
 
             if (canEquip)
             {
-                itemInHand.Set(copyEquipmentSlot, new ItemSlotData());
-                uiItemInHand.UpdateItemInHandUI();
-                
+                itemInHand.Set(copyEquipmentSlot, slotIndex: -1, storageType: StoredType.Another, true);           
             }                
         }
         else
@@ -172,9 +170,7 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
     {
         ItemSlot itemSlot = new ItemSlot(equipmentSlot);
         equipmentSlot.ClearSlot();
-        itemInHand.Set(itemSlot, new ItemSlotData());
-
-        uiItemInHand.UpdateItemInHandUI();
+        itemInHand.Set(itemSlot, slotIndex: -1, storageType: StoredType.Another, true);
     }
 
     #endregion LOCGIC HANDLER

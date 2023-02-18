@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// ItemSlot is a combination of item data and item quantity.
+/// </summary>
 [System.Serializable]
 public class ItemSlot
 {
@@ -154,6 +157,13 @@ public class ItemSlot
     public bool HasItem()
     {
         return ItemData != null;
+    }
+
+    public static bool IsSameItem(ItemSlot itemSlotA, ItemSlot itemSlotB)
+    {
+        if (itemSlotA == null || itemSlotB == null) return false;
+        if (itemSlotA.ItemData == null || itemSlotB.ItemData == null) return false;
+        return itemSlotA.ItemData.Equals(itemSlotB.ItemData);
     }
 
     public override int GetHashCode()

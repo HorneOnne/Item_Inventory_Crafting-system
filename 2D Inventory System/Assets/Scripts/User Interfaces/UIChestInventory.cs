@@ -413,14 +413,8 @@ public class UIChestInventory : Singleton<UIChestInventory>
             var itemSlotToSwap_01 = itemInHand.GetSlot();
             var itemSlotToSwap_02 = new ItemSlot(chestInventory.inventory[index]);
             chestInventory.inventory[index].ClearSlot();
-            itemInHand.Set(itemSlotToSwap_02, new ItemSlotData
-            {
-                slotStoredType = StoredType.ChestInventory,
-                slotIndex = index
-            });
+            itemInHand.Set(itemSlotToSwap_02, index, StoredType.ChestInventory, true);
             chestInventory.inventory[index] = itemSlotToSwap_01;
-
-            uiItemInHand.UpdateItemInHandUI();
         }
 
 
@@ -430,11 +424,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
             var itemSlotToSwap_01 = itemInHand.GetSlot();
             var itemSlotToSwap_02 = new ItemSlot(chestInventory.inventory[index]);
             chestInventory.inventory[index].ClearSlot();
-            itemInHand.Set(itemSlotToSwap_02, new ItemSlotData
-            {
-                slotStoredType = StoredType.ChestInventory,
-                slotIndex = index
-            });
+            itemInHand.Set(itemSlotToSwap_02, index, StoredType.ChestInventory);
             chestInventory.inventory[index] = itemSlotToSwap_01;
         }
     }
@@ -450,13 +440,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
     {
         var chosenSlot = new ItemSlot(chestInventory.inventory[index]);
         chestInventory.inventory[index].ClearSlot();
-        itemInHand.Set(chosenSlot, new ItemSlotData
-        {
-            slotStoredType = StoredType.ChestInventory,
-            slotIndex = index
-        });
-
-        uiItemInHand.UpdateItemInHandUI();
+        itemInHand.Set(chosenSlot, index, StoredType.ChestInventory, true);
     }
 
     /// <summary>
@@ -472,13 +456,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
 
             var chosenSlot = new ItemSlot(chestInventory.inventory[index]);
             chosenSlot.SetItemQuantity(splitItemQuantity);
-            itemInHand.Set(chosenSlot, new ItemSlotData
-            {
-                slotStoredType = StoredType.ChestInventory,
-                slotIndex = index
-            });
-
-            uiItemInHand.UpdateItemInHandUI();
+            itemInHand.Set(chosenSlot, index, StoredType.ChestInventory, true);
         }
         else
         {
@@ -503,12 +481,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
             Debug.Log("Same Object");
 
             var returnSlot = chestInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot());
-            itemInHand.Set(returnSlot, new ItemSlotData
-            {
-                slotStoredType = StoredType.ChestInventory,
-                slotIndex = index
-            });
-            uiItemInHand.UpdateItemInHandUI();
+            itemInHand.Set(returnSlot, index, StoredType.ChestInventory, true);
 
         }
         else

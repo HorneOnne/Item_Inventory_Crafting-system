@@ -28,6 +28,12 @@ public abstract class ItemData : ScriptableObject
         return true;
     }
 
+    public static bool IsSameItem(ItemData itemA, ItemData itemB)
+    {
+        if (itemA == null || itemB == null) return false;
+        return itemA.Equals(itemB);
+    }
+
     public override int GetHashCode()
     {
         return HashCode.Combine(ItemName, icon, itemType, max_quantity, description, duration);
