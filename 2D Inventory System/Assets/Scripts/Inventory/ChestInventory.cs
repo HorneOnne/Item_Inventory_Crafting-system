@@ -51,7 +51,7 @@ public class ChestInventory : MonoBehaviour
     }
 
 
-    public void AddNewItemIntoInventoryAtIndex(int index, ItemData item)
+    public void AddNewItemAt(int index, ItemData item)
     {
         inventory[index].AddNewItem(item);
         EventManager.ChestInventoryUpdate();

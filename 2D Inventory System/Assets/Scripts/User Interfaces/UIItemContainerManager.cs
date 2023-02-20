@@ -31,14 +31,12 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
     [Header("Logic References")]
     public Player player;
     private ItemInHand itemInHand;
-    private UIItemInHand uiItemInHand;
 
 
 
     private void Start()
     {
         itemInHand = player.ItemInHand;
-        uiItemInHand = UIItemInHand.Instance;
         LoadAllItems();
     }
 
@@ -103,8 +101,10 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
     private void OnSlotClicked(BaseEventData baseEvent, GameObject clickedObj)
     {
         ItemData item = itemScriptableObjectList[clickedObj.GetComponent<UIItemSlot>().SlotIndex];
-        itemInHand.Set(new ItemSlot(item, item.max_quantity));
-        uiItemInHand.UpdateItemInHandUI();
+        if(player.PlayerInputHandler.PressUtilityKeyInput)
+            itemInHand.Set(new ItemSlot(item, item.max_quantity), -1, StoredType.Another, true);
+        else
+            itemInHand.Set(new ItemSlot(item, 1), -1, StoredType.Another, true);
     }
 
     // =======================================================================

@@ -208,8 +208,8 @@ MonoBehaviour:
   player: {fileID: 947877364}
   itemSlotList: []
   itemSlotPrefab: {fileID: 7458145588481894704, guid: 1ecea798bf505ab4a8ef672c1fa8332a, type: 3}
-  pressIntervalTime: 0.05
-  clickToPressInterval: 0.3
+  dragType: 0
+  pressIntervalTime: 0.1
 --- !u!114 &40666623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -519,6 +519,10 @@ MonoBehaviour:
   - {fileID: 7190463713838927434, guid: 0f8f403f6cc7da44db42c306f69ba98f, type: 3}
   - {fileID: 312586115855323783, guid: a0f3c3c8fe259a64680e479376e6753e, type: 3}
   - {fileID: 1416386903674173468, guid: b548d1e9d446d6246b945e6ee2d9b95c, type: 3}
+  - {fileID: 868897557705245351, guid: 60c29473405b2224c86c74c8e393dfb2, type: 3}
+  - {fileID: 3018514922614819798, guid: 1b2339a3339f975438e5127625ecf149, type: 3}
+  - {fileID: 2529793786540057903, guid: 5d1d205d20a92c044a1f5f4dc838a9a5, type: 3}
+  - {fileID: 6339103748529592072, guid: 2e2d5c61105126a41baa295962e7b126, type: 3}
   itemContainerParent: {fileID: 2089559315}
 --- !u!4 &86529247
 Transform:
@@ -3392,6 +3396,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 196c224353f79504386c5202a6c998ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <CurrentMouseState>k__BackingField: 0
   utilityKeyBinding: 304
   dropItemKey: 116
 --- !u!50 &947877368
@@ -3790,8 +3795,8 @@ MonoBehaviour:
   player: {fileID: 0}
   itemSlotList: []
   itemSlotPrefab: {fileID: 7458145588481894704, guid: 1ecea798bf505ab4a8ef672c1fa8332a, type: 3}
+  dragType: 0
   pressIntervalTime: 0.05
-  clickToPressInterval: 0.3
 --- !u!1001 &1031687916
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5032,7 +5037,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 111, y: 9}
+  m_AnchoredPosition: {x: 111, y: 208}
   m_SizeDelta: {x: 468.78, y: 130.542}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1403378297
@@ -5645,7 +5650,6 @@ MonoBehaviour:
   - {fileID: 1599830935}
   - {fileID: 1957052207}
   outputSlot: {fileID: 597088884}
-  clickToPressInterval: 0.3
 --- !u!114 &1668710990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5745,7 +5749,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 9eaf8b869decda1429521359c7981c97, type: 2}
     - {fileID: 11400000, guid: d7f221a207da0c44cb24468b6a871024, type: 2}
     - {fileID: 11400000, guid: 0597a3afe504c244a96b870527755cf3, type: 2}
-  craftingGridData: []
+  inputSlots: []
   player: {fileID: 947877364}
 --- !u!114 &1668710991
 MonoBehaviour:

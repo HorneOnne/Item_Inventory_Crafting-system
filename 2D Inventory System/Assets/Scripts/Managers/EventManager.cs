@@ -3,23 +3,28 @@ using System;
 
 public static class EventManager 
 {
+    // Player events
     public static event Action OnInventoryUpdate;
-    public static event Action OnChestInventoryUpdate;
+    public static event Action OnItemInHandChanged;
+    public static event Action OnPlayerEquipmentChanged;
 
+    // Chest events
+    public static event Action OnChestInventoryUpdate;
     public static event Action OnOpenChest;
     public static event Action OnCloseChest;
 
-    public static event Action OnItemInHandChanged;
+    
 
-    public static event Action OnPlayerEquipmentChanged;
-
-
+    // Crafting table events
     public static event Action OnGridChanged;
     public static event Action OnGetOutputItem;
 
 
+    // Anvil (Upgrade items) events
     public static event Action OnInputUpgradeItemChanged;
     public static event Action OnMaterialInputUpgradeItemChanged;
+
+
 
 
     public static void PlayerInventoryUpdate() => OnInventoryUpdate?.Invoke();

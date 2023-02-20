@@ -19,6 +19,12 @@ MonoBehaviour:
   duration: 0.3
   currentLevel: 1
   maxLevel: 3
-  nextLvItemData: {fileID: 0}
+  upgradeRecipe:
+    materials:
+    - itemData: {fileID: 11400000, guid: e1a9aea5ab73b5b44894301aed77fa74, type: 2}
+      quantity: 64
+    outputItem:
+      itemData: {fileID: 11400000, guid: 7f5c629c9c7136448ba4b464b31d70cc, type: 2}
+      quantity: 1
   baseAttackDamage: 11
   releaseSpeed: 50

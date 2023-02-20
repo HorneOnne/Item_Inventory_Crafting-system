@@ -100,20 +100,18 @@ public abstract class Item : MonoBehaviour, IDroppable, ICollectible, IUseable
         Debug.Log(ItemData.itemType);
     }*/
 
-    public virtual void Drop(Player player, Vector2 position, Vector3 rotation)
+    public virtual void Drop(Player player, Vector2 position, Vector3 rotation, bool forceDestroyItemObject = false)
     {
-        var itemInHand = player.ItemInHand;
-        if (itemInHand.HasItemData() == false) return;
-        var itemSlotDrop = new ItemSlot(itemInHand.GetSlot());
+        var itemSlotDrop = new ItemSlot(ItemSlot);
         var itemPrefab = ItemContainerManager.Instance.GetItemPrefab($"DropItem");
-        var itemObject = Instantiate(itemPrefab, position, Quaternion.Euler(rotation), SaveManager.Instance.itemContainerParent);
-
-        
+        var itemObject = Instantiate(itemPrefab, position, Quaternion.Euler(rotation), SaveManager.Instance.itemContainerParent);    
         itemObject.GetComponent<DropItem>().Set(itemSlotDrop);
         itemObject.transform.localScale = new Vector3(2, 2, 1);
 
-        itemInHand.ClearSlot();
-        UIItemInHand.Instance.UpdateItemInHandUI();
+        if(forceDestroyItemObject)
+        {
+            Destroy(this.gameObject);
+        }
     }
 
 

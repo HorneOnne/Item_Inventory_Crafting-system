@@ -128,4 +128,5 @@ public class PlayerEquipment : MonoBehaviour
             chestSr.sprite = null;
     }
 
+
 }

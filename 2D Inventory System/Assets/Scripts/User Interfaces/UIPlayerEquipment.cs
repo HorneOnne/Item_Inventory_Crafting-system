@@ -7,7 +7,6 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
     [Header("References")]
     public Player player;
     private ItemInHand itemInHand;
-    private UIItemInHand uiItemInHand;
     private PlayerEquipment playerEquipment;
 
 
@@ -21,14 +20,10 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
     {
         playerEquipment = player.PlayerEquipment;
         itemInHand = player.ItemInHand;
-        uiItemInHand = UIItemInHand.Instance;
-
 
         AddUIItemSLotEvent(uiHelmSlot);
         AddUIItemSLotEvent(uiChestSlot);
         AddUIItemSLotEvent(uiShieldSlot);
-
-        //UpdateEquipmentUI();
     }
 
 
@@ -96,7 +91,8 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
             else
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
-                GetItemSlot(equipmentSlot);
+                itemInHand.Set(equipmentSlot, slotIndex: -1, storageType: StoredType.Another, true);
+                equipmentSlot.ClearSlot();
             }
         }
         else
@@ -160,18 +156,6 @@ public class UIPlayerEquipment : Singleton<UIPlayerEquipment>
     }
 
 
-
-
-    /// <summary>
-    /// Method remove itemSlot in itemSlotList and put it in "itemInHand".
-    /// </summary>
-    /// <param name="index">Index used in itemSlotList at specific itemSlot you want to get.</param>
-    private void GetItemSlot(ItemSlot equipmentSlot)
-    {
-        ItemSlot itemSlot = new ItemSlot(equipmentSlot);
-        equipmentSlot.ClearSlot();
-        itemInHand.Set(itemSlot, slotIndex: -1, storageType: StoredType.Another, true);
-    }
 
     #endregion LOCGIC HANDLER
 }

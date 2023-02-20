@@ -1,3 +1,4 @@
+using MyGame.Ultilities;
 using System;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -24,18 +25,18 @@ public class PlayerInputHandler : MonoBehaviour
     public bool TriggerJump { get; private set; }
     public bool PressUtilityKeyInput { get; private set; }
     public bool JumpInput { get; private set; }
-    public bool DoubleLeftClickInput { get; private set; }
-    public bool SingleLeftClickInput { get; private set; }
+    [field: SerializeField] public PointerState CurrentMouseState{get; private set;}
     #endregion Properties
 
 
 
     float doubleClickTime = 0.2f; // time in seconds between clicks to register as a double click
     float lastClickTime = 0; // time of last click
-    bool click = false; // variable to track if a click has occurred
-
-
+    float rightPressIntervalTime = 1.0f;
+    private float lastRightPressIntervalTimeCount = 0.0f;
     private float elapsedTime = 0.0f;
+
+    bool isLeftClicking = false; // variable to track if a click has occurred
     private bool firstUseItem = true;   // Use item immediately if it is the first time use, not wait for elapsedTime
 
 
@@ -45,6 +46,7 @@ public class PlayerInputHandler : MonoBehaviour
     private float offsetAngle;
 
 
+    [Header("Key binding")]
     public KeyCode utilityKeyBinding = KeyCode.LeftShift;
     public KeyCode dropItemKey = KeyCode.T;
 
@@ -112,21 +114,39 @@ public class PlayerInputHandler : MonoBehaviour
             if (itemInHand.GetItemObject() != null)
             {
                 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                itemInHand.GetItemObject().Drop(player, mousePosition, Vector3.zero);
+                itemInHand.GetItemObject().Drop(player, mousePosition, Vector3.zero, true);
+                itemInHand.ClearSlot();
             }
         }
 
 
-        LeftClickHandler();
-
-
-        if(itemInHand.HasItemObject() && itemInHand.GetItemObject().canShow == true)
+        if (itemInHand.HasItemObject() && itemInHand.GetItemObject().canShow == true)
             RotateHoldItem();
+
+
+
+        HandleMouseEvents();
+
+
+        if(CurrentMouseState == PointerState.DoubleLeftClick)
+        {
+            StackItem();
+        }
+        else if(CurrentMouseState == PointerState.SingleLeftClick)
+        {
+            OpenCloseChest();
+            UseItem();
+        }
+        else if(CurrentMouseState == PointerState.LeftPress)
+        {
+            UseItem();
+        }
+        
     }
 
 
 
-    private void LeftClickHandler()
+    private void HandleMouseEvents()
     {  
         if (Input.GetMouseButtonDown(0))
         {
@@ -134,39 +154,45 @@ public class PlayerInputHandler : MonoBehaviour
             if (Time.time - lastClickTime < doubleClickTime)
             {
                 //Debug.Log("Double click detected");                
-                click = false;
-
-                DoubleLeftClick();
+                isLeftClicking = false;
+                CurrentMouseState = PointerState.DoubleLeftClick;
             }
             else
             {
                 // first click
                 lastClickTime = Time.time;
-                click = true;
+                isLeftClicking = true;
+                CurrentMouseState = PointerState.SingleLeftClick;
             }
         }
-        else if (Input.GetMouseButtonUp(0) && click)
+        else if (Input.GetMouseButtonUp(0) && isLeftClicking)
         {
             //Debug.Log("Single click detected");           
-            click = false;
-
-            SingleLeftClick();
+            isLeftClicking = false;
+            CurrentMouseState = PointerState.Null;
         }
         else if(Input.GetMouseButton(0))
         {
-            UseItem();
-            //SingleLeftClick();
+            CurrentMouseState = PointerState.LeftPress;
+        }
+        else if (Input.GetMouseButton(1))
+        {
+            CurrentMouseState = PointerState.RightPress;
+            if(Time.time - lastRightPressIntervalTimeCount >= rightPressIntervalTime)
+            {
+                CurrentMouseState = PointerState.RightPressAfterWait;            
+            }
+        }
+        else if (Input.GetMouseButtonUp(1))
+        {
+            CurrentMouseState = PointerState.Null;
+            lastRightPressIntervalTimeCount = Time.time;
         }
     }
 
 
-    private void SingleLeftClick()
-    {
-        OpenCloseChest();
-        UseItem();
-    }
 
-    private void DoubleLeftClick()
+    private void StackItem()
     {
         switch (itemInHand.ItemGetFrom.slotStoredType)
         {
@@ -211,26 +237,18 @@ public class PlayerInputHandler : MonoBehaviour
                 Destroy(player.HandHoldItem.GetChild(i).gameObject);           
             }   
         }
-
-
         itemInHand.SetItemObject(null);
+
+
         if (itemInHand.HasItemData())
         {
-            var itemPrefab = ItemContainerManager.Instance.GetItemPrefab(itemInHand.GetItemData().itemType.ToString());
-
-            if (itemPrefab != null)
+            var itemObject = Utilities.InstantiateItemObject(itemInHand.GetSlot(), player.HandHoldItem);
+            itemInHand.SetItemObject(itemObject.GetComponent<Item>());
+            if (itemObject.canShow == false)
             {
-                var itemObject = Instantiate(ItemContainerManager.Instance.GetItemPrefab(itemInHand.GetItemData().itemType.ToString()), player.HandHoldItem.transform);
-                itemObject.GetComponent<Item>().SetData(itemInHand.GetSlot());
-                itemInHand.SetItemObject(itemObject.GetComponent<Item>());
-
-                if (itemObject.GetComponent<Item>().canShow == false)
-                {
-                    itemObject.SetActive(false);
-                }
+                itemObject.gameObject.SetActive(false);
             }
-        }
-        
+        }       
     }
 
 
@@ -330,10 +348,23 @@ public class PlayerInputHandler : MonoBehaviour
     }
 
 
+
+
     public void ResetJumpInput() => TriggerJump = false;
 
     public float GetTimeLeftGround()
     {
         return Mathf.Abs(hangCounter - player.playerData.hangTime);
     }
+}
+
+public enum PointerState
+{
+    SingleLeftClick,
+    SingleRightClick,
+    LeftPress,
+    RightPress,
+    RightPressAfterWait,
+    DoubleLeftClick,
+    Null
 }

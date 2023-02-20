@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Unity.Mathematics;
-using UnityEngine.Tilemaps;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
@@ -10,14 +6,8 @@ namespace MyGame.Ultilities
 {
     public static class Utilities
     {    
-        public static Vector2 GetMousPosition()
-        {
-            return Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        }
 
-
-      
-
+   
         public static void AddEvent(GameObject obj, EventTriggerType type, UnityAction<BaseEventData> action)
         {
             EventTrigger trigger = obj.GetComponent<EventTrigger>();
@@ -28,21 +18,22 @@ namespace MyGame.Ultilities
         }
 
 
-        /// <summary>
-        /// Call callback method after an interval of time.
-        /// </summary>
-        /// <param name="callback"></param>
-        /// <param name="timeInterval"></param>
-        /// <param name="timeCount"></param>
-        public static void InvokeMethodByInterval(System.Action callback, float timeInterval, ref float timeCount)
+
+        public static Item InstantiateItemObject(ItemSlot itemSlot, Transform parent = null)
         {
-            timeCount += Time.deltaTime;
-            if (timeCount > timeInterval)
+            GameObject returnGameObject = null;
+
+            var itemPrefab = ItemContainerManager.Instance.GetItemPrefab(itemSlot.ItemData.itemType.ToString());
+            if (itemPrefab != null)
             {
-                callback();
-                timeCount = 0.0f;
+                returnGameObject = MonoBehaviour.Instantiate(ItemContainerManager.Instance.GetItemPrefab(itemSlot.ItemData.itemType.ToString()), parent);
+                returnGameObject.GetComponent<Item>().SetData(itemSlot);
+     
             }
+           
+            return returnGameObject.GetComponent<Item>();
         }
+
     }
 }
 

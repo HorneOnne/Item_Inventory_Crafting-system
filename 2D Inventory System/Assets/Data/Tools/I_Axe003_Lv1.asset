@@ -16,8 +16,15 @@ MonoBehaviour:
   itemType: 14
   max_quantity: 1
   description: 
+  duration: 0
   currentLevel: 1
   maxLevel: 2
-  nextLvItemData: {fileID: 11400000, guid: 20ee756b84e98fe4a855636af05773c2, type: 2}
+  upgradeRecipe:
+    materials:
+    - itemData: {fileID: 11400000, guid: 59db2d8e10c755a4da53fc124717d3f6, type: 2}
+      quantity: 10
+    outputItem:
+      itemData: {fileID: 11400000, guid: 20ee756b84e98fe4a855636af05773c2, type: 2}
+      quantity: 1
   axePower: 0
   attackDamage: 0

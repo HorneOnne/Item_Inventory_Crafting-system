@@ -7,8 +7,8 @@ public class UIChestInventory : Singleton<UIChestInventory>
 {
     [Header("Inventory References")]
     public Player player;
-    private UIItemInHand uiItemInHand;
     private ItemInHand itemInHand;
+    private PlayerInputHandler playerInputHandler;
     private ChestInventory chestInventory;
 
 
@@ -23,16 +23,14 @@ public class UIChestInventory : Singleton<UIChestInventory>
     private GameObject startingSlotDrag;
     private GameObject currentSlotClicked;
 
+
+    [Header("Inventory Settings")]
+    public DragType dragType;
+
     // right press
     [SerializeField] float pressIntervalTime = 1.0f;
     private float pressIntervalTimeCount = 0.0f;
 
-    [SerializeField] float clickToPressInterval = 0.3f;
-    float clickToPressTimeCount = 0.0f;
-
-
-    // =================================
-    PointerState currentPointerState = PointerState.Null;
 
 
     private bool hasChestInventoryData;
@@ -40,6 +38,9 @@ public class UIChestInventory : Singleton<UIChestInventory>
     private const int MAX_NORMAL_CHEST_SLOT = 36;
 
 
+    //Cache
+    private bool handHasItem;
+    private bool slotHasItem;
 
     #region Properties
     public int SlotCount { get => transform.childCount; }
@@ -60,6 +61,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
     private void Start()
     {
         hasChestInventoryData = false;
+        dragType = DragType.Swap;
 
         for (int i = 0; i < MAX_NORMAL_CHEST_SLOT; i++)
         {
@@ -87,8 +89,8 @@ public class UIChestInventory : Singleton<UIChestInventory>
         hasChestInventoryData = true;
 
         this.player = chestInventory.player;
+        playerInputHandler = player.PlayerInputHandler;
         itemInHand = this.player.ItemInHand;
-        uiItemInHand = UIItemInHand.Instance;
 
         UpdateInventoryUI();
     }
@@ -100,8 +102,8 @@ public class UIChestInventory : Singleton<UIChestInventory>
         hasChestInventoryData = false;
 
         this.player = null;
+        playerInputHandler = null;
         itemInHand = null;
-        uiItemInHand = null;
     }
 
 
@@ -109,39 +111,24 @@ public class UIChestInventory : Singleton<UIChestInventory>
     {
         if (hasChestInventoryData == false) return;
 
-        currentPointerState = GetPointerState();
 
-        if (player.ItemInHand.HasItemData())
+        if (itemInHand.HasItemData())
         {
-            if (Input.GetMouseButton(1) && currentSlotClicked != null)
+            if (playerInputHandler.CurrentMouseState == PointerState.RightPressAfterWait)
             {
-                Utilities.InvokeMethodByInterval(() => OnRightPress(GetItemSlotIndex(currentSlotClicked)), pressIntervalTime, ref pressIntervalTimeCount);
+                if (currentSlotClicked != null)
+                {
+                    if (Time.time - pressIntervalTimeCount >= pressIntervalTime)
+                    {
+                        OnRightPress(GetItemSlotIndex(currentSlotClicked));
+                        pressIntervalTimeCount = Time.time;
+                    }
+                }
             }
         }
     }
 
-    private PointerState GetPointerState()
-    {
-        // Mosue Press
-        if (Input.GetMouseButtonDown(1))
-        {
-            return PointerState.RightClick;
-        }
-        if (Input.GetMouseButton(1))
-        {
-            clickToPressTimeCount += Time.deltaTime;
-            if (clickToPressTimeCount > clickToPressInterval)
-                return PointerState.RightPress;
-        }
-        if (Input.GetMouseButtonUp(1))
-        {
-            clickToPressTimeCount = 0f;
-            return PointerState.Null;
-        }
-
-
-        return currentPointerState;
-    }
+    
 
     public void UpdateInventoryUI()
     {
@@ -197,9 +184,6 @@ public class UIChestInventory : Singleton<UIChestInventory>
 
     public void OnExit(GameObject clickedObject)
     {
-        //isEnter = false;
-        currentPointerState = PointerState.Null;
-
         currentSlotDrag = null;
         currentSlotClicked = null;
     }
@@ -242,30 +226,31 @@ public class UIChestInventory : Singleton<UIChestInventory>
 
             if (chestInventory.HasItem(index))
             {
-                if (IsSameItem(chestInventory.inventory[index].ItemData, itemInHand.GetItemData()))
+                bool isSameItem = ItemData.IsSameItem(chestInventory.inventory[index].ItemData, itemInHand.GetItemData());
+                if (isSameItem)
                 {
-                    CombineItemSlotQuantity(index);
+                    ItemSlot remainItems = chestInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot());
+                    itemInHand.Set(remainItems, index, StoredType.ChestInventory, true);
                 }
                 else
                 {
-                    // Swap slot the first time
-                    SwapItemInHandAndInventorySlot(index);
+                    itemInHand.Swap(ref chestInventory.inventory, index, StoredType.ChestInventory, true);
 
-
-                    // Swap slot the second time if there are no items in this STRARTING SLOT. 
-                    int startingSlotIndex = GetItemSlotIndex(startingSlotDrag);
-                    if (chestInventory.inventory[startingSlotIndex].HasItem() == false)
+                    if (dragType == DragType.Swap)
                     {
-                        startingSlotDrag = null;
-                        SwapItemInHandAndInventorySlot(startingSlotIndex);
+                        int startingSlotIndex = GetItemSlotIndex(startingSlotDrag);
+                        if (chestInventory.inventory[startingSlotIndex].HasItem() == false)
+                        {
+                            startingSlotDrag = null;
+                            itemInHand.Swap(ref chestInventory.inventory, startingSlotIndex, StoredType.ChestInventory, true);
+                        }
                     }
-
 
                 }
             }
             else
             {
-                SwapItemInHandAndInventorySlot(index);
+                itemInHand.Swap(ref chestInventory.inventory, index, StoredType.ChestInventory, true);
             }
             UpdateInventoryUI();
         }
@@ -278,68 +263,76 @@ public class UIChestInventory : Singleton<UIChestInventory>
 
     private void OnLeftClick(int index)
     {
-        //if (currentPointerState != PointerState.LeftClick) return;
+        handHasItem = itemInHand.HasItemData();
+        slotHasItem = chestInventory.inventory[index].HasItem();
 
-        if (itemInHand.HasItemData() == false)
+        if (handHasItem == false)
         {
-            if (chestInventory.inventory[index].HasItem() == false)
+            if (slotHasItem == false)
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: EMPTY");
             }
             else
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
-                GetItemSlot(index);
+                itemInHand.Swap(ref chestInventory.inventory, index, StoredType.ChestInventory, true);
             }
         }
         else
         {
-            if (chestInventory.inventory[index].HasItem() == false)
+            if (slotHasItem == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                SwapItemInHandAndInventorySlot(index);
-                itemInHand.RemoveItem();
+                itemInHand.Swap(ref chestInventory.inventory, index, StoredType.ChestInventory, true);
             }
             else
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
-                CombineItemSlotQuantity(index);
+                bool isSameItem = ItemData.IsSameItem(chestInventory.inventory[index].ItemData, itemInHand.GetItemData());
+                if (isSameItem)
+                {
+                    ItemSlot remainItems = chestInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot());
+                    itemInHand.Set(remainItems, index, StoredType.ChestInventory, true);
+                }
+                else
+                {
+                    itemInHand.Swap(ref chestInventory.inventory, index, StoredType.ChestInventory, true);
+                }
             }
         }
     }
 
     private void OnRightClick(int index)
     {
-        if (currentPointerState != PointerState.RightClick) return;
+        handHasItem = itemInHand.HasItemData();
+        slotHasItem = chestInventory.inventory[index].HasItem();
 
-        if (itemInHand.HasItemData() == false)
+        if (handHasItem == false)
         {
-            if (chestInventory.inventory[index].HasItem() == false)
+            if (slotHasItem == false)
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: EMPTY");
             }
             else
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
-                HalveItemSlotQuantity(index);
+                itemInHand.SplitItemSlotQuantityInInventoryAt(ref chestInventory.inventory, index);
             }
         }
         else
         {
-            if (chestInventory.inventory[index].HasItem() == false)
+            if (slotHasItem == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                chestInventory.AddNewItemIntoInventoryAtIndex(index, itemInHand.GetItemData());
+                chestInventory.AddNewItemAt(index, itemInHand.GetItemData());
                 itemInHand.RemoveItem();
 
             }
             else
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
-
-                if (IsSameItem(itemInHand.GetItemData(), chestInventory.GetItem(index)))
+                if (ItemData.IsSameItem(itemInHand.GetItemData(), chestInventory.GetItem(index)))
                 {
-                    //Debug.Log("Same item");
                     bool isSlotNotFull = chestInventory.AddItem(index);
 
                     if (isSlotNotFull)
@@ -354,14 +347,15 @@ public class UIChestInventory : Singleton<UIChestInventory>
 
     private void OnRightPress(int index)
     {
-        if (currentPointerState != PointerState.RightPress) return;
+        handHasItem = itemInHand.HasItemData();
+        slotHasItem = chestInventory.inventory[index].HasItem();
 
-        if (itemInHand.HasItemData() == true)
+        if (handHasItem == true)
         {
-            if (chestInventory.inventory[index].HasItem() == false)
+            if (slotHasItem == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                chestInventory.AddNewItemIntoInventoryAtIndex(index, itemInHand.GetItemData());
+                chestInventory.AddNewItemAt(index, itemInHand.GetItemData());
                 itemInHand.RemoveItem();
 
             }
@@ -369,7 +363,7 @@ public class UIChestInventory : Singleton<UIChestInventory>
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
 
-                if (IsSameItem(itemInHand.GetItemData(), chestInventory.GetItem(index)))
+                if (ItemData.IsSameItem(itemInHand.GetItemData(), chestInventory.GetItem(index)))
                 {
                     //Debug.Log("Same item");
                     bool isSlotNotFull = chestInventory.AddItem(index);
@@ -378,17 +372,11 @@ public class UIChestInventory : Singleton<UIChestInventory>
                     {
                         itemInHand.RemoveItem();
                     }
-
                 }
             }
         }
     }
 
-    public bool IsSameItem(ItemData itemA, ItemData itemB)
-    {
-        if (itemA == null || itemB == null) return false;
-        return itemA == itemB;
-    }
 
     /// <summary>
     /// This method get itemSlot object then return itemSlot object's index in itemSlotList
@@ -401,95 +389,6 @@ public class UIChestInventory : Singleton<UIChestInventory>
         return itemSlot.GetComponent<UIItemSlot>().SlotIndex;
     }
 
-    /// <summary>
-    /// This Method Swap InHandSlot and Slot in inventory at index
-    /// </summary>
-    /// <param name="index">index for itemSlotList</param>
-    private void SwapItemInHandAndInventorySlot(int index)
-    {
-        if (itemInHand.HasItemData() &&
-           chestInventory.inventory[index].HasItem())
-        {
-            var itemSlotToSwap_01 = itemInHand.GetSlot();
-            var itemSlotToSwap_02 = new ItemSlot(chestInventory.inventory[index]);
-            chestInventory.inventory[index].ClearSlot();
-            itemInHand.Set(itemSlotToSwap_02, index, StoredType.ChestInventory, true);
-            chestInventory.inventory[index] = itemSlotToSwap_01;
-        }
-
-
-        if (itemInHand.HasItemData() &&
-           chestInventory.inventory[index].HasItem() == false)
-        {
-            var itemSlotToSwap_01 = itemInHand.GetSlot();
-            var itemSlotToSwap_02 = new ItemSlot(chestInventory.inventory[index]);
-            chestInventory.inventory[index].ClearSlot();
-            itemInHand.Set(itemSlotToSwap_02, index, StoredType.ChestInventory);
-            chestInventory.inventory[index] = itemSlotToSwap_01;
-        }
-    }
-
-
-
-
-    /// <summary>
-    /// Method remove itemSlot in itemSlotList and put it in "itemInHand".
-    /// </summary>
-    /// <param name="index">Index used in itemSlotList at specific itemSlot you want to get.</param>
-    private void GetItemSlot(int index)
-    {
-        var chosenSlot = new ItemSlot(chestInventory.inventory[index]);
-        chestInventory.inventory[index].ClearSlot();
-        itemInHand.Set(chosenSlot, index, StoredType.ChestInventory, true);
-    }
-
-    /// <summary>
-    /// Method halve amount of item quantity from itemSlotList at index and put it in "itemInHand".
-    /// </summary>
-    /// <param name="index">Index used in itemSlotList at specific itemSlot you want to get.</param>
-    private void HalveItemSlotQuantity(int index)
-    {
-        if (chestInventory.inventory[index].ItemQuantity > 1)
-        {
-            int splitItemQuantity = chestInventory.inventory[index].ItemQuantity / 2;
-            chestInventory.inventory[index].SetItemQuantity(chestInventory.inventory[index].ItemQuantity - splitItemQuantity);
-
-            var chosenSlot = new ItemSlot(chestInventory.inventory[index]);
-            chosenSlot.SetItemQuantity(splitItemQuantity);
-            itemInHand.Set(chosenSlot, index, StoredType.ChestInventory, true);
-        }
-        else
-        {
-            GetItemSlot(index);
-        }
-    }
-
-    /// <summary>
-    /// Method combine amount of item quantity from itemSlotList at index inHandSlot.
-    /// </summary>
-    /// <param name="index">Index used in itemSlotList at specific itemSlot you want to get</param>
-    private void CombineItemSlotQuantity(int index)
-    {
-        //Debug.Log("CombineItemSlotQuantity");
-        if (IsSameItem(chestInventory.inventory[index].ItemData, itemInHand.GetItemData()))
-        {
-            /*Debug.Log("Same Object");           
-            itemInHand.Set(chestInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot()), StoredType.ChestInventory);
-            uiItemInHand.DisplayItemInHand();*/
-
-
-            Debug.Log("Same Object");
-
-            var returnSlot = chestInventory.inventory[index].AddItemsFromAnotherSlot(itemInHand.GetSlot());
-            itemInHand.Set(returnSlot, index, StoredType.ChestInventory, true);
-
-        }
-        else
-        {
-            //Debug.Log("Not same object");
-            SwapItemInHandAndInventorySlot(index);
-        }
-    }
 
     #endregion Inventory interactive methods
 }

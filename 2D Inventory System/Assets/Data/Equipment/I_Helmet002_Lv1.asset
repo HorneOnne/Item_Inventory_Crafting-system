@@ -19,5 +19,11 @@ MonoBehaviour:
   duration: 0
   currentLevel: 1
   maxLevel: 3
-  nextLvItemData: {fileID: 11400000, guid: 66efff63496d1164aab24ee8debec0ec, type: 2}
+  upgradeRecipe:
+    materials:
+    - itemData: {fileID: 11400000, guid: 59db2d8e10c755a4da53fc124717d3f6, type: 2}
+      quantity: 10
+    outputItem:
+      itemData: {fileID: 11400000, guid: 7cea0a00135673a45a3ae727e633ed1e, type: 2}
+      quantity: 1
   armor: 5

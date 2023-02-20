@@ -72,7 +72,7 @@ public class Player : MonoBehaviour
         Debug.Log("Drop item called");
 
         GameObject itemObject = new GameObject();
-        itemObject.transform.position = Utilities.GetMousPosition();
+        itemObject.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
         itemObject.name = $"{slot.ItemData.name}";
         itemObject.AddComponent<BoxCollider2D>();

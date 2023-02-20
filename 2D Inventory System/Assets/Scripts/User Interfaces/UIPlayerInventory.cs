@@ -8,14 +8,17 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     [Header("Inventory References")]
     public Player player;
     private PlayerInventory playerInventory;
+    private PlayerInputHandler playerInputHandler;
     private ItemInHand itemInHand;
 
 
     [Header("Containers")]
     public List<GameObject> itemSlotList;
 
+
     [Header("UI")]
     public GameObject itemSlotPrefab;
+
 
     [Header("UI Event Properties")]
     private GameObject currentSlotDrag;
@@ -25,18 +28,15 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
 
     [Header("Inventory Settings")]
     public DragType dragType;
+    private bool handHasItem;
+    private bool slotHasItem;
 
 
     // right press
     [SerializeField] float pressIntervalTime = 1.0f;
     private float pressIntervalTimeCount = 0.0f;
 
-    [SerializeField] float clickToPressInterval = 0.3f;
-    float clickToPressTimeCount = 0.0f;
 
-
-    // =================================
-    PointerState currentPointerState = PointerState.Null;
 
     private void OnEnable()
     {
@@ -53,6 +53,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
     {
         itemInHand = player.ItemInHand;
         playerInventory = player.PlayerInventory;
+        playerInputHandler = player.PlayerInputHandler;
         dragType = DragType.Swap;
 
 
@@ -78,40 +79,23 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
 
     private void Update()
     {
-        currentPointerState = GetPointerState();
-
-
-        if (player.ItemInHand.HasItemData())
+        if (itemInHand.HasItemData())
         {
-            if (Input.GetMouseButton(1) && currentSlotClicked != null)
+            if(playerInputHandler.CurrentMouseState == PointerState.RightPressAfterWait)
             {
-                Utilities.InvokeMethodByInterval(() => OnRightPress(GetItemSlotIndex(currentSlotClicked)), pressIntervalTime, ref pressIntervalTimeCount);
+                if(currentSlotClicked != null)
+                {
+                    if (Time.time - pressIntervalTimeCount >= pressIntervalTime)
+                    {
+                        OnRightPress(GetItemSlotIndex(currentSlotClicked));
+                        pressIntervalTimeCount = Time.time;
+                    }                 
+                }          
             }
         }
     }
 
-    private PointerState GetPointerState()
-    {
-        // Mosue Press
-        if (Input.GetMouseButtonDown(1))
-        {
-            return PointerState.RightClick;
-        }
-        if (Input.GetMouseButton(1))
-        {
-            clickToPressTimeCount += Time.deltaTime;
-            if (clickToPressTimeCount > clickToPressInterval)
-                return PointerState.RightPress;
-        }
-        if (Input.GetMouseButtonUp(1))
-        {
-            clickToPressTimeCount = 0f;
-            return PointerState.Null;
-        }
 
-
-        return currentPointerState;
-    }
 
     public void UpdateInventoryUI()
     {
@@ -164,9 +148,6 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
 
     public void OnExit(GameObject clickedObject)
     {
-        //isEnter = false;
-        currentPointerState = PointerState.Null;
-
         currentSlotDrag = null;
         currentSlotClicked = null;
     }
@@ -208,8 +189,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
             if (playerInventory.HasSlot(index) == false) return;
 
             if (playerInventory.HasItem(index))
-            {
-                //bool isSameItem = IsSameItem(playerInventory.inventory[index].ItemData, itemInHand.GetItemData());
+            {               
                 bool isSameItem = ItemData.IsSameItem(playerInventory.inventory[index].ItemData, itemInHand.GetItemData());
                 if (isSameItem)
                 {
@@ -247,11 +227,12 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
 
     private void OnLeftClick(int index)
     {
-        //if (currentPointerState != PointerState.LeftClick) return;
+        handHasItem = itemInHand.HasItemData();
+        slotHasItem = playerInventory.inventory[index].HasItem();
 
-        if (itemInHand.HasItemData() == false)
+        if (handHasItem == false)
         {
-            if (playerInventory.inventory[index].HasItem() == false)
+            if (slotHasItem == false)
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: EMPTY");
             }
@@ -263,7 +244,7 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
         }
         else
         {
-            if (playerInventory.inventory[index].HasItem() == false)
+            if (slotHasItem == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
                 itemInHand.Swap(ref playerInventory.inventory, index, StoredType.PlayerInventory, true);
@@ -287,23 +268,24 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
 
     private void OnRightClick(int index)
     {
-        if (currentPointerState != PointerState.RightClick) return;
+        handHasItem = itemInHand.HasItemData();
+        slotHasItem = playerInventory.inventory[index].HasItem();
 
-        if (itemInHand.HasItemData() == false)
+        if (handHasItem == false)
         {
-            if (playerInventory.inventory[index].HasItem() == false)
+            if (slotHasItem == false)
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: EMPTY");
             }
             else
             {
-                Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
+                //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
                 itemInHand.SplitItemSlotQuantityInInventoryAt(ref playerInventory.inventory, index);
             }
         }
         else
         {
-            if (playerInventory.inventory[index].HasItem() == false)
+            if (slotHasItem == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
                 playerInventory.AddNewItemAt(index, itemInHand.GetItemData());
@@ -313,10 +295,8 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
             else
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
-
                 if (ItemData.IsSameItem(itemInHand.GetItemData(), playerInventory.GetItem(index)))
                 {
-                    //Debug.Log("Same item");
                     bool isSlotNotFull = playerInventory.AddItemAt(index);
 
                     if (isSlotNotFull)
@@ -330,12 +310,13 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
 
 
     private void OnRightPress(int index)
-    {
-        if (currentPointerState != PointerState.RightPress) return;
+    {    
+        handHasItem = itemInHand.HasItemData();
+        slotHasItem = playerInventory.inventory[index].HasItem();
 
-        if (itemInHand.HasItemData() == true)
+        if (handHasItem == true)
         {
-            if (playerInventory.inventory[index].HasItem() == false)
+            if (slotHasItem == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
                 playerInventory.AddNewItemAt(index, itemInHand.GetItemData());
@@ -348,7 +329,6 @@ public class UIPlayerInventory : Singleton<UIPlayerInventory>
 
                 if (ItemData.IsSameItem(itemInHand.GetItemData(), playerInventory.GetItem(index)))
                 {
-                    //Debug.Log("Same item");
                     bool isSlotNotFull = playerInventory.AddItemAt(index);
 
                     if (isSlotNotFull)
@@ -384,13 +364,4 @@ public enum DragType
     Hold
 }
 
-public enum PointerState
-{
-    RightClick,
-    LeftClick,
-    RightPress,
-    LeftPress,
-    DoubleRightClick,
-    DoubleLeftClick,
-    Null
-}
+

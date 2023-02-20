@@ -1,11 +1,16 @@
 ﻿using MyGame.Ultilities;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static UnityEditor.Progress;
 
 public class UIAnvil : Singleton<UIAnvil>
 {
+    private const int MAX_MATERIALS_SLOT = 8;
+
     [Header("References")]
     public Player player;
     private ItemInHand itemInHand;
@@ -31,7 +36,7 @@ public class UIAnvil : Singleton<UIAnvil>
         Utilities.AddEvent(uiOutputItem.gameObject, EventTriggerType.PointerDown, (baseEvent) => OnItemOutputSlotPointerDown(baseEvent, uiOutputItem.gameObject));
 
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < MAX_MATERIALS_SLOT; i++)
         {
             var materialNeededObject = Instantiate(uIMaterialNeededItemSlotPrefab, materialSlotsParent).GetComponent<UIItemSlot>();
             materialNeededObject.SetIndex(i);
@@ -57,40 +62,41 @@ public class UIAnvil : Singleton<UIAnvil>
     {
         if (anvil == null) return;
 
-        uiInputItem.SetData(anvil.UpgradeItemInputSlot);
+        uiInputItem.SetData(anvil.upgradeItemInputSlot);
 
 
         if(anvil.IsSufficient)
         {
-            uiOutputItem.SetData(anvil.UpgradeItemOutputSlot, 1.0f);
+            uiOutputItem.SetData(anvil.upgradeItemOutputSlot, 1.0f);
         }
         else
         {
-            uiOutputItem.SetData(anvil.UpgradeItemOutputSlot, 0.5f);
+            uiOutputItem.SetData(anvil.upgradeItemOutputSlot, 0.5f);
         }
 
 
 
-        if (anvil.HasOuputUpgradeItem() == false)
+        for (int i = 0; i < materialSlots.Count; i++)
         {
-            for (int i = 0; i < materialSlots.Count; i++)
+            if(materialSlots[i].gameObject.activeInHierarchy)
                 materialSlots[i].gameObject.SetActive(false);
         }
-        else
+        if (anvil.HasOuputUpgradeItem() == true)
         {
-            for (int i = 0; i < anvil.MaterialsNeededToUpgrade.Count; i++)
+            for (int i = 0; i < anvil.materialsNeededToUpgrade.Count; i++)
             {
                 materialSlots[i].gameObject.SetActive(true);
-                if (anvil.MaterialsHasBeenFilled[i].HasItem() == false)
+                if (anvil.materialsHasBeenFilled[i].HasItem() == false)
                 {
-                    materialSlots[i].SetData(anvil.MaterialsNeededToUpgrade[i], 0.5f);
+                    materialSlots[i].SetData(anvil.materialsNeededToUpgrade[i], 0.5f);
                 }
                 else
                 {
-                    materialSlots[i].SetData(anvil.MaterialsHasBeenFilled[i], 1.0f);
+                    materialSlots[i].SetData(anvil.materialsHasBeenFilled[i], 1.0f);
                 }
             }
         }
+
     }
 
     #endregion
@@ -105,11 +111,7 @@ public class UIAnvil : Singleton<UIAnvil>
 
         if (pointerEventData.pointerId == -1)   // Mouse Left Event
         {
-            OnItemInputSlotLeftClick(clickedObject,
-                        PerformItemInputSlot_HandEmptySlotEmptyClick,
-                        PerformItemInputSlot_HandEmptySlotHasClick,
-                        PerformItemInputSlot_HandHasSlotEmptyClick,
-                        PerformItemInputSlot_HandHasSlotHasClick);
+            OnItemInputSlotLeftClick(clickedObject);
 
         }
     }
@@ -124,8 +126,7 @@ public class UIAnvil : Singleton<UIAnvil>
     /// <param name="handEmptySlotHas"></param>
     /// <param name="handHasSlotEmpty"></param>
     /// <param name="handHasSlotHas"></param>
-    private void OnItemInputSlotLeftClick(GameObject clickedObj, Action handEmptySlotEmpty, Action handEmptySlotHas,
-        Action handHasSlotEmpty, Action handHasSlotHas)
+    private void OnItemInputSlotLeftClick(GameObject clickedObj)
     {
         bool handHasItem = itemInHand.HasItemData();
         bool slotHasItem = anvil.HasInputUpgradeItem();
@@ -135,26 +136,37 @@ public class UIAnvil : Singleton<UIAnvil>
             if (slotHasItem == false)
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: EMPTY");
-                handEmptySlotEmpty();
             }
             else
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
-                handEmptySlotHas();
+                itemInHand.Set(new ItemSlot(anvil.upgradeItemInputSlot));
+                anvil.upgradeItemInputSlot.ClearSlot();
 
             }
         }
         else
-        {
+        {                                   
             if (slotHasItem == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                handHasSlotEmpty();
+                bool canAdd = anvil.AddItemInputSlot(itemInHand.GetSlot());
+
+                if (canAdd)
+                    itemInHand.ClearSlot();
             }
             else
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
-                handHasSlotHas();
+                bool isSameItem = ItemData.IsSameItem(anvil.upgradeItemInputSlot.ItemData, itemInHand.GetItemData());
+                if (isSameItem == false)
+                {
+                    var tempUpgradeItemInputSlot = new ItemSlot(anvil.upgradeItemInputSlot);
+                    bool canAdd = anvil.AddItemInputSlot(itemInHand.GetSlot());
+
+                    if(canAdd)
+                        itemInHand.Set(tempUpgradeItemInputSlot, -1, StoredType.Another, true);
+                }
             }
         }
 
@@ -163,32 +175,6 @@ public class UIAnvil : Singleton<UIAnvil>
         EventManager.InputUpgradeItemChanged();
         UpdateUI();
     }
-
-
-    private void PerformItemInputSlot_HandEmptySlotEmptyClick()
-    {
-
-    }
-
-    private void PerformItemInputSlot_HandEmptySlotHasClick()
-    {
-        itemInHand.Set(new ItemSlot(anvil.UpgradeItemInputSlot));
-        anvil.UpgradeItemInputSlot.ClearSlot();
-    }
-
-    private void PerformItemInputSlot_HandHasSlotEmptyClick()
-    {
-        if (itemInHand.GetItemData() is UpgradeableItemData == false) return;
-
-        anvil.UpgradeItemInputSlot = new ItemSlot(itemInHand.GetSlot());
-        itemInHand.ClearSlot();
-    }
-
-    private void PerformItemInputSlot_HandHasSlotHasClick()
-    {
-
-    }
-
     #endregion
 
 
@@ -201,11 +187,7 @@ public class UIAnvil : Singleton<UIAnvil>
 
         if (pointerEventData.pointerId == -1)   // Mouse Left Event
         {
-            OnItemOutputSlotLeftClick(clickedObject,
-                        PerformItemOutputSlot_HandEmptySlotEmptyClick,
-                        PerformItemOutputSlot_HandEmptySlotHasClick,
-                        PerformItemOutputSlot_HandHasSlotEmptyClick,
-                        PerformItemOutputSlot_HandHasSlotHasClick);
+            OnItemOutputSlotLeftClick(clickedObject);
 
         }
     }
@@ -220,8 +202,7 @@ public class UIAnvil : Singleton<UIAnvil>
     /// <param name="handEmptySlotHas"></param>
     /// <param name="handHasSlotEmpty"></param>
     /// <param name="handHasSlotHas"></param>
-    private void OnItemOutputSlotLeftClick(GameObject clickedObj, Action handEmptySlotEmpty, Action handEmptySlotHas,
-        Action handHasSlotEmpty, Action handHasSlotHas)
+    private void OnItemOutputSlotLeftClick(GameObject clickedObj)
     {
         bool handHasItem = itemInHand.HasItemData();
         bool slotHasItem = anvil.HasOuputUpgradeItem();
@@ -231,13 +212,18 @@ public class UIAnvil : Singleton<UIAnvil>
             if (slotHasItem == false)
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: EMPTY");
-                handEmptySlotEmpty();
             }
             else
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
-                handEmptySlotHas();
+                if (anvil == null) return;
+                if (anvil.IsSufficient == false) return;
 
+                anvil.ComsumeMaterials();
+                itemInHand.Set(new ItemSlot(anvil.upgradeItemOutputSlot));
+                anvil.upgradeItemOutputSlot.ClearSlot();
+                anvil.upgradeItemInputSlot.ClearSlot();
+                
             }
         }
         else
@@ -245,51 +231,17 @@ public class UIAnvil : Singleton<UIAnvil>
             if (slotHasItem == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                handHasSlotEmpty();
             }
             else
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
-                handHasSlotHas();
             }
         }
-
 
         UIItemInHand.Instance.UpdateItemInHandUI();
         EventManager.InputUpgradeItemChanged();
         UpdateUI();
     }
-
-
-    private void PerformItemOutputSlot_HandEmptySlotEmptyClick()
-    {
-
-    }
-
-    private void PerformItemOutputSlot_HandEmptySlotHasClick()
-    {
-        if (anvil == null) return;
-        if (anvil.IsSufficient == false) return;
-
-        itemInHand.Set(new ItemSlot(anvil.UpgradeItemOutputSlot));
-        anvil.UpgradeItemOutputSlot.ClearSlot();
-
-        // Remove itemInputUpgrade and materials need to upgrade.
-        anvil.UpgradeItemInputSlot.ClearSlot();
-    }
-
-    private void PerformItemOutputSlot_HandHasSlotEmptyClick()
-    {
-       
-    }
-
-    private void PerformItemOutputSlot_HandHasSlotHasClick()
-    {
-
-    }
-
-
-   
 
     #endregion
 
@@ -303,12 +255,12 @@ public class UIAnvil : Singleton<UIAnvil>
 
         if (pointerEventData.pointerId == -1)   // Mouse Left Event
         {
-            OnMaterialInputSlotLeftClick(clickedObject,
-                        PerformMaterialInputSlot_HandEmptySlotEmptyClick,
-                        PerformMaterialInputSlot_HandEmptySlotHasClick,
-                        PerformMaterialInputSlot_HandHasSlotEmptyClick,
-                        PerformMaterialInputSlot_HandHasSlotHasClick);
+            OnMaterialInputSlotLeftClick(clickedObject);
+        }
 
+        if (pointerEventData.pointerId == -2)   // Mouse Right Event
+        {
+            OnMaterialInputSlotRightClick(clickedObject);
         }
     }
 
@@ -322,12 +274,11 @@ public class UIAnvil : Singleton<UIAnvil>
     /// <param name="handEmptySlotHas"></param>
     /// <param name="handHasSlotEmpty"></param>
     /// <param name="handHasSlotHas"></param>
-    private void OnMaterialInputSlotLeftClick(GameObject clickedObj, Action<GameObject> handEmptySlotEmpty, Action<GameObject> handEmptySlotHas,
-        Action<GameObject> handHasSlotEmpty, Action<GameObject> handHasSlotHas)
+    private void OnMaterialInputSlotLeftClick(GameObject clickedObject)
     {
-        int index = GetSlotIndex(clickedObj);
+        int index = GetSlotIndex(clickedObject);
         bool handHasItem = itemInHand.HasItemData();
-        bool slotHasItem = anvil.MaterialsHasBeenFilled[index].HasItem();
+        bool slotHasItem = anvil.materialsHasBeenFilled[index].HasItem();
 
 
         if (handHasItem == false)
@@ -335,26 +286,34 @@ public class UIAnvil : Singleton<UIAnvil>
             if (slotHasItem == false)
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: EMPTY");
-                handEmptySlotEmpty(clickedObj);
             }
             else
             {
-                Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
-                handEmptySlotHas(clickedObj);
-
+                //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
+                itemInHand.Swap(ref anvil.materialsHasBeenFilled, index, StoredType.Another, true);
             }
         }
         else
         {
             if (slotHasItem == false)
             {
-                Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                handHasSlotEmpty(clickedObj);
+                //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
+                itemInHand.Swap(ref anvil.materialsHasBeenFilled, index, StoredType.Another, true);
             }
             else
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
-                handHasSlotHas(clickedObj);
+                bool isSameItem = ItemData.IsSameItem(anvil.materialsHasBeenFilled[index].ItemData, itemInHand.GetItemData());
+                if (isSameItem)
+                {
+                    ItemSlot remainItems = anvil.materialsHasBeenFilled[index].AddItemsFromAnotherSlot(itemInHand.GetSlot());
+                    itemInHand.Set(remainItems, index, StoredType.PlayerInventory, true);
+                }
+                else
+                {
+                    itemInHand.Swap(ref anvil.materialsHasBeenFilled, index, StoredType.PlayerInventory, true);
+                }
+
             }
         }
 
@@ -365,28 +324,54 @@ public class UIAnvil : Singleton<UIAnvil>
     }
 
 
-    private void PerformMaterialInputSlot_HandEmptySlotEmptyClick(GameObject clickedObject)
-    {
-
-    }
-
-    private void PerformMaterialInputSlot_HandEmptySlotHasClick(GameObject clickedObject)
+    private void OnMaterialInputSlotRightClick(GameObject clickedObject)
     {
         int index = GetSlotIndex(clickedObject);
-        itemInHand.Set(new ItemSlot(anvil.MaterialsHasBeenFilled[index]));
-        anvil.MaterialsHasBeenFilled[index].ClearSlot();
-    }
+        bool handHasItem = itemInHand.HasItemData();
+        bool slotHasItem = anvil.materialsHasBeenFilled[index].HasItem();
 
-    private void PerformMaterialInputSlot_HandHasSlotEmptyClick(GameObject clickedObject)
-    {
-        int index = GetSlotIndex(clickedObject);
-        anvil.MaterialsHasBeenFilled[index] = new ItemSlot(itemInHand.GetSlot());
-        itemInHand.ClearSlot();
-    }
 
-    private void PerformMaterialInputSlot_HandHasSlotHasClick(GameObject clickedObject)
-    {
+        if (handHasItem == false)
+        {
+            if (slotHasItem == false)
+            {
+                //Debug.Log("HAND: EMPTY \t SLOT: EMPTY");
+            }
+            else
+            {
+                //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
+                itemInHand.SplitItemSlotQuantityInInventoryAt(ref anvil.materialsHasBeenFilled, index);
+            }
+        }
+        else
+        {
+            if (slotHasItem == false)
+            {
+                //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
+                anvil.materialsHasBeenFilled[index].AddNewItem(itemInHand.GetItemData());
+                itemInHand.RemoveItem();
+            }
+            else
+            {
+                //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
+                bool isSameItem = ItemData.IsSameItem(anvil.materialsHasBeenFilled[index].ItemData, itemInHand.GetItemData());
+                if (isSameItem)
+                {
+                    bool isSlotNotFull =  anvil.materialsHasBeenFilled[index].AddItem();
 
+                    if (isSlotNotFull)
+                    {
+                        itemInHand.RemoveItem();
+                    }
+                }
+
+            }
+        }
+
+
+        UIItemInHand.Instance.UpdateItemInHandUI();
+        EventManager.MaterialInputUpgradeItemChanged();
+        UpdateUI();
     }
 
 

@@ -2,7 +2,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Linq;
-using System.Collections;
+using MyGame.Ultilities;
+using System;
 
 public class Anvil : Item, IPlaceable, IPointerClickHandler
 {
@@ -21,12 +22,14 @@ public class Anvil : Item, IPlaceable, IPointerClickHandler
     private bool isOpen;
 
 
-    #region Properties
-    [field: SerializeField] public ItemSlot UpgradeItemInputSlot { get; set; }
-    [field: SerializeField] public ItemSlot UpgradeItemOutputSlot { get; private set; }
+    [Header("Data container")]
+    public ItemSlot upgradeItemInputSlot;
+    public ItemSlot upgradeItemOutputSlot;
+    public List<ItemSlot> materialsNeededToUpgrade;
+    public List<ItemSlot> materialsHasBeenFilled;
 
-    [field: SerializeField] public List<ItemSlot> MaterialsNeededToUpgrade { get; private set; }
-    [field: SerializeField] public List<ItemSlot> MaterialsHasBeenFilled { get; private set; }
+
+    #region Properties
     public bool IsSufficient { get; private set; }
     #endregion
 
@@ -34,23 +37,27 @@ public class Anvil : Item, IPlaceable, IPointerClickHandler
     private void OnEnable()
     {
         EventManager.OnInputUpgradeItemChanged += OnItemInputChanged;
-
         EventManager.OnMaterialInputUpgradeItemChanged += IsSufficientMaterials;
     }
 
     private void OnDisable()
     {
         EventManager.OnInputUpgradeItemChanged -= OnItemInputChanged;
-
         EventManager.OnMaterialInputUpgradeItemChanged -= IsSufficientMaterials;
     }
+
 
     protected override void Start()
     {
         base.Start();
         uiAnvilCanvas = UIManager.Instance.AnvilCanvas;
-        MaterialsNeededToUpgrade = new List<ItemSlot>();
-        MaterialsHasBeenFilled = new List<ItemSlot>();
+        materialsNeededToUpgrade = new List<ItemSlot>();
+        materialsHasBeenFilled = new List<ItemSlot>();
+
+        /*for(int i = 0; i < 8; i++)
+        {
+            materialsHasBeenFilled.Add(new ItemSlot());
+        }*/
     }
 
 
@@ -122,7 +129,6 @@ public class Anvil : Item, IPlaceable, IPointerClickHandler
 
     private void OnItemInputChanged()
     {
-        Debug.Log("Item Input changed.");
         UpdateUpgradedItemOutput();
     }
 
@@ -161,45 +167,43 @@ public class Anvil : Item, IPlaceable, IPointerClickHandler
 
     public bool HasInputUpgradeItem()
     {
-        if (UpgradeItemInputSlot == null)
+        if (upgradeItemInputSlot == null)
             return false;
 
-        return UpgradeItemInputSlot.HasItem();
+        return upgradeItemInputSlot.HasItem();
     }
 
     public bool HasOuputUpgradeItem()
     {
-        if (UpgradeItemOutputSlot == null)
+        if (upgradeItemOutputSlot == null)
             return false;
 
-        return UpgradeItemOutputSlot.HasItem();
+        return upgradeItemOutputSlot.HasItem();
     }
 
 
 
     public void UpdateUpgradedItemOutput()
     {
-        MaterialsNeededToUpgrade.Clear();
-        MaterialsHasBeenFilled.Clear();
+        DropRemainingMaterials();
+        materialsNeededToUpgrade.Clear();
+        materialsHasBeenFilled.Clear();
+        IsSufficient = false;
+        upgradeItemOutputSlot.ClearSlot();
 
-        UpgradeItemOutputSlot.ClearSlot();
-        if (UpgradeItemInputSlot == null)
-        {
-            return;
-        }
 
-        if (UpgradeItemInputSlot.ItemData is UpgradeableItemData == false) return;
+        if (upgradeItemInputSlot.ItemData is UpgradeableItemData == false) return;
 
-        UpgradeableItemData itemData = (UpgradeableItemData)UpgradeItemInputSlot.ItemData;
+        UpgradeableItemData itemData = (UpgradeableItemData)upgradeItemInputSlot.ItemData;
         ItemUpgradeRecipe recipe = itemData.upgradeRecipe;
 
-        UpgradeItemOutputSlot = new ItemSlot(recipe.outputItem.itemData, recipe.outputItem.quantity);
+        upgradeItemOutputSlot = new ItemSlot(recipe.outputItem.itemData, recipe.outputItem.quantity);
         ItemUpgradeRecipe.RecipeSlot material;
         for (int i = 0; i < recipe.materials.Count; i++)
         {
             material = recipe.materials[i];
-            MaterialsNeededToUpgrade.Add(new ItemSlot(material.itemData, material.quantity));
-            MaterialsHasBeenFilled.Add(new ItemSlot());
+            materialsNeededToUpgrade.Add(new ItemSlot(material.itemData, material.quantity));
+            materialsHasBeenFilled.Add(new ItemSlot());
         }
     }
 
@@ -210,26 +214,32 @@ public class Anvil : Item, IPlaceable, IPointerClickHandler
     /// <returns></returns>
     private void IsSufficientMaterials()
     {
-        if (MaterialsNeededToUpgrade == null || MaterialsHasBeenFilled == null) return;
-        if (MaterialsNeededToUpgrade.Count == 0 || MaterialsHasBeenFilled.Count == 0) return;
+        if (materialsNeededToUpgrade == null || materialsHasBeenFilled == null) return;
+        if (materialsNeededToUpgrade.Count == 0 || materialsHasBeenFilled.Count == 0) return;
 
+        HashSet<int> indexRemoval = new HashSet<int>();
         IsSufficient = true;
-        if (MaterialsNeededToUpgrade.Count != MaterialsHasBeenFilled.Count)
+        if (materialsNeededToUpgrade.Count != materialsHasBeenFilled.Count)
         {
             IsSufficient = false;
         }
         else
         {
-            for (int i = 0; i < MaterialsNeededToUpgrade.Count; i++)
+            for (int i = 0; i < materialsNeededToUpgrade.Count; i++)
             {
                 bool foundMatch = false;
 
-                for (int j = 0; j < MaterialsHasBeenFilled.Count; j++)
+                for (int j = 0; j < materialsHasBeenFilled.Count; j++)
                 {
-                    if (MaterialsNeededToUpgrade[i].ItemData == MaterialsHasBeenFilled[j].ItemData)
+                    if (indexRemoval.Contains(j))
+                        continue;
+
+                    if (materialsNeededToUpgrade[i].ItemData == materialsHasBeenFilled[j].ItemData)
                     {
-                        if (MaterialsNeededToUpgrade[i].ItemQuantity <= MaterialsHasBeenFilled[j].ItemQuantity)
+                        if (materialsNeededToUpgrade[i].ItemQuantity <= materialsHasBeenFilled[j].ItemQuantity)
                         {
+                            indexRemoval.Add(j);
+
                             foundMatch = true;
                             break;
                         }
@@ -254,9 +264,9 @@ public class Anvil : Item, IPlaceable, IPointerClickHandler
     {
         bool hasMaterials = false;
 
-        for(int i = 0; i < MaterialsHasBeenFilled.Count; i++)
+        for (int i = 0; i < materialsHasBeenFilled.Count; i++)
         {
-            if (MaterialsHasBeenFilled[i].HasItem())
+            if (materialsHasBeenFilled[i].HasItem())
             {
                 hasMaterials = true;
                 break;
@@ -264,6 +274,62 @@ public class Anvil : Item, IPlaceable, IPointerClickHandler
         }
 
         return hasMaterials;
+    }
+
+
+    public bool AddItemInputSlot(ItemSlot itemSlot)
+    {
+        if (itemSlot == null) return false;
+        if (itemSlot.HasItem() == false) return false;
+        bool canAdd = false;
+
+        if (itemSlot.ItemData is UpgradeableItemData)
+        {
+            upgradeItemInputSlot = new ItemSlot(itemSlot);
+            canAdd = true;
+        }
+
+        return canAdd;
+    }
+
+
+
+    public void ComsumeMaterials()
+    {
+        if (IsSufficient)
+        {
+            for (int i = 0; i < materialsNeededToUpgrade.Count; i++)
+            {
+                for (int j = 0; j < materialsHasBeenFilled.Count; j++)
+                {
+                    if (materialsNeededToUpgrade[i].ItemData == materialsHasBeenFilled[j].ItemData)
+                    {
+                        int remainItemQuantity = (materialsHasBeenFilled[j].ItemQuantity - materialsNeededToUpgrade[i].ItemQuantity);
+
+                        if (remainItemQuantity == 0)
+                            materialsHasBeenFilled[j].ClearSlot();
+                        else
+                            materialsHasBeenFilled[j].SetItemQuantity(remainItemQuantity);
+                    }
+                }
+            }
+        }
+
+    }
+
+    public void DropRemainingMaterials()
+    {
+        for (int i = 0; i < materialsHasBeenFilled.Count; i++)
+        {
+            if (materialsHasBeenFilled[i].HasItem())
+            {
+                Item itemObject = Utilities.InstantiateItemObject(materialsHasBeenFilled[i], ItemContainerManager.Instance.itemContainerParent);
+                itemObject.SetData(materialsHasBeenFilled[i]);
+
+                Vector2 dropPosition = (Vector2)transform.position + UnityEngine.Random.insideUnitCircle * 2; new Vector2(0, 3);
+                itemObject.Drop(null, dropPosition, Vector3.zero, true);
+            }
+        }
     }
 }
 
