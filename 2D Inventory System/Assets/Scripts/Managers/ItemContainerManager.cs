@@ -1,7 +1,4 @@
-using Newtonsoft.Json.Bson;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class ItemContainerManager : Singleton<ItemContainerManager>
@@ -12,7 +9,7 @@ public class ItemContainerManager : Singleton<ItemContainerManager>
 
 
     [SerializeField] List<GameObject> prefabObject = new List<GameObject>();
-    private Dictionary<string, GameObject> prefabObjectDict= new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> prefabObjectDict = new Dictionary<string, GameObject>();
 
 
     public Transform itemContainerParent;

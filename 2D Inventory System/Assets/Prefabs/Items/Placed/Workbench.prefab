@@ -94,9 +94,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49bd3205bef472a4ca089cd1601d5b94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <ItemData>k__BackingField: {fileID: 0}
-  <ItemSlot>k__BackingField:
-    itemQuantity: 0
+  <ItemData>k__BackingField: {fileID: 11400000, guid: 79852d68c4757cd48af5d6453530d4c0, type: 2}
   <OffsetPosition>k__BackingField: {x: 0, y: 0}
   <OffsetZAngle>k__BackingField: 0
   canShow: 0
@@ -177,12 +175,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 71400925, guid: e5f63e32b27050346a4a588ccf3cda14, type: 3}
+  m_Sprite: {fileID: -1886627189, guid: e5f63e32b27050346a4a588ccf3cda14, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 4, y: 4}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

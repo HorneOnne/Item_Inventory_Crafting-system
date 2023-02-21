@@ -5,13 +5,13 @@ using UnityEditor;
 using System;
 using System.Reflection;
 
-[RequireComponent(typeof(CraftingTableManager))]
-public class UICraftingTableManager : Singleton<UICraftingTableManager>
+[RequireComponent(typeof(CraftingTable))]
+public class UICraftingTable : Singleton<UICraftingTable>
 {
     [Header("References")]
     public Player player;
     private PlayerInputHandler playerInput;
-    private CraftingTableManager craftingTableManager;
+    private CraftingTable craftingTableManager;
     private ItemInHand itemInHand;
 
 
@@ -26,7 +26,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
 
     private void Start()
     {
-        craftingTableManager = CraftingTableManager.Instance;
+        craftingTableManager = CraftingTable.Instance;
         itemInHand = player.ItemInHand;
         playerInput = player.PlayerInputHandler;
 
@@ -62,21 +62,51 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
         }
 
         // Update Output slot
-        UpdateOutputSlotCraftingTalbeDisplay();
+        UpdateOutputSlotCraftingTalbeUI();
+
+
+
+ 
+
+
+
+        
     }
 
     public void UpdateCraftingTableDisplayUIAt(int index)
     {
         UIItemSlot uiSlot = craftingGridSlot[index].GetComponent<UIItemSlot>();
-        uiSlot.SetData(craftingTableManager.GetItemIntputSlotAt(index));
- 
+
+        var itemSlot = craftingTableManager.GetItemInputSlotAt(index);
+
+        if(itemSlot != null && itemSlot.HasItem())
+        {
+            uiSlot.SetData(craftingTableManager.GetItemInputSlotAt(index), 1.0f);
+        }
+        else
+        {
+            uiSlot.SetData(craftingTableManager.craftingSuggestionInputSlots[index], 0.3f);
+        }
+        
     }
 
-    private void UpdateOutputSlotCraftingTalbeDisplay()
+    private void UpdateOutputSlotCraftingTalbeUI()
     {
         UIItemSlot uiSlot = outputSlot.GetComponent<UIItemSlot>();
-        uiSlot.SetData(craftingTableManager.outputSlot);      
+        uiSlot.SetData(craftingTableManager.craftingOutputSlot, 1.0f);
+
+        var itemSlot = craftingTableManager.craftingOutputSlot;
+
+        if (itemSlot != null && itemSlot.HasItem())
+        {
+            uiSlot.SetData(craftingTableManager.craftingOutputSlot, 1.0f);
+        }
+        else
+        {
+            uiSlot.SetData(craftingTableManager.craftingSuggestionOutputSlot, 0.3f);
+        }
     }
+
     #endregion UPDATE CRAFTINGTABLE DISPLAY UI REGION.
 
 
@@ -95,9 +125,9 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             {
                 QuickGetAllOutputItem();
             }
-            else if (craftingTableManager.HasOutputSlot() && craftingTableManager.outputSlot.HasItem())
+            else if (craftingTableManager.HasOutputSlot() && craftingTableManager.craftingOutputSlot.HasItem())
             {
-                var outputItemSlot = craftingTableManager.outputSlot;
+                var outputItemSlot = craftingTableManager.craftingOutputSlot;
                 bool canPickup = itemInHand.PickupItem(ref outputItemSlot);
 
                 if (canPickup == true)
@@ -116,9 +146,9 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     {
         while(true)
         {
-            if (craftingTableManager.HasOutputSlot() && craftingTableManager.outputSlot.HasItem())
+            if (craftingTableManager.HasOutputSlot() && craftingTableManager.craftingOutputSlot.HasItem())
             {
-                var outputItemSlot = craftingTableManager.outputSlot;
+                var outputItemSlot = craftingTableManager.craftingOutputSlot;
                 bool canPickup = itemInHand.PickupItem(ref outputItemSlot);
 
                 if (canPickup == true)
@@ -145,7 +175,6 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
 
     public void OnPointerDown(BaseEventData baseEvent, GameObject clickedObject)
     {
-        Debug.Log("OnPointerDown");
         PointerEventData pointerEventData = (PointerEventData)baseEvent;
         int index = GetItemSlotIndex(clickedObject);
         if (index == -1) return;
@@ -166,7 +195,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     private void OnLeftClick(int index)
     {
         handHasItem = itemInHand.HasItemData();
-        slotHasItem = craftingTableManager.GetItemIntputSlotAt(index).HasItem();
+        slotHasItem = craftingTableManager.GetItemInputSlotAt(index).HasItem();
 
         if (handHasItem == false)
         {
@@ -177,7 +206,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             else
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
-                itemInHand.Swap(ref craftingTableManager.inputSlots, index, StoredType.CraftingTable, true);
+                itemInHand.Swap(ref craftingTableManager.crafintInputSlots, index, StoredType.CraftingTable, true);
             }
         }
         else
@@ -185,20 +214,20 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             if (slotHasItem == false)
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                itemInHand.Swap(ref craftingTableManager.inputSlots, index, StoredType.CraftingTable, true);
+                itemInHand.Swap(ref craftingTableManager.crafintInputSlots, index, StoredType.CraftingTable, true);
             }
             else
             {
                 //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
-                bool isSameItem = ItemData.IsSameItem(craftingTableManager.inputSlots[index].ItemData, itemInHand.GetItemData());
+                bool isSameItem = ItemData.IsSameItem(craftingTableManager.crafintInputSlots[index].ItemData, itemInHand.GetItemData());
                 if (isSameItem)
                 {
-                    ItemSlot remainItems = craftingTableManager.inputSlots[index].AddItemsFromAnotherSlot(itemInHand.GetSlot());
+                    ItemSlot remainItems = craftingTableManager.crafintInputSlots[index].AddItemsFromAnotherSlot(itemInHand.GetSlot());
                     itemInHand.Set(remainItems, index, StoredType.CraftingTable, true);
                 }
                 else
                 {
-                    itemInHand.Swap(ref craftingTableManager.inputSlots, index, StoredType.CraftingTable, true);
+                    itemInHand.Swap(ref craftingTableManager.crafintInputSlots, index, StoredType.CraftingTable, true);
                 }
             }
         }
@@ -210,7 +239,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     private void OnRightClick(int index)
     {
         handHasItem = itemInHand.HasItemData();
-        slotHasItem = craftingTableManager.GetItemIntputSlotAt(index).HasItem();
+        slotHasItem = craftingTableManager.GetItemInputSlotAt(index).HasItem();
 
         if (handHasItem == false)
         {
@@ -221,7 +250,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
             else
             {
                 //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
-                itemInHand.SplitItemSlotQuantityInInventoryAt(ref craftingTableManager.inputSlots, index);
+                itemInHand.SplitItemSlotQuantityInInventoryAt(ref craftingTableManager.crafintInputSlots, index);
             }
         }
         else
@@ -255,7 +284,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
     private void OnRightPress(int index)
     {
         handHasItem = itemInHand.HasItemData();
-        slotHasItem = craftingTableManager.inputSlots[index].HasItem();
+        slotHasItem = craftingTableManager.crafintInputSlots[index].HasItem();
 
         if (handHasItem == true)
         {
@@ -300,7 +329,7 @@ public class UICraftingTableManager : Singleton<UICraftingTableManager>
 
         int index = GetItemSlotIndex(clickedObject);
         handHasItem = itemInHand.HasItemData();
-        slotHasItem = craftingTableManager.GetItemIntputSlotAt(index).HasItem();
+        slotHasItem = craftingTableManager.GetItemInputSlotAt(index).HasItem();
 
         if (handHasItem == true)
         {

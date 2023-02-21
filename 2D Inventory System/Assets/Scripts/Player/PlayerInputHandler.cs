@@ -203,7 +203,7 @@ public class PlayerInputHandler : MonoBehaviour
                 player.currentOpenChest.Inventory.StackItem();
                 break;
             case StoredType.CraftingTable:
-                CraftingTableManager.Instance.StackItem();
+                CraftingTable.Instance.StackItem();
                 break;
 
             default: break;

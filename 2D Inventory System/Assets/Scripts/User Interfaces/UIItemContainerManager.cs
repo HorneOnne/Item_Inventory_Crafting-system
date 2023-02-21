@@ -9,7 +9,7 @@ using MyGame.Ultilities;
 public class UIItemContainerManager : Singleton<UIItemContainerManager>
 {
     [Header("Containers")]
-    public List<ItemData> itemScriptableObjectList;
+    public List<ItemData> itemDataList;
     public List<GameObject> UI_SlotList;
 
     [Header("UI")]
@@ -18,6 +18,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
     [Header("References")]
     [SerializeField] Transform contentPanel;
     [SerializeField] TextMeshProUGUI currentItemTypeText;
+    private GameObject uiCraftingTableCanvas;
 
 
     [Header("TagItemContainerReferences")]
@@ -37,6 +38,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
     private void Start()
     {
         itemInHand = player.ItemInHand;
+        uiCraftingTableCanvas = UIManager.Instance.CraftingTableCanvas;
         LoadAllItems();
     }
 
@@ -51,7 +53,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
             Destroy(slot.gameObject);
         }
         UI_SlotList.Clear();
-        itemScriptableObjectList.Clear();
+        itemDataList.Clear();
 
         int index = 0;
         foreach(var item in ItemContainerManager.Instance.itemDataDict.Keys)
@@ -62,7 +64,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
             slotObject.GetComponent<UIItemSlot>().SetData(new ItemSlot(item, 1));
 
             UI_SlotList.Add(slotObject);
-            itemScriptableObjectList.Add(item);
+            itemDataList.Add(item);
 
             index++;
         }
@@ -75,7 +77,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
             Destroy(slot.gameObject);
         }
         UI_SlotList.Clear();
-        itemScriptableObjectList.Clear();
+        itemDataList.Clear();
 
         int index = 0;
         foreach (var item in ItemContainerManager.Instance.itemDataDict.Keys)
@@ -88,7 +90,7 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
                 slotObject.GetComponent<UIItemSlot>().SetData(new ItemSlot(item, 1));
 
                 UI_SlotList.Add(slotObject);
-                itemScriptableObjectList.Add(item);
+                itemDataList.Add(item);
 
                 index++;
             }
@@ -98,13 +100,32 @@ public class UIItemContainerManager : Singleton<UIItemContainerManager>
 
     // Logic
     // =======================================================================
-    private void OnSlotClicked(BaseEventData baseEvent, GameObject clickedObj)
+    private void OnSlotClicked(BaseEventData baseEvent, GameObject clickedObject)
     {
-        ItemData item = itemScriptableObjectList[clickedObj.GetComponent<UIItemSlot>().SlotIndex];
-        if(player.PlayerInputHandler.PressUtilityKeyInput)
-            itemInHand.Set(new ItemSlot(item, item.max_quantity), -1, StoredType.Another, true);
-        else
-            itemInHand.Set(new ItemSlot(item, 1), -1, StoredType.Another, true);
+        PointerEventData pointerEventData = (PointerEventData)baseEvent;
+
+        if (pointerEventData.pointerId == -1)   // Mouse Left Event
+        {
+            ItemData itemData = itemDataList[clickedObject.GetComponent<UIItemSlot>().SlotIndex];
+            if (player.PlayerInputHandler.PressUtilityKeyInput)
+                itemInHand.Set(new ItemSlot(itemData, itemData.max_quantity), -1, StoredType.Another, true);
+            else
+                itemInHand.Set(new ItemSlot(itemData, 1), -1, StoredType.Another, true);
+        }
+
+
+        if (pointerEventData.pointerId == -2)   // Mouse Right Event
+        {
+            ItemData itemData = itemDataList[clickedObject.GetComponent<UIItemSlot>().SlotIndex];
+            if (uiCraftingTableCanvas.activeInHierarchy)
+            {
+                Debug.Log("Do here.");
+                var recipe = ItemRecipeManager.Instance.GetRecipeFromItem(itemData);
+                CraftingTable.Instance.FillCraftingSuggestionData(recipe);
+                UICraftingTable.Instance.UpdateCraftingTableDisplayUI();
+
+            }
+        } 
     }
 
     // =======================================================================
