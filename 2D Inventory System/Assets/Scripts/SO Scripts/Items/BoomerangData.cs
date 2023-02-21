@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "Boomerang", menuName = "ScriptableObject/Item/Weapons/Boomerang", order = 51)]
-public class BoomerangData : ItemData
+namespace DIVH_InventorySystem
 {
-    [Header("BoomerangData Properties")]
-    public int damage;
-    public float releaseSpeed;
-    public float timeToReturn;  // Time the boomerang back to player (seconds).
-    public float rotateSpeed;  // Only visualization effect.
+    [CreateAssetMenu(fileName = "Boomerang", menuName = "ScriptableObject/Item/Weapons/Boomerang", order = 51)]
+    public class BoomerangData : ItemData
+    {
+        [Header("BoomerangData Properties")]
+        public int damage;
+        public float releaseSpeed;
+        public float timeToReturn;  // Time the boomerang back to player (seconds).
+        public float rotateSpeed;  // Only visualization effect.
+    }
 }
-

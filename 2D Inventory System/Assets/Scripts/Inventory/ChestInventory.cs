@@ -1,130 +1,132 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.EventSystems;
 
-public class ChestInventory : MonoBehaviour
+namespace DIVH_InventorySystem
 {
-    [Header("References")]
-    public Player player;
-    private ItemInHand itemInHand;
-
-
-    [Header("Inventory Settings")]
-    private const int MAX_NORMAL_CHEST_SLOT = 36;
-    public List<ItemSlot> inventory = new List<ItemSlot>();
-
-
-    private void Start()
+    public class ChestInventory : MonoBehaviour
     {
-        for (int i = 0; i < MAX_NORMAL_CHEST_SLOT; i++)
+        [Header("References")]
+        public Player player;
+        private ItemInHand itemInHand;
+
+
+        [Header("Inventory Settings")]
+        private const int MAX_NORMAL_CHEST_SLOT = 36;
+        public List<ItemSlot> inventory = new List<ItemSlot>();
+
+
+        private void Start()
         {
-            inventory.Add(new ItemSlot());
+            for (int i = 0; i < MAX_NORMAL_CHEST_SLOT; i++)
+            {
+                inventory.Add(new ItemSlot());
+            }
         }
-    }
 
-    public void Set(Player player)
-    {
-        this.player = player;
-
-        if (player != null)
-            itemInHand = this.player.ItemInHand;
-        else
-            itemInHand = null;
-    }
-
-    public ItemData GetItem(int slotIndex)
-    {
-        if (HasSlot(slotIndex))
+        public void Set(Player player)
         {
-            return inventory[slotIndex].ItemData;
+            this.player = player;
+
+            if (player != null)
+                itemInHand = this.player.ItemInHand;
+            else
+                itemInHand = null;
         }
-        return null;
-    }
 
-
-    public bool AddItem(int index)
-    {
-        bool isSlotNotFull = inventory[index].AddItem();
-        EventManager.ChestInventoryUpdate();
-        return isSlotNotFull;
-    }
-
-
-    public void AddNewItemAt(int index, ItemData item)
-    {
-        inventory[index].AddNewItem(item);
-        EventManager.ChestInventoryUpdate();
-    }
-
-    public void RemoveItemFromInventoryAtIndex(int index)
-    {
-        inventory[index].RemoveItem();
-        EventManager.ChestInventoryUpdate();
-    }
-
-
-    public bool HasSlot(int slotIndex)
-    {
-        try
+        public ItemData GetItem(int slotIndex)
         {
-            inventory[slotIndex].HasItem();
+            if (HasSlot(slotIndex))
+            {
+                return inventory[slotIndex].ItemData;
+            }
+            return null;
         }
-        catch
+
+
+        public bool AddItem(int index)
         {
+            bool isSlotNotFull = inventory[index].AddItem();
+            EventManager.ChestInventoryUpdate();
+            return isSlotNotFull;
+        }
+
+
+        public void AddNewItemAt(int index, ItemData item)
+        {
+            inventory[index].AddNewItem(item);
+            EventManager.ChestInventoryUpdate();
+        }
+
+        public void RemoveItemFromInventoryAtIndex(int index)
+        {
+            inventory[index].RemoveItem();
+            EventManager.ChestInventoryUpdate();
+        }
+
+
+        public bool HasSlot(int slotIndex)
+        {
+            try
+            {
+                inventory[slotIndex].HasItem();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+
+        public bool HasItem(int slotIndex)
+        {
+            if (HasSlot(slotIndex))
+            {
+                return inventory[slotIndex].HasItem();
+            }
             return false;
         }
 
-        return true;
-    }
-
-
-    public bool HasItem(int slotIndex)
-    {
-        if (HasSlot(slotIndex))
+        public int? GetSlotIndex(ItemSlot itemSlot)
         {
-            return inventory[slotIndex].HasItem();
-        }
-        return false;
-    }
-
-    public int? GetSlotIndex(ItemSlot itemSlot)
-    {
-        for (int i = 0; i < inventory.Count; i++)
-        {
-            if (inventory[i].Equals(itemSlot))
+            for (int i = 0; i < inventory.Count; i++)
             {
-                return i;
+                if (inventory[i].Equals(itemSlot))
+                {
+                    return i;
+                }
             }
+
+            return null;
         }
 
-        return null;
-    }
 
-
-    public void StackItem()
-    {
-        if (itemInHand.GetItemData() == null) return;
-        Dictionary<int, int> dict = new Dictionary<int, int>();
-        Dictionary<int, int> sortedDict = new Dictionary<int, int>();
-
-        for (int i = 0; i < inventory.Count; i++)
+        public void StackItem()
         {
-            if (inventory[i].ItemData == itemInHand.GetItemData())
+            if (itemInHand.GetItemData() == null) return;
+            Dictionary<int, int> dict = new Dictionary<int, int>();
+            Dictionary<int, int> sortedDict = new Dictionary<int, int>();
+
+            for (int i = 0; i < inventory.Count; i++)
             {
-                dict.Add(i, inventory[i].ItemQuantity);
+                if (inventory[i].ItemData == itemInHand.GetItemData())
+                {
+                    dict.Add(i, inventory[i].ItemQuantity);
+                }
             }
-        }
 
-        // Use OrderBy to sort the dictionary by value
-        sortedDict = dict.OrderBy(x => x.Value)
-            .ToDictionary(x => x.Key, x => x.Value);
+            // Use OrderBy to sort the dictionary by value
+            sortedDict = dict.OrderBy(x => x.Value)
+                .ToDictionary(x => x.Key, x => x.Value);
 
-        foreach (var e in sortedDict)
-        {
-            itemInHand.GetSlot().AddItemsFromAnotherSlot(inventory[e.Key]);
-            UIItemInHand.Instance.UpdateItemInHandUI();
-            UIChestInventory.Instance.UpdateInventoryUIAt(e.Key);
+            foreach (var e in sortedDict)
+            {
+                itemInHand.GetSlot().AddItemsFromAnotherSlot(inventory[e.Key]);
+                UIItemInHand.Instance.UpdateItemInHandUI();
+                UIChestInventory.Instance.UpdateInventoryUIAt(e.Key);
+            }
         }
     }
 }

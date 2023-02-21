@@ -1,67 +1,68 @@
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
-using UnityEngine.EventSystems;
-using UnityEngine.Events;
 
-public class UIItemSlot : MonoBehaviour
+namespace DIVH_InventorySystem
 {
-    [Header("Internal References")]
-    public Image mainImage;
-    public Image defaultImage;
-    public TextMeshProUGUI amountItemInSlotText;
-    [SerializeField] private int slotIndex;
-    public int SlotIndex { get { return slotIndex; } protected set { slotIndex = value; }}
-
-    public void SetIndex(int slotIndex = -1)
+    public class UIItemSlot : MonoBehaviour
     {
-        this.slotIndex = slotIndex;
-    }
+        [Header("Internal References")]
+        public Image mainImage;
+        public Image defaultImage;
+        public TextMeshProUGUI amountItemInSlotText;
+        [SerializeField] private int slotIndex;
+        public int SlotIndex { get { return slotIndex; } protected set { slotIndex = value; } }
 
-    public void SetData(ItemSlot itemSlot)
-    {
-        if (itemSlot == null || itemSlot.HasItem() == false)
+        public void SetIndex(int slotIndex = -1)
         {
-            defaultImage.enabled = true;
-            this.mainImage.sprite = null;
-            amountItemInSlotText.text = "";
+            this.slotIndex = slotIndex;
         }
-        else
+
+        public void SetData(ItemSlot itemSlot)
         {
-            defaultImage.enabled = false;
-            this.mainImage.sprite = itemSlot.GetItemIcon();
-            if (itemSlot.ItemQuantity > 1)
-                amountItemInSlotText.text = $"{itemSlot.ItemQuantity}";
-            else
+            if (itemSlot == null || itemSlot.HasItem() == false)
+            {
+                defaultImage.enabled = true;
+                this.mainImage.sprite = null;
                 amountItemInSlotText.text = "";
-        }     
-    }
-
-    public void SetData(ItemSlot itemSlot, float opacity)
-    {
-        Color mainImageColor = mainImage.color;
-        mainImageColor.a = opacity;
-
-        Color defaultTextColor = amountItemInSlotText.color;
-        defaultTextColor.a = opacity;
-
-        if (itemSlot == null || itemSlot.HasItem() == false)
-        {
-            defaultImage.enabled = true;                  
-            this.mainImage.sprite = null;
-            amountItemInSlotText.text = "";
-        }
-        else
-        {
-            defaultImage.enabled = false;
-            this.mainImage.sprite = itemSlot.GetItemIcon();
-            if (itemSlot.ItemQuantity > 1)
-                amountItemInSlotText.text = $"{itemSlot.ItemQuantity}";
+            }
             else
-                amountItemInSlotText.text = "";
+            {
+                defaultImage.enabled = false;
+                this.mainImage.sprite = itemSlot.GetItemIcon();
+                if (itemSlot.ItemQuantity > 1)
+                    amountItemInSlotText.text = $"{itemSlot.ItemQuantity}";
+                else
+                    amountItemInSlotText.text = "";
+            }
         }
 
-        mainImage.color = mainImageColor;
-        amountItemInSlotText.color = defaultTextColor;
+        public void SetData(ItemSlot itemSlot, float opacity)
+        {
+            Color mainImageColor = mainImage.color;
+            mainImageColor.a = opacity;
+
+            Color defaultTextColor = amountItemInSlotText.color;
+            defaultTextColor.a = opacity;
+
+            if (itemSlot == null || itemSlot.HasItem() == false)
+            {
+                defaultImage.enabled = true;
+                this.mainImage.sprite = null;
+                amountItemInSlotText.text = "";
+            }
+            else
+            {
+                defaultImage.enabled = false;
+                this.mainImage.sprite = itemSlot.GetItemIcon();
+                if (itemSlot.ItemQuantity > 1)
+                    amountItemInSlotText.text = $"{itemSlot.ItemQuantity}";
+                else
+                    amountItemInSlotText.text = "";
+            }
+
+            mainImage.color = mainImageColor;
+            amountItemInSlotText.color = defaultTextColor;
+        }
     }
 }

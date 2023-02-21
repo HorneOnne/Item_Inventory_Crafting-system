@@ -1,371 +1,334 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using MyGame.Ultilities;
-using UnityEditor;
-using System;
-using System.Reflection;
 
-[RequireComponent(typeof(CraftingTable))]
-public class UICraftingTable : Singleton<UICraftingTable>
+
+namespace DIVH_InventorySystem
 {
-    [Header("References")]
-    public Player player;
-    private PlayerInputHandler playerInput;
-    private CraftingTable craftingTableManager;
-    private ItemInHand itemInHand;
-
-
-    [SerializeField] private GameObject[] craftingGridSlot = new GameObject[9];
-    [SerializeField] private GameObject outputSlot;
-    
-
-    // Cache
-    private bool handHasItem;
-    private bool slotHasItem;
-
-
-    private void Start()
+    [RequireComponent(typeof(CraftingTable))]
+    public class UICraftingTable : Singleton<UICraftingTable>
     {
-        craftingTableManager = CraftingTable.Instance;
-        itemInHand = player.ItemInHand;
-        playerInput = player.PlayerInputHandler;
+        [Header("REFERENCES")]
+        public Player player;
+        private PlayerInputHandler playerInputHandler;
+        private CraftingTable craftingTable;
+        private ItemInHand itemInHand;
 
 
-        for (int i = 0; i < craftingTableManager.GridLength; i++)
+        [Header("DATA")]
+        [SerializeField] private GameObject[] craftingGridSlot = new GameObject[9];
+        [SerializeField] private GameObject outputSlot;
+
+
+        // Cache
+        private bool handHasItem;
+        private bool slotHasItem;
+
+
+        private void Start()
         {
-            // craftingGridSlot event
-            GameObject slotObject = craftingGridSlot[i];
-            slotObject.GetComponent<UIItemSlot>().SetIndex(i);
-            slotObject.GetComponent<UIItemSlot>().SetData(null);
-            Utilities.AddEvent(slotObject, EventTriggerType.PointerDown, (baseEvent) => OnPointerDown(baseEvent, slotObject));
-            Utilities.AddEvent(slotObject, EventTriggerType.PointerEnter, delegate { OnEnter(slotObject); });
-            
-        }
-
-        UpdateCraftingTableDisplayUI();
+            craftingTable = CraftingTable.Instance;
+            itemInHand = player.ItemInHand;
+            playerInputHandler = player.PlayerInputHandler;
 
 
-        // outputSlot Event
-        Utilities.AddEvent(outputSlot, EventTriggerType.PointerClick, (baseEvent) => OnOutputSlotClick(baseEvent, outputSlot));
-        UIManager.Instance.CraftingTableCanvas.SetActive(false);
-    }
-
-
-
-    #region UPDATE CRAFTINGTABLE DISPLAY UI REGION.
-    public void UpdateCraftingTableDisplayUI()
-    {
-        // Update Crafting grid slot
-        for (int i = 0; i < craftingTableManager.GridLength; i++)
-        {
-            UpdateCraftingTableDisplayUIAt(i);
-        }
-
-        // Update Output slot
-        UpdateOutputSlotCraftingTalbeUI();
-
-
-
- 
-
-
-
-        
-    }
-
-    public void UpdateCraftingTableDisplayUIAt(int index)
-    {
-        UIItemSlot uiSlot = craftingGridSlot[index].GetComponent<UIItemSlot>();
-
-        var itemSlot = craftingTableManager.GetItemInputSlotAt(index);
-
-        if(itemSlot != null && itemSlot.HasItem())
-        {
-            uiSlot.SetData(craftingTableManager.GetItemInputSlotAt(index), 1.0f);
-        }
-        else
-        {
-            uiSlot.SetData(craftingTableManager.craftingSuggestionInputSlots[index], 0.3f);
-        }
-        
-    }
-
-    private void UpdateOutputSlotCraftingTalbeUI()
-    {
-        UIItemSlot uiSlot = outputSlot.GetComponent<UIItemSlot>();
-        uiSlot.SetData(craftingTableManager.craftingOutputSlot, 1.0f);
-
-        var itemSlot = craftingTableManager.craftingOutputSlot;
-
-        if (itemSlot != null && itemSlot.HasItem())
-        {
-            uiSlot.SetData(craftingTableManager.craftingOutputSlot, 1.0f);
-        }
-        else
-        {
-            uiSlot.SetData(craftingTableManager.craftingSuggestionOutputSlot, 0.3f);
-        }
-    }
-
-    #endregion UPDATE CRAFTINGTABLE DISPLAY UI REGION.
-
-
-
-
-    #region LOGIC HANDLER
-    // LOGIC 
-    // ===================================================================
-    public void OnOutputSlotClick(BaseEventData baseEvent, GameObject clickedObject)
-    {
-        PointerEventData pointerEventData = (PointerEventData)baseEvent;
- 
-        if (pointerEventData.pointerId == -1)   // Mouse Left Event
-        {
-            if (playerInput.PressUtilityKeyInput)
+            for (int i = 0; i < craftingTable.GridLength; i++)
             {
-                QuickGetAllOutputItem();
+                // craftingGridSlot event
+                GameObject slotObject = craftingGridSlot[i];
+                slotObject.GetComponent<UIItemSlot>().SetIndex(i);
+                slotObject.GetComponent<UIItemSlot>().SetData(null);
+                Utilities.AddEvent(slotObject, EventTriggerType.PointerDown, (baseEvent) => OnPointerDown(baseEvent, slotObject));
+                Utilities.AddEvent(slotObject, EventTriggerType.PointerEnter, delegate { OnEnter(slotObject); });
+
             }
-            else if (craftingTableManager.HasOutputSlot() && craftingTableManager.craftingOutputSlot.HasItem())
-            {
-                var outputItemSlot = craftingTableManager.craftingOutputSlot;
-                bool canPickup = itemInHand.PickupItem(ref outputItemSlot);
 
-                if (canPickup == true)
-                {
-                    EventManager.GetOutputItem();
-                    EventManager.GridChanged();
-                    UpdateCraftingTableDisplayUI();
-                }        
-               
+            UpdateCraftingTableDisplayUI();
+
+
+            // outputSlot Event
+            Utilities.AddEvent(outputSlot, EventTriggerType.PointerClick, (baseEvent) => OnOutputSlotClick(baseEvent, outputSlot));
+            UIManager.Instance.CraftingTableCanvas.SetActive(false);
+        }
+
+
+
+        #region UPDATE CRAFTINGTABLE DISPLAY UI REGION.
+        public void UpdateCraftingTableDisplayUI()
+        {
+            // Update Crafting grid slot
+            for (int i = 0; i < craftingTable.GridLength; i++)
+            {
+                UpdateCraftingTableDisplayUIAt(i);
+            }
+
+            // Update Output slot
+            UpdateOutputSlotCraftingTalbeUI();
+
+
+
+
+
+
+
+
+        }
+
+        public void UpdateCraftingTableDisplayUIAt(int index)
+        {
+            UIItemSlot uiSlot = craftingGridSlot[index].GetComponent<UIItemSlot>();
+
+            var itemSlot = craftingTable.GetItemInputSlotAt(index);
+
+            if (itemSlot != null && itemSlot.HasItem())
+            {
+                uiSlot.SetData(craftingTable.GetItemInputSlotAt(index), 1.0f);
+            }
+            else
+            {
+                uiSlot.SetData(craftingTable.craftingSuggestionInputSlots[index], 0.3f);
+            }
+
+        }
+
+        private void UpdateOutputSlotCraftingTalbeUI()
+        {
+            UIItemSlot uiSlot = outputSlot.GetComponent<UIItemSlot>();
+            uiSlot.SetData(craftingTable.craftingOutputSlot, 1.0f);
+
+            var itemSlot = craftingTable.craftingOutputSlot;
+
+            if (itemSlot != null && itemSlot.HasItem())
+            {
+                uiSlot.SetData(craftingTable.craftingOutputSlot, 1.0f);
+            }
+            else
+            {
+                uiSlot.SetData(craftingTable.craftingSuggestionOutputSlot, 0.3f);
             }
         }
-    }
+
+        #endregion UPDATE CRAFTINGTABLE DISPLAY UI REGION.
 
 
-    public void QuickGetAllOutputItem()
-    {
-        while(true)
+
+
+        #region LOGIC HANDLER
+        // LOGIC 
+        // ===================================================================
+        public void OnOutputSlotClick(BaseEventData baseEvent, GameObject clickedObject)
         {
-            if (craftingTableManager.HasOutputSlot() && craftingTableManager.craftingOutputSlot.HasItem())
+            PointerEventData pointerEventData = (PointerEventData)baseEvent;
+
+            if (pointerEventData.pointerId == -1)   // Mouse Left Event
             {
-                var outputItemSlot = craftingTableManager.craftingOutputSlot;
-                bool canPickup = itemInHand.PickupItem(ref outputItemSlot);
-
-                if (canPickup == true)
+                if (playerInputHandler.PressUtilityKeyInput)
                 {
-                    EventManager.GetOutputItem();
-                    EventManager.GridChanged();
-                    UpdateCraftingTableDisplayUI();
+                    QuickGetAllOutputItem();
+                }
+                else if (craftingTable.HasOutputSlot() && craftingTable.craftingOutputSlot.HasItem())
+                {
+                    var outputItemSlot = craftingTable.craftingOutputSlot;
+                    bool canPickup = itemInHand.PickupItem(ref outputItemSlot);
 
-                    Debug.Log("Pick up all item");
+                    if (canPickup == true)
+                    {
+                        EventManager.GetOutputItem();
+                        EventManager.GridChanged();
+                        UpdateCraftingTableDisplayUI();
+                    }
+
+                }
+            }
+        }
+
+
+        public void QuickGetAllOutputItem()
+        {
+            while (true)
+            {
+                if (craftingTable.HasOutputSlot() && craftingTable.craftingOutputSlot.HasItem())
+                {
+                    var outputItemSlot = craftingTable.craftingOutputSlot;
+                    bool canPickup = itemInHand.PickupItem(ref outputItemSlot);
+
+                    if (canPickup == true)
+                    {
+                        EventManager.GetOutputItem();
+                        EventManager.GridChanged();
+                        UpdateCraftingTableDisplayUI();
+
+                        Debug.Log("Pick up all item");
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
                 else
                 {
                     break;
+
                 }
             }
-            else
-            { 
-                break;
-           
-            }
-        }
-    }
-
-
-    public void OnPointerDown(BaseEventData baseEvent, GameObject clickedObject)
-    {
-        PointerEventData pointerEventData = (PointerEventData)baseEvent;
-        int index = GetItemSlotIndex(clickedObject);
-        if (index == -1) return;
-
-        if (pointerEventData.pointerId == -1)   // Mouse Left Event
-        {
-            OnLeftClick(index);
         }
 
 
-        if (pointerEventData.pointerId == -2)   // Mouse Right Event
+        public void OnPointerDown(BaseEventData baseEvent, GameObject clickedObject)
         {
-            OnRightClick(index);
-        }
-    }
+            PointerEventData pointerEventData = (PointerEventData)baseEvent;
+            int index = GetItemSlotIndex(clickedObject);
+            if (index == -1) return;
 
-
-    private void OnLeftClick(int index)
-    {
-        handHasItem = itemInHand.HasItemData();
-        slotHasItem = craftingTableManager.GetItemInputSlotAt(index).HasItem();
-
-        if (handHasItem == false)
-        {
-            if (slotHasItem == false)
+            if (pointerEventData.pointerId == -1)   // Mouse Left Event
             {
-                //Debug.Log("HAND: EMPTY \t SLOT: EMPTY");
+                OnLeftClick(index);
             }
-            else
+
+
+            if (pointerEventData.pointerId == -2)   // Mouse Right Event
             {
-                //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
-                itemInHand.Swap(ref craftingTableManager.crafintInputSlots, index, StoredType.CraftingTable, true);
+                OnRightClick(index);
             }
         }
-        else
+
+
+        private void OnLeftClick(int index)
         {
-            if (slotHasItem == false)
+            handHasItem = itemInHand.HasItemData();
+            slotHasItem = craftingTable.GetItemInputSlotAt(index).HasItem();
+
+            if (handHasItem == false)
             {
-                //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                itemInHand.Swap(ref craftingTableManager.crafintInputSlots, index, StoredType.CraftingTable, true);
-            }
-            else
-            {
-                //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
-                bool isSameItem = ItemData.IsSameItem(craftingTableManager.crafintInputSlots[index].ItemData, itemInHand.GetItemData());
-                if (isSameItem)
+                if (slotHasItem == false)
                 {
-                    ItemSlot remainItems = craftingTableManager.crafintInputSlots[index].AddItemsFromAnotherSlot(itemInHand.GetSlot());
-                    itemInHand.Set(remainItems, index, StoredType.CraftingTable, true);
+                    //Debug.Log("HAND: EMPTY \t SLOT: EMPTY");
                 }
                 else
                 {
-                    itemInHand.Swap(ref craftingTableManager.crafintInputSlots, index, StoredType.CraftingTable, true);
+                    //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
+                    itemInHand.Swap(ref craftingTable.craftingInputSlots, index, StoredType.CraftingTable, true);
                 }
             }
-        }
-
-        EventManager.GridChanged();
-        UpdateCraftingTableDisplayUI();
-    }
-
-    private void OnRightClick(int index)
-    {
-        handHasItem = itemInHand.HasItemData();
-        slotHasItem = craftingTableManager.GetItemInputSlotAt(index).HasItem();
-
-        if (handHasItem == false)
-        {
-            if (slotHasItem == false)
-            {
-                //Debug.Log("HAND: EMPTY \t SLOT: EMPTY");
-            }
             else
             {
-                //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
-                itemInHand.SplitItemSlotQuantityInInventoryAt(ref craftingTableManager.crafintInputSlots, index);
-            }
-        }
-        else
-        {
-            if (slotHasItem == false)
-            {
-                //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                craftingTableManager.AddNewItemAt(index, itemInHand.GetItemData());
-                itemInHand.RemoveItem();
-            }
-            else
-            {
-                //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
-                if (ItemData.IsSameItem(itemInHand.GetItemData(), craftingTableManager.GetItem(index)))
+                if (slotHasItem == false)
                 {
-                    bool isSlotNotFull = craftingTableManager.AddItem(index);
-
-                    if (isSlotNotFull)
+                    //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
+                    itemInHand.Swap(ref craftingTable.craftingInputSlots, index, StoredType.CraftingTable, true);
+                }
+                else
+                {
+                    //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
+                    bool isSameItem = ItemData.IsSameItem(craftingTable.craftingInputSlots[index].ItemData, itemInHand.GetItemData());
+                    if (isSameItem)
                     {
-                        itemInHand.RemoveItem();
+                        ItemSlot remainItems = craftingTable.craftingInputSlots[index].AddItemsFromAnotherSlot(itemInHand.GetSlot());
+                        itemInHand.Set(remainItems, index, StoredType.CraftingTable, true);
+                    }
+                    else
+                    {
+                        itemInHand.Swap(ref craftingTable.craftingInputSlots, index, StoredType.CraftingTable, true);
                     }
                 }
-
             }
+
+            EventManager.GridChanged();
+            UpdateCraftingTableDisplayUI();
         }
 
-        EventManager.GridChanged();
-        UpdateCraftingTableDisplayUI();
-    }
-
-    private void OnRightPress(int index)
-    {
-        handHasItem = itemInHand.HasItemData();
-        slotHasItem = craftingTableManager.crafintInputSlots[index].HasItem();
-
-        if (handHasItem == true)
+        private void OnRightClick(int index)
         {
+            handHasItem = itemInHand.HasItemData();
+            slotHasItem = craftingTable.GetItemInputSlotAt(index).HasItem();
 
-            if (slotHasItem == false && craftingTableManager.HasSlot(index))
+            if (handHasItem == false)
             {
-                Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                craftingTableManager.AddNewItemAt(index, itemInHand.GetItemData());
-                itemInHand.RemoveItem();
-
+                if (slotHasItem == false)
+                {
+                    //Debug.Log("HAND: EMPTY \t SLOT: EMPTY");
+                }
+                else
+                {
+                    //Debug.Log("HAND: EMPTY \t SLOT: HAS ITEM");
+                    itemInHand.SplitItemSlotQuantityInInventoryAt(ref craftingTable.craftingInputSlots, index);
+                }
             }
             else
             {
-                //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
-
-                if (ItemData.IsSameItem(itemInHand.GetItemData(), craftingTableManager.GetItem(index)))
+                if (slotHasItem == false)
                 {
-                    //Debug.Log("Same item");
-                    bool isSlotNotFull = craftingTableManager.AddItem(index);
-
-                    if (isSlotNotFull)
+                    //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
+                    craftingTable.AddNewItemAt(index, itemInHand.GetItemData());
+                    itemInHand.RemoveItem();
+                }
+                else
+                {
+                    //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
+                    if (ItemData.IsSameItem(itemInHand.GetItemData(), craftingTable.GetItem(index)))
                     {
-                        itemInHand.RemoveItem();
+                        bool isSlotNotFull = craftingTable.AddItem(index);
+
+                        if (isSlotNotFull)
+                        {
+                            itemInHand.RemoveItem();
+                        }
                     }
 
                 }
             }
+
+            EventManager.GridChanged();
+            UpdateCraftingTableDisplayUI();
         }
 
-        EventManager.GridChanged();
-        UpdateCraftingTableDisplayUI();
-    }
 
-
-    public void OnEnter(GameObject clickedObject)
-    {      
-        if(player.PlayerInputHandler.CurrentMouseState != PointerState.RightPressAfterWait)
+        public void OnEnter(GameObject clickedObject)
         {
-            //OnRightClick(GetItemSlotIndex(clickedObject));
-            return;
-        }
-
-        int index = GetItemSlotIndex(clickedObject);
-        handHasItem = itemInHand.HasItemData();
-        slotHasItem = craftingTableManager.GetItemInputSlotAt(index).HasItem();
-
-        if (handHasItem == true)
-        {
-            if (slotHasItem == false)
+            if (playerInputHandler.CurrentMouseState != PointerState.RightPressAfterWait)
             {
-                //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
-                craftingTableManager.AddNewItemAt(index, itemInHand.GetItemData());
-                itemInHand.RemoveItem();
+                return;
             }
-            else
+
+            int index = GetItemSlotIndex(clickedObject);
+            handHasItem = itemInHand.HasItemData();
+            slotHasItem = craftingTable.GetItemInputSlotAt(index).HasItem();
+
+            if (handHasItem == true)
             {
-                //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
-                if (ItemData.IsSameItem(itemInHand.GetItemData(), craftingTableManager.GetItem(index)))
+                if (slotHasItem == false)
                 {
-                    bool isSlotNotFull = craftingTableManager.AddItem(index);
-
-                    if (isSlotNotFull)
-                    {
-                        itemInHand.RemoveItem();
-                    }
+                    //Debug.Log("HAND: HAS ITEM \t SLOT: EMPTY");
+                    craftingTable.AddNewItemAt(index, itemInHand.GetItemData());
+                    itemInHand.RemoveItem();
                 }
+                else
+                {
+                    //Debug.Log("HAND: HAS ITEM \t SLOT: HAS ITEM");
+                    if (ItemData.IsSameItem(itemInHand.GetItemData(), craftingTable.GetItem(index)))
+                    {
+                        bool isSlotNotFull = craftingTable.AddItem(index);
 
+                        if (isSlotNotFull)
+                        {
+                            itemInHand.RemoveItem();
+                        }
+                    }
+
+                }
             }
+
+            EventManager.GridChanged();
+            UpdateCraftingTableDisplayUI();
         }
- 
-        EventManager.GridChanged();
-        UpdateCraftingTableDisplayUI();
+
+
+        private int GetItemSlotIndex(GameObject itemSlot)
+        {
+            if (itemSlot == null) return -1;
+            return itemSlot.GetComponent<UIItemSlot>().SlotIndex;
+        }
+
+        #endregion LOCGIC HANDLER
+
     }
-
-
-    private int GetItemSlotIndex(GameObject itemSlot)
-    {
-        if (itemSlot == null) return -1;
-        return itemSlot.GetComponent<UIItemSlot>().SlotIndex;
-    }
-
-    #endregion LOCGIC HANDLER
-
 }

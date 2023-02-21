@@ -1,1 +1,4 @@
-﻿public class Armor : Item { }
+﻿namespace DIVH_InventorySystem
+{
+    public class Armor : Item { }
+}

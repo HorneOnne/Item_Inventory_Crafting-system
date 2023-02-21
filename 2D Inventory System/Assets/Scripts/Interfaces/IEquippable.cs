@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public interface IEquippable 
+namespace DIVH_InventorySystem
 {
-    public void Equip(Player player);
+    public interface IEquippable
+    {
+        public void Equip(Player player);
+    }
 }

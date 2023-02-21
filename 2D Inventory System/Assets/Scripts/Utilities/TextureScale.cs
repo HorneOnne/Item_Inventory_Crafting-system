@@ -1,7 +1,7 @@
 using System.Threading;
 using UnityEngine;
 
-namespace MyGame.Ultilities
+namespace DIVH_InventorySystem
 {
     public class TextureScale
     {

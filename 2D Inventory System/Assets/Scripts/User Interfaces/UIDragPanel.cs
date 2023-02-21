@@ -1,40 +1,41 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-/// <summary>
-/// This class provide drag ability to player.
-/// </summary>
-public class UIDragPanel : MonoBehaviour, IDragHandler, IPointerDownHandler
+namespace DIVH_InventorySystem
 {
-    private ItemInHand itemInHand;
-    private RectTransform rt;
-    private Canvas canvas;
-    void Start()
+    /// <summary>
+    /// This class provide drag ability to player.
+    /// </summary>
+    public class UIDragPanel : MonoBehaviour, IDragHandler, IPointerDownHandler
     {
-        rt = GetComponent<RectTransform>(); 
-        canvas = GetComponentInParent<Canvas>();
-
-        itemInHand = GameObject.FindObjectOfType<ItemInHand>(); 
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        if(eventData.button == PointerEventData.InputButton.Right)
+        private ItemInHand itemInHand;
+        private RectTransform rt;
+        private Canvas canvas;
+        void Start()
         {
-            rt.anchoredPosition += eventData.delta / canvas.scaleFactor;
-        }
-        
-    }
+            rt = GetComponent<RectTransform>();
+            canvas = GetComponentInParent<Canvas>();
 
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        if (eventData.button == PointerEventData.InputButton.Right
-            && itemInHand.HasItemData() == false)
-        {
-            rt.transform.SetAsLastSibling();
+            itemInHand = GameObject.FindObjectOfType<ItemInHand>();
         }
-        
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Right)
+            {
+                rt.anchoredPosition += eventData.delta / canvas.scaleFactor;
+            }
+
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Right
+                && itemInHand.HasItemData() == false)
+            {
+                rt.transform.SetAsLastSibling();
+            }
+
+        }
     }
 }

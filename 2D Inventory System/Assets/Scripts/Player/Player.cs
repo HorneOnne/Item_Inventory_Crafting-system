@@ -1,106 +1,104 @@
-using MyGame.Ultilities;
 using UnityEngine;
 
 
-[RequireComponent(typeof(PlayerInventory))]
-[RequireComponent(typeof(ItemInHand))]  
-[RequireComponent(typeof(PlayerMovement))]  
-[RequireComponent(typeof(PlayerInputHandler))]  
-[RequireComponent(typeof(PlayerEquipment))]  
-[RequireComponent(typeof(PlayerBattle))]  
-public class Player : MonoBehaviour
+namespace DIVH_InventorySystem
 {
-    [Header("Character Body")]
-    [SerializeField] Transform handHoldItem;
-
-
-    [Header("Character Data")]
-    public PlayerData playerData;
-
-
-    #region Properties
-    [HideInInspector] public PlayerInventory PlayerInventory { get; private set; }
-    [HideInInspector] public ItemInHand ItemInHand { get; private set; }
-    [HideInInspector] public PlayerMovement PlayerMovement { get; private set; }
-    [HideInInspector] public PlayerInputHandler PlayerInputHandler { get; private set; }
-    [HideInInspector] public PlayerEquipment PlayerEquipment { get; private set; }
-    [HideInInspector] public PlayerBattle PlayerBattle { get; private set; }
-    [HideInInspector] public Transform HandHoldItem { get => handHoldItem; }
-    #endregion
-
-    public Chest currentOpenChest;
-    
-
-
-    private void Awake()
+    [RequireComponent(typeof(PlayerInventory))]
+    [RequireComponent(typeof(ItemInHand))]
+    [RequireComponent(typeof(PlayerMovement))]
+    [RequireComponent(typeof(PlayerInputHandler))]
+    [RequireComponent(typeof(PlayerEquipment))]
+    [RequireComponent(typeof(PlayerBattle))]
+    public class Player : MonoBehaviour
     {
-        PlayerInventory = GetComponent<PlayerInventory>();
-        ItemInHand= GetComponent<ItemInHand>();
-        PlayerMovement = GetComponent<PlayerMovement>();
-        PlayerInputHandler = GetComponent<PlayerInputHandler>();
-        PlayerEquipment = GetComponent<PlayerEquipment>();
-        PlayerBattle = GetComponent<PlayerBattle>();
-    }
+        [Header("Character Body")]
+        [SerializeField] Transform handHoldItem;
 
 
-    private void Update()
-    {
-        /*if (Input.GetMouseButton(0))
+        [Header("Character Data")]
+        public PlayerData playerData;
+
+
+        #region Properties
+        [HideInInspector] public PlayerInventory PlayerInventory { get; private set; }
+        [HideInInspector] public ItemInHand ItemInHand { get; private set; }
+        [HideInInspector] public PlayerMovement PlayerMovement { get; private set; }
+        [HideInInspector] public PlayerInputHandler PlayerInputHandler { get; private set; }
+        [HideInInspector] public PlayerEquipment PlayerEquipment { get; private set; }
+        [HideInInspector] public PlayerBattle PlayerBattle { get; private set; }
+        [HideInInspector] public Transform HandHoldItem { get => handHoldItem; }
+        #endregion
+
+        public Chest currentOpenChest;
+
+
+
+        private void Awake()
         {
-            if (itemInHand.HasItem())
-            {
-                itemInHand.UseItem();
-            }
-            else
-            {
-                Debug.Log("Don't have Item");
-            }
+            PlayerInventory = GetComponent<PlayerInventory>();
+            ItemInHand = GetComponent<ItemInHand>();
+            PlayerMovement = GetComponent<PlayerMovement>();
+            PlayerInputHandler = GetComponent<PlayerInputHandler>();
+            PlayerEquipment = GetComponent<PlayerEquipment>();
+            PlayerBattle = GetComponent<PlayerBattle>();
         }
 
-        if (Input.GetKeyDown(KeyCode.Q))
+
+        private void Update()
         {
-            if (itemInHand.HasItem())
+            /*if (Input.GetMouseButton(0))
             {
-                Drop(itemInHand.itemSlot);
+                if (itemInHand.HasItem())
+                {
+                    itemInHand.UseItem();
+                }
+                else
+                {
+                    Debug.Log("Don't have Item");
+                }
             }
 
-        }*/      
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                if (itemInHand.HasItem())
+                {
+                    Drop(itemInHand.itemSlot);
+                }
+
+            }*/
+        }
+
+        public void Drop(ItemSlot slot)
+        {
+            Debug.Log("Drop item called");
+
+            GameObject itemObject = new GameObject();
+            itemObject.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            itemObject.name = $"{slot.ItemData.name}";
+            itemObject.AddComponent<BoxCollider2D>();
+            itemObject.AddComponent<SpriteRenderer>();
+            itemObject.AddComponent<Rigidbody2D>();
+            itemObject.AddComponent<Item>();
+
+            itemObject.layer = LayerMask.NameToLayer("Item");
+            itemObject.tag = "Item";
+            itemObject.GetComponent<SpriteRenderer>().sprite = slot.ItemData.icon;
+
+            Debug.Log("Fix here");
+            //itemObject.GetComponent<Item>().AddItemData(slot.itemObject);
+        }
+
+
+
+        public void SetDefaultAttackSpeed()
+        {
+            playerData.currentAttackSpeed = playerData.baseAttackSpeed;
+        }
+
+        public void IncreaseAttackSpeed(float value)
+        {
+            playerData.currentAttackSpeed += value;
+        }
     }
-
-    public void Drop(ItemSlot slot)
-    {
-        Debug.Log("Drop item called");
-
-        GameObject itemObject = new GameObject();
-        itemObject.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        itemObject.name = $"{slot.ItemData.name}";
-        itemObject.AddComponent<BoxCollider2D>();
-        itemObject.AddComponent<SpriteRenderer>();
-        itemObject.AddComponent<Rigidbody2D>();
-        itemObject.AddComponent<Item>();
-
-        itemObject.layer = LayerMask.NameToLayer("Item");
-        itemObject.tag = "Item";
-        itemObject.GetComponent<SpriteRenderer>().sprite = slot.ItemData.icon;
-
-        Debug.Log("Fix here");
-        //itemObject.GetComponent<Item>().AddItemData(slot.itemObject);
-    }
-
-    
-
-    public void SetDefaultAttackSpeed()
-    {
-        playerData.currentAttackSpeed = playerData.baseAttackSpeed;
-    }
-
-    public void IncreaseAttackSpeed(float value)
-    {
-        playerData.currentAttackSpeed += value;
-    }
-
-
-
-   
 }

@@ -1,7 +1,10 @@
-﻿public enum GeneralItemType
+﻿namespace DIVH_InventorySystem
 {
-    Weapons,
-    Tools,
-    Projectiles,
-    Equipments,
+    public enum GeneralItemType
+    {
+        Weapons,
+        Tools,
+        Projectiles,
+        Equipments,
+    }
 }

@@ -1,89 +1,92 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-public class Bow : Item, IUpgradeable, IConsumability
+
+namespace DIVH_InventorySystem
 {
-    public int CurrentLevel { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-    public int MaxLevel { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
-    public bool Consumability { get => consumeArrow; set => consumeArrow = value; }
-
-    [Header("References")]
-    private PlayerInventory playerInventory;
-
-    [Header("Bow Properties")]
-    private BowData bowData;
-    [SerializeField] private bool consumeArrow;
-
-
-    private ArrowData arrowData;
-    private int? arrowSlotIndex;
-    private ItemSlot arrowSlotInPlayerInventory;
-    private GameObject arrowProjectilePrefab;
-    private ArrowProjectile_001 arrowProjectileObject;
-
-    // Cached
-
-    protected override void Start()
+    public class Bow : Item
     {
-        base.Start();
-        base.SetOffsetPosition();
+        [Header("References")]
+        private PlayerInventory playerInventory;
 
-        bowData = (BowData)this.ItemData;
-        arrowProjectilePrefab = ItemContainerManager.Instance.GetItemPrefab("ArrowProjectile_001");
-        
-    }
-
-   
-
-    public bool CanUpgrade()
-    {
-        //throw new System.NotImplementedException();
-        return false;
-    }
-
-    public bool IsMaxLevel()
-    {
-        //throw new System.NotImplementedException();
-        return false;
-    }
+        [Header("Bow Properties")]
+        private BowData bowData;
+        [SerializeField] private bool consumeArrow;
 
 
-    public override bool Use(Player player)
-    {
-        playerInventory = player.PlayerInventory;
-        arrowSlotIndex = playerInventory.FindArrowSlotIndex();
+        private ArrowData arrowData;
+        private int? arrowSlotIndex;
+        private ItemSlot arrowSlotInPlayerInventory;
+        private GameObject arrowProjectilePrefab;
+        private ArrowProjectile_001 arrowProjectileObject;
 
-        if (arrowSlotIndex == null) return false;
-        if (arrowProjectilePrefab == null) return false;
+        // Cached
 
-
-        arrowProjectileObject = ArrowSpawner.Instance.Pool.Get().GetComponent<ArrowProjectile_001>();
-        arrowProjectileObject.transform.position = transform.position;
-        arrowProjectileObject.transform.rotation = transform.rotation;
-      
-        arrowSlotInPlayerInventory = playerInventory.inventory[(int)arrowSlotIndex];      
-        arrowData = (ArrowData)arrowSlotInPlayerInventory.ItemData;
-        arrowProjectileObject.SetData(arrowData);    
-        arrowProjectileObject.Shoot(bowData, arrowData);
-
-        Consume(player);
-        return true;
-    }
-
-
-
-    public void Upgrade()
-    {
-        //throw new System.NotImplementedException();
-    }
-
-    public void Consume(Player fromPlayer)
-    {
-        if (Consumability)
+        protected override void Start()
         {
-            arrowSlotInPlayerInventory.RemoveItem();
-            UIPlayerInventory.Instance.UpdateInventoryUIAt((int)arrowSlotIndex);
+            base.Start();
+            base.SetOffsetPosition();
+
+            bowData = (BowData)this.ItemData;
+            arrowProjectilePrefab = ItemDataManager.Instance.GetItemPrefab("ArrowProjectile_001");
+
+        }
+
+
+
+
+
+        public override bool Use(Player player)
+        {
+            playerInventory = player.PlayerInventory;
+            arrowSlotIndex = playerInventory.FindArrowSlotIndex();
+
+            if (arrowSlotIndex == null) return false;
+            if (arrowProjectilePrefab == null) return false;
+
+            UseType02();
+
+
+            ConsumeArrow();
+            return true;
+        }
+
+        private void UseType01()
+        {
+            arrowProjectileObject = ArrowSpawner.Instance.Pool.Get().GetComponent<ArrowProjectile_001>();
+            arrowProjectileObject.transform.position = transform.position;
+            arrowProjectileObject.transform.rotation = transform.rotation;
+
+            arrowSlotInPlayerInventory = playerInventory.inventory[(int)arrowSlotIndex];
+            arrowData = (ArrowData)arrowSlotInPlayerInventory.ItemData;
+            arrowProjectileObject.SetData(arrowData);
+            arrowProjectileObject.Shoot(bowData, arrowData);
+        }
+
+        private void UseType02()
+        {
+            var arrowProjectileObject01 = ArrowSpawner.Instance.Pool.Get().GetComponent<ArrowProjectile_001>();
+            var arrowProjectileObject02 = ArrowSpawner.Instance.Pool.Get().GetComponent<ArrowProjectile_001>();
+            arrowProjectileObject01.transform.position = transform.position;
+            arrowProjectileObject01.transform.rotation = transform.rotation;
+            arrowProjectileObject02.transform.position = transform.position;
+            arrowProjectileObject02.transform.rotation = transform.rotation;
+
+            Debug.Log("Fix here.");
+
+
+            arrowSlotInPlayerInventory = playerInventory.inventory[(int)arrowSlotIndex];
+            arrowData = (ArrowData)arrowSlotInPlayerInventory.ItemData;
+            arrowProjectileObject01.SetData(arrowData);
+            arrowProjectileObject01.Shoot(bowData, arrowData);
+        }
+
+
+        private void ConsumeArrow()
+        {
+            if (consumeArrow)
+            {
+                arrowSlotInPlayerInventory.RemoveItem();
+                UIPlayerInventory.Instance.UpdateInventoryUIAt((int)arrowSlotIndex);
+            }
         }
     }
 }

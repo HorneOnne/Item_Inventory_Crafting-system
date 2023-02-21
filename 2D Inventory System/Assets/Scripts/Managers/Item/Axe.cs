@@ -1,9 +1,10 @@
-using UnityEngine;
-
-public class Axe : Item, IUseable
+namespace DIVH_InventorySystem
 {
-    public override bool Use(Player player)
+    public class Axe : Item, IUseable
     {
-        return true;
+        public override bool Use(Player player)
+        {
+            return true;
+        }
     }
 }

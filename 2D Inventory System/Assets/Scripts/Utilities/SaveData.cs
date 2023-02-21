@@ -1,178 +1,179 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Experimental.AI;
 
-[System.Serializable]
-public class SaveData
+
+namespace DIVH_InventorySystem
 {
-    public string path = Application.dataPath + "/Saves/";
-    public PlayerInventorySaveData playerInventoryData;
-    public ItemOnGroundSaveData itemOnGroundData;
-    public WorldChest worldChest;
-
-
-    public SaveData(PlayerInventory playerInventory, List<Item> itemsOnGround, List<Chest> chestObjects)
+    [System.Serializable]
+    public class SaveData
     {
-        playerInventoryData = new PlayerInventorySaveData(playerInventory);
-        itemOnGroundData = new ItemOnGroundSaveData(itemsOnGround);
-        worldChest = new WorldChest(chestObjects);
-        //chestInventorySaveData = new ChestInventorySaveData(chestObject.transform.position, chestObject.transform.rotation.eulerAngles); ;    
-    }
-
-    public void SaveAllData()
-    {
-        Save(playerInventoryData, "playerInventory");
-        Save(itemOnGroundData, "itemsOnGround");
-
-        Save(worldChest, "chestInventory");
-    }
-
-    public void LoadAllData()
-    {
-        playerInventoryData = Load<PlayerInventorySaveData>("playerInventory");
-        itemOnGroundData = Load<ItemOnGroundSaveData>("itemsOnGround");
-
-        worldChest = Load<WorldChest>("chestInventory");
-    }
+        public string path = Application.dataPath + "/Saves/";
+        public PlayerInventorySaveData playerInventoryData;
+        public ItemOnGroundSaveData itemOnGroundData;
+        public WorldChest worldChest;
 
 
-    public void Save<T>(T objectToSave, string key)
-    {
-        Directory.CreateDirectory(path);
-        string jsonString = JsonUtility.ToJson(objectToSave);
-        using (StreamWriter sw = new StreamWriter($"{path}{key}.txt"))
+        public SaveData(PlayerInventory playerInventory, List<Item> itemsOnGround, List<Chest> chestObjects)
         {
-            sw.Write(jsonString);
+            playerInventoryData = new PlayerInventorySaveData(playerInventory);
+            itemOnGroundData = new ItemOnGroundSaveData(itemsOnGround);
+            worldChest = new WorldChest(chestObjects);
+            //chestInventorySaveData = new ChestInventorySaveData(chestObject.transform.position, chestObject.transform.rotation.eulerAngles); ;    
         }
 
-        Debug.Log($"Saved at path: {path}{key}.txt");
+        public void SaveAllData()
+        {
+            Save(playerInventoryData, "playerInventory");
+            Save(itemOnGroundData, "itemsOnGround");
+
+            Save(worldChest, "chestInventory");
+        }
+
+        public void LoadAllData()
+        {
+            playerInventoryData = Load<PlayerInventorySaveData>("playerInventory");
+            itemOnGroundData = Load<ItemOnGroundSaveData>("itemsOnGround");
+
+            worldChest = Load<WorldChest>("chestInventory");
+        }
+
+
+        public void Save<T>(T objectToSave, string key)
+        {
+            Directory.CreateDirectory(path);
+            string jsonString = JsonUtility.ToJson(objectToSave);
+            using (StreamWriter sw = new StreamWriter($"{path}{key}.txt"))
+            {
+                sw.Write(jsonString);
+            }
+
+            Debug.Log($"Saved at path: {path}{key}.txt");
+        }
+
+        public T Load<T>(string key)
+        {
+            T returnValue = default(T);
+            if (File.Exists($"{path}{key}.txt"))
+            {
+                string jsonString = "";
+                // LOAD DATA
+                using (StreamReader sr = new StreamReader($"{path}{key}.txt"))
+                {
+                    jsonString = sr.ReadToEnd();
+                    returnValue = JsonUtility.FromJson<T>(jsonString);
+                    Debug.Log("Loaded.");
+                }
+            }
+            else
+            {
+                Debug.Log("NOT FOUND FILE.");
+            }
+
+            return returnValue;
+        }
+
+
+
     }
 
-    public T Load<T>(string key)
+    [System.Serializable]
+    public struct PlayerInventorySaveData
     {
-        T returnValue = default(T);
-        if (File.Exists($"{path}{key}.txt"))
+        public List<ItemSlotSaveData> itemDatas;
+
+        public PlayerInventorySaveData(PlayerInventory playerInventory)
         {
-            string jsonString = "";
-            // LOAD DATA
-            using (StreamReader sr = new StreamReader($"{path}{key}.txt"))
+            itemDatas = new List<ItemSlotSaveData>();
+            for (int i = 0; i < playerInventory.inventory.Count; i++)
             {
-                jsonString = sr.ReadToEnd();
-                returnValue = JsonUtility.FromJson<T>(jsonString);
-                Debug.Log("Loaded.");
+                var itemSlot = playerInventory.inventory[i];
+                itemDatas.Add(new ItemSlotSaveData(ItemDataManager.Instance.GetItemID(itemSlot.ItemData), itemSlot.ItemQuantity));
             }
         }
-        else
-        {
-            Debug.Log("NOT FOUND FILE.");
-        }
-
-        return returnValue;
-    }
-
-
-
-}
-
-[System.Serializable]
-public struct PlayerInventorySaveData
-{
-    public List<ItemSlotSaveData> itemDatas;
-
-    public PlayerInventorySaveData(PlayerInventory playerInventory)
-    {
-        itemDatas = new List<ItemSlotSaveData>();
-        for (int i = 0; i < playerInventory.inventory.Count; i++)
-        {
-            var itemSlot = playerInventory.inventory[i];
-            itemDatas.Add(new ItemSlotSaveData(ItemContainerManager.Instance.GetItemID(itemSlot.ItemData), itemSlot.ItemQuantity));
-        }
-    }
-}
-
-[System.Serializable]
-public struct ItemSlotSaveData
-{
-    public int itemID;
-    public int itemQuantity;
-
-    public ItemSlotSaveData(int itemID, int itemQuantity)
-    {
-        this.itemID = itemID;
-        this.itemQuantity = itemQuantity;
-    }
-}
-
-[System.Serializable]
-public struct ItemOnGroundSaveData
-{
-    public List<ItemObjectData> itemDatas;
-
-    public ItemOnGroundSaveData(List<Item> itemsOnGround)
-    {
-        itemDatas = new List<ItemObjectData>();
-        for (int i = 0; i < itemsOnGround.Count; i++)
-        {
-            int itemID = ItemContainerManager.Instance.GetItemID(itemsOnGround[i].ItemData);
-
-            itemDatas.Add(new ItemObjectData(itemID, itemsOnGround[i].transform.position, itemsOnGround[i].transform.eulerAngles));
-        }
-        
     }
 
     [System.Serializable]
-    public struct ItemObjectData
+    public struct ItemSlotSaveData
     {
         public int itemID;
-        public Vector2 position;
-        public Vector3 rotation;
+        public int itemQuantity;
 
-        public ItemObjectData(int itemID, Vector2 position, Vector3 rotation)
+        public ItemSlotSaveData(int itemID, int itemQuantity)
         {
             this.itemID = itemID;
-            this.position = position;
-            this.rotation = rotation;
+            this.itemQuantity = itemQuantity;
         }
     }
-}
 
-
-[System.Serializable]
-public struct WorldChest
-{
-    public List<ChestInventorySaveData> allChests;
-
-    public WorldChest(List<Chest> chests)
+    [System.Serializable]
+    public struct ItemOnGroundSaveData
     {
-        allChests = new List<ChestInventorySaveData>();
-        for (int i = 0; i < chests.Count; i++)
+        public List<ItemObjectData> itemDatas;
+
+        public ItemOnGroundSaveData(List<Item> itemsOnGround)
         {
-            allChests.Add(new ChestInventorySaveData(chests[i].Inventory, chests[i].transform.position, chests[i].transform.rotation.eulerAngles));
+            itemDatas = new List<ItemObjectData>();
+            for (int i = 0; i < itemsOnGround.Count; i++)
+            {
+                int itemID = ItemDataManager.Instance.GetItemID(itemsOnGround[i].ItemData);
+
+                itemDatas.Add(new ItemObjectData(itemID, itemsOnGround[i].transform.position, itemsOnGround[i].transform.eulerAngles));
+            }
+
+        }
+
+        [System.Serializable]
+        public struct ItemObjectData
+        {
+            public int itemID;
+            public Vector2 position;
+            public Vector3 rotation;
+
+            public ItemObjectData(int itemID, Vector2 position, Vector3 rotation)
+            {
+                this.itemID = itemID;
+                this.position = position;
+                this.rotation = rotation;
+            }
         }
     }
-
 
 
     [System.Serializable]
-    public struct ChestInventorySaveData
+    public struct WorldChest
     {
-        public List<ItemSlotSaveData> itemSlotData;
-        public Vector2 position;
-        public Vector3 rotation;
+        public List<ChestInventorySaveData> allChests;
 
-        public ChestInventorySaveData(ChestInventory chestInventory, Vector2 position, Vector3 rotation)
+        public WorldChest(List<Chest> chests)
         {
-            this.itemSlotData = new List<ItemSlotSaveData>();
-            this.position = position;
-            this.rotation = rotation;
-
-            for (int i = 0; i < 36; i++)
+            allChests = new List<ChestInventorySaveData>();
+            for (int i = 0; i < chests.Count; i++)
             {
-                var itemSlot = chestInventory.inventory[i];
-                itemSlotData.Add(new ItemSlotSaveData(ItemContainerManager.Instance.GetItemID(itemSlot.ItemData), itemSlot.ItemQuantity));
+                allChests.Add(new ChestInventorySaveData(chests[i].Inventory, chests[i].transform.position, chests[i].transform.rotation.eulerAngles));
+            }
+        }
+
+
+
+        [System.Serializable]
+        public struct ChestInventorySaveData
+        {
+            public List<ItemSlotSaveData> itemSlotData;
+            public Vector2 position;
+            public Vector3 rotation;
+
+            public ChestInventorySaveData(ChestInventory chestInventory, Vector2 position, Vector3 rotation)
+            {
+                this.itemSlotData = new List<ItemSlotSaveData>();
+                this.position = position;
+                this.rotation = rotation;
+
+                for (int i = 0; i < 36; i++)
+                {
+                    var itemSlot = chestInventory.inventory[i];
+                    itemSlotData.Add(new ItemSlotSaveData(ItemDataManager.Instance.GetItemID(itemSlot.ItemData), itemSlot.ItemQuantity));
+                }
             }
         }
     }

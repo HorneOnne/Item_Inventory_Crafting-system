@@ -1,233 +1,232 @@
 ﻿using UnityEngine;
-using UnityEngine.Rendering;
 
 
-public class CombatDummy : Item, ICanBeAttacked, IPlaceable, IShowDamage
+namespace DIVH_InventorySystem
 {
-    [Header("References")]
-    private Animator anim;
-
-    [Header("CombatDummy Properties")]
-    private bool playerOnLeft;
-
-
-    #region Properties
-    [field: SerializeField]
-    public bool ShowRay { get; set; }
-    [field:SerializeField]
-    public LayerMask PlacedLayer { get; set; }
-    [field: SerializeField]
-    public float Cooldown { get; set; }
-
-    #endregion
-
-
-    [Header("CombatDummy Properties")]
-    private bool canTrigger = true;
-
-
-    // Cached
-    private GameObject textPrefab;
-    private GameObject textObject;
-    private Vector3 moveTextObjectVector;
-    private Vector3 textObjectRotation;
-
-
-
-
-
-    protected override void Start()
+    public class CombatDummy : Item, ICanBeAttacked, IPlaceable, IShowDamage
     {
-        base.Start();
-        anim = base.Model.GetComponent<Animator>();
+        [Header("References")]
+        private Animator anim;
 
-        textPrefab = ItemContainerManager.Instance.GetItemPrefab("DamagePopup");
-    }
+        [Header("CombatDummy Properties")]
+        private bool playerOnLeft;
 
-    private bool IsLeftSideChecker(Transform object01, Transform object02)
-    {
-        float xDifference = object02.position.x - object01.position.x;
-        bool returnBool;
-        if (xDifference > 0)
+
+        #region Properties
+        [field: SerializeField]
+        public bool ShowRay { get; set; }
+        [field: SerializeField]
+        public LayerMask PlacedLayer { get; set; }
+        [field: SerializeField]
+        public float Cooldown { get; set; }
+
+        #endregion
+
+
+        [Header("CombatDummy Properties")]
+        private bool canTrigger = true;
+
+
+        // Cached
+        private GameObject textPrefab;
+        private GameObject textObject;
+        private Vector3 moveTextObjectVector;
+        private Vector3 textObjectRotation;
+
+
+
+
+
+        protected override void Start()
         {
-            //Debug.Log("GameObject2 is on the right of GameObject1");
-            returnBool = false;
-        }
-        else if (xDifference < 0)
-        {
-            //Debug.Log("GameObject2 is on the left of GameObject1");
-            returnBool = true;
-        }
-        else
-        {
-            //Debug.Log("GameObject2 is on the same x position as GameObject1");
-            returnBool = true;
+            base.Start();
+            anim = base.Model.GetComponent<Animator>();
+
+            textPrefab = ItemDataManager.Instance.GetItemPrefab("DamagePopup");
         }
 
-        return returnBool;
-    }
-
-
-    public override bool Use(Player player)
-    {
-        //Debug.Log("Use");
-        return true;
-    }
-
-
-    public bool IsAboveGround(Player player, bool showRay = false)
-    {
-        bool canBePlaced = false;
-        RaycastHit2D hit = Physics2D.Raycast(UIItemInHand.Instance.uiSlotDisplay.transform.position, Vector2.down , 2.5f ,PlacedLayer);
-  
-        if(showRay)
-            Debug.DrawRay(UIItemInHand.Instance.uiSlotDisplay.transform.position, Vector2.down * 2.5f, Color.blue, 1);
-        if (hit.collider != null)
+        private bool IsLeftSideChecker(Transform object01, Transform object02)
         {
-            canBePlaced = true;
-        }
-
-        return canBePlaced;
-
-    }
-
-    public void Placed(Vector3 placedPosition, Player player = null, Transform parent = null)
-    {
-        Debug.Log("Placed");
-        Vector3 cachedLocalScale = transform.localScale;
-
-        if (parent != null)
-            transform.parent = parent.transform;
-
-        gameObject.SetActive(true);
-        transform.position = placedPosition;
-        transform.localScale = cachedLocalScale;
-        transform.localRotation = Quaternion.Euler(0,0,0);
-
-        player.ItemInHand.RemoveItem();
-        UIItemInHand.Instance.UpdateItemInHandUI();
-    }
-
-    public void ShowDamage(int damaged)
-    {
-
-        if (textPrefab != null)
-        {
-            //textObject = Instantiate(textPrefab, transform.position, Quaternion.identity);
-            textObject = DamagePopupSpawner.Instance.Pool.Get();
-            textObject.transform.position = transform.position;
-
-            moveTextObjectVector = new Vector3(Random.Range(-1f, 1f), Random.Range(0.5f, 1f));
-
-
-            if(moveTextObjectVector.x > 0)
-                textObjectRotation = new Vector3(0, 0, Random.Range(-30f, 0));
+            float xDifference = object02.position.x - object01.position.x;
+            bool returnBool;
+            if (xDifference > 0)
+            {
+                //Debug.Log("GameObject2 is on the right of GameObject1");
+                returnBool = false;
+            }
+            else if (xDifference < 0)
+            {
+                //Debug.Log("GameObject2 is on the left of GameObject1");
+                returnBool = true;
+            }
             else
-                textObjectRotation = new Vector3(0, 0, Random.Range(0f, 30f));
-
-            textObject.GetComponent<DamagePopup>().SetUp(damaged, GetDamageColor(damaged), GetDamageSize(damaged), moveTextObjectVector, textObjectRotation);
-        }
-
-    }
-
-
-    private Color GetDamageColor(float damage)
-    {
-        switch (damage)
-        {
-            case float n when (n >= 0 && n < 25):
-                return Color.green;
-            case float n when (n >= 25 && n < 50):
-                return Color.blue;
-            case float n when (n >= 50 && n < 75):
-                return new Color(0.6f, 0.2f, 1f); // Purple
-            case float n when (n >= 75 && n < 90):
-                return Color.red;
-            case float n when (n >= 90):
-                return Color.yellow;
-            default:
-                return Color.white;
-        }
-    }
-
-    private float GetDamageSize(float damage)
-    {
-        switch (damage)
-        {
-            case float n when (n >= 0 && n < 25):
-                return 15;
-            case float n when (n >= 25 && n < 50):
-                return 16;
-            case float n when (n >= 50 && n < 75):
-                return 17; // Purple
-            case float n when (n >= 75 && n < 90):
-                return 19;
-            case float n when (n >= 90):
-                return 25;
-            default:
-                return 15;
-        }
-    }
-
-
-    public void BeAttacked(int damaged)
-    {
-        anim.SetBool("playerOnLeft", playerOnLeft);
-        anim.SetTrigger("damage");
-
-        ShowDamage(damaged);
-    }
-
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (canTrigger)
-        {
-            if (collision.collider.CompareTag("Item"))
             {
-                playerOnLeft = IsLeftSideChecker(this.transform, collision.transform);
-
-                if (collision.gameObject.GetComponent<ICanCauseDamage>() != null)
-                {
-                    BeAttacked(collision.gameObject.GetComponent<ICanCauseDamage>().GetDamage());
-                }
-
+                //Debug.Log("GameObject2 is on the same x position as GameObject1");
+                returnBool = true;
             }
 
-            canTrigger = false;
-            Invoke("ResetTrigger", Cooldown);
+            return returnBool;
         }
-    }
 
-    
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (canTrigger)
+        public override bool Use(Player player)
         {
-            if (collision.CompareTag("Item"))
+            //Debug.Log("Use");
+            return true;
+        }
+
+
+        public bool IsAboveGround(Player player, bool showRay = false)
+        {
+            bool canBePlaced = false;
+            RaycastHit2D hit = Physics2D.Raycast(UIItemInHand.Instance.uiSlotDisplay.transform.position, Vector2.down, 2.5f, PlacedLayer);
+
+            if (showRay)
+                Debug.DrawRay(UIItemInHand.Instance.uiSlotDisplay.transform.position, Vector2.down * 2.5f, Color.blue, 1);
+            if (hit.collider != null)
             {
-                playerOnLeft = IsLeftSideChecker(this.transform, collision.transform);
-
-                if (collision.gameObject.GetComponent<ICanCauseDamage>() != null)
-                {
-                    BeAttacked(collision.gameObject.GetComponent<ICanCauseDamage>().GetDamage());
-                }
-
+                canBePlaced = true;
             }
 
+            return canBePlaced;
 
-            canTrigger = false;
-            Invoke("ResetTrigger", Cooldown);
-        }   
+        }
+
+        public void Placed(Vector3 placedPosition, Player player = null, Transform parent = null)
+        {
+            Debug.Log("Placed");
+            Vector3 cachedLocalScale = transform.localScale;
+
+            if (parent != null)
+                transform.parent = parent.transform;
+
+            gameObject.SetActive(true);
+            transform.position = placedPosition;
+            transform.localScale = cachedLocalScale;
+            transform.localRotation = Quaternion.Euler(0, 0, 0);
+
+            player.ItemInHand.RemoveItem();
+            UIItemInHand.Instance.UpdateItemInHandUI();
+        }
+
+        public void ShowDamage(int damaged)
+        {
+
+            if (textPrefab != null)
+            {
+                //textObject = Instantiate(textPrefab, transform.position, Quaternion.identity);
+                textObject = DamagePopupSpawner.Instance.Pool.Get();
+                textObject.transform.position = transform.position;
+
+                moveTextObjectVector = new Vector3(Random.Range(-1f, 1f), Random.Range(0.5f, 1f));
+
+
+                if (moveTextObjectVector.x > 0)
+                    textObjectRotation = new Vector3(0, 0, Random.Range(-30f, 0));
+                else
+                    textObjectRotation = new Vector3(0, 0, Random.Range(0f, 30f));
+
+                textObject.GetComponent<DamagePopup>().SetUp(damaged, GetDamageColor(damaged), GetDamageSize(damaged), moveTextObjectVector, textObjectRotation);
+            }
+
+        }
+
+
+        private Color GetDamageColor(float damage)
+        {
+            switch (damage)
+            {
+                case float n when (n >= 0 && n < 25):
+                    return Color.green;
+                case float n when (n >= 25 && n < 50):
+                    return Color.blue;
+                case float n when (n >= 50 && n < 75):
+                    return new Color(0.6f, 0.2f, 1f); // Purple
+                case float n when (n >= 75 && n < 90):
+                    return Color.red;
+                case float n when (n >= 90):
+                    return Color.yellow;
+                default:
+                    return Color.white;
+            }
+        }
+
+        private float GetDamageSize(float damage)
+        {
+            switch (damage)
+            {
+                case float n when (n >= 0 && n < 25):
+                    return 15;
+                case float n when (n >= 25 && n < 50):
+                    return 16;
+                case float n when (n >= 50 && n < 75):
+                    return 17; // Purple
+                case float n when (n >= 75 && n < 90):
+                    return 19;
+                case float n when (n >= 90):
+                    return 25;
+                default:
+                    return 15;
+            }
+        }
+
+
+        public void BeAttacked(int damaged)
+        {
+            anim.SetBool("playerOnLeft", playerOnLeft);
+            anim.SetTrigger("damage");
+
+            ShowDamage(damaged);
+        }
+
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (canTrigger)
+            {
+                if (collision.collider.CompareTag("Item"))
+                {
+                    playerOnLeft = IsLeftSideChecker(this.transform, collision.transform);
+
+                    if (collision.gameObject.GetComponent<ICanCauseDamage>() != null)
+                    {
+                        BeAttacked(collision.gameObject.GetComponent<ICanCauseDamage>().GetDamage());
+                    }
+
+                }
+
+                canTrigger = false;
+                Invoke("ResetTrigger", Cooldown);
+            }
+        }
+
+
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (canTrigger)
+            {
+                if (collision.CompareTag("Item"))
+                {
+                    playerOnLeft = IsLeftSideChecker(this.transform, collision.transform);
+
+                    if (collision.gameObject.GetComponent<ICanCauseDamage>() != null)
+                    {
+                        BeAttacked(collision.gameObject.GetComponent<ICanCauseDamage>().GetDamage());
+                    }
+
+                }
+
+
+                canTrigger = false;
+                Invoke("ResetTrigger", Cooldown);
+            }
+        }
+
+        private void ResetTrigger()
+        {
+            canTrigger = true;
+        }
     }
-
-    private void ResetTrigger()
-    {
-        canTrigger = true;
-    }
-
-
 }
-
 

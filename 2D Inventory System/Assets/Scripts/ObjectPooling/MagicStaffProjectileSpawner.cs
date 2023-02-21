@@ -1,57 +1,60 @@
 ﻿using UnityEngine;
 using UnityEngine.Pool;
 
-public class MagicStaffProjectileSpawner : Singleton<MagicStaffProjectileSpawner>
+namespace DIVH_InventorySystem
 {
-    public GameObject magicStaffProjectile;
-
-    // Collection checks will throw errors if we try to release an item that is already
-    // in the pool.   
-    public bool collectionChecks = true;
-    public int maxPoolSize = 10;
-
-    IObjectPool<GameObject> m_Pool;
-
-    public IObjectPool<GameObject> Pool
+    public class MagicStaffProjectileSpawner : Singleton<MagicStaffProjectileSpawner>
     {
-        get
+        public GameObject magicStaffProjectile;
+
+        // Collection checks will throw errors if we try to release an item that is already
+        // in the pool.   
+        public bool collectionChecks = true;
+        public int maxPoolSize = 10;
+
+        IObjectPool<GameObject> m_Pool;
+
+        public IObjectPool<GameObject> Pool
         {
-            if (m_Pool == null)
+            get
             {
-                m_Pool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, collectionChecks, 10, maxPoolSize);
+                if (m_Pool == null)
+                {
+                    m_Pool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, collectionChecks, 10, maxPoolSize);
+                }
+
+                return m_Pool;
             }
-
-            return m_Pool;
         }
-    }
 
 
 
-    private GameObject CreatePooledItem()
-    {
-        return Instantiate(magicStaffProjectile, this.gameObject.transform);
-    }
+        private GameObject CreatePooledItem()
+        {
+            return Instantiate(magicStaffProjectile, this.gameObject.transform);
+        }
 
 
-    // Called when an item is returned to the pool using Release
-    private void OnReturnedToPool(GameObject gameObject)
-    {
-        gameObject.SetActive(false);
-    }
+        // Called when an item is returned to the pool using Release
+        private void OnReturnedToPool(GameObject gameObject)
+        {
+            gameObject.SetActive(false);
+        }
 
 
-    // Called when an item is taken from the pool using Get
-    private void OnTakeFromPool(GameObject gameObject)
-    {
-        gameObject.SetActive(true);
-    }
+        // Called when an item is taken from the pool using Get
+        private void OnTakeFromPool(GameObject gameObject)
+        {
+            gameObject.SetActive(true);
+        }
 
 
 
-    // If the pool capacity is reached then any items returned will be destroyed.
-    // We can control what the destroy behavior does, here we destroy the GameObject.
-    private void OnDestroyPoolObject(GameObject gameObject)
-    {
-        Destroy(gameObject);
+        // If the pool capacity is reached then any items returned will be destroyed.
+        // We can control what the destroy behavior does, here we destroy the GameObject.
+        private void OnDestroyPoolObject(GameObject gameObject)
+        {
+            Destroy(gameObject);
+        }
     }
 }

@@ -1,7 +1,9 @@
-﻿using UnityEngine;
-
-public interface ICanBeAttacked
+﻿namespace DIVH_InventorySystem
 {
-    public float Cooldown { get; set; } // The time between two instances of taking damage
-    public void BeAttacked(int damaged);
+    public interface ICanBeAttacked
+    {
+        public float Cooldown { get; set; } // The time between two instances of taking damage
+        public void BeAttacked(int damaged);
+    }
 }
+

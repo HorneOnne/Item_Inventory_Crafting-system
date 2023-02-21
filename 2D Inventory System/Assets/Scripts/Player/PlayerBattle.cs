@@ -1,33 +1,36 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Player))]
-public class PlayerBattle : MonoBehaviour
+namespace DIVH_InventorySystem
 {
-    [Header("References")]
-    private Player player;
-    private ItemInHand itemInHand;
-    private PlayerData playerData;
-
-    private void Start()
+    [RequireComponent(typeof(Player))]
+    public class PlayerBattle : MonoBehaviour
     {
-        player = GetComponent<Player>();
-        playerData = player.playerData;
-        itemInHand = player.ItemInHand;
-    }
+        [Header("References")]
+        private Player player;
+        private ItemInHand itemInHand;
+        private PlayerData playerData;
 
-    public int GetPlayerDamage()
-    {
-        int itemInHandDamage = 0;
-        if (itemInHand.GetItemObject() is ICanCauseDamage)
+        private void Start()
         {
-            itemInHandDamage = itemInHand.GetItemObject().GetComponent<ICanCauseDamage>().GetDamage();
+            player = GetComponent<Player>();
+            playerData = player.playerData;
+            itemInHand = player.ItemInHand;
         }
 
-        return playerData.baseAttackDamage + itemInHandDamage;
-    }
+        public int GetPlayerDamage()
+        {
+            int itemInHandDamage = 0;
+            if (itemInHand.GetItemObject() is ICanCauseDamage)
+            {
+                itemInHandDamage = itemInHand.GetItemObject().GetComponent<ICanCauseDamage>().GetDamage();
+            }
 
-    public void AddWeaponDamage()
-    {
-        
+            return playerData.baseAttackDamage + itemInHandDamage;
+        }
+
+        public void AddWeaponDamage()
+        {
+
+        }
     }
 }

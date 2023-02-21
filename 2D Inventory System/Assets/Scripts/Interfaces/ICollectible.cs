@@ -1,8 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public interface ICollectible
+namespace DIVH_InventorySystem
 {
-    public void Collect(Player player);
+    public interface ICollectible
+    {
+        public void Collect(Player player);
+    }
+
 }

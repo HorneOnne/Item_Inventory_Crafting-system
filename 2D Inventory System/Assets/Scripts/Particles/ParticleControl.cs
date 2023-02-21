@@ -1,27 +1,26 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(ParticleSystem))]
-public class ParticleControl : MonoBehaviour
+namespace DIVH_InventorySystem
 {
-    private ParticleSystem m_particleSystem;
-
-    private void Awake()
+    [RequireComponent(typeof(ParticleSystem))]
+    public class ParticleControl : MonoBehaviour
     {
-        m_particleSystem = GetComponent<ParticleSystem>();    
-    }
+        private ParticleSystem m_particleSystem;
 
-
-    public void SetParticles(List<Sprite> frames)
-    {
-        for(int i = 0; i < frames.Count; i++) 
+        private void Awake()
         {
-            m_particleSystem.textureSheetAnimation.SetSprite(i, frames[i]);
+            m_particleSystem = GetComponent<ParticleSystem>();
+        }
+
+
+        public void SetParticles(List<Sprite> frames)
+        {
+            for (int i = 0; i < frames.Count; i++)
+            {
+                m_particleSystem.textureSheetAnimation.SetSprite(i, frames[i]);
+            }
         }
     }
-
-
-
 }
 

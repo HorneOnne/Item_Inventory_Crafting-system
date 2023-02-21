@@ -1,36 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class DropItem : Item
+namespace DIVH_InventorySystem
 {
-
-    public void Set(ItemSlot itemSlot)
+    public class DropItem : Item
     {
-        base.SetData(itemSlot);
-    }
 
-
-    /*public override void Collect(Player player)
-    {
-        bool canAddItem = player.PlayerInventory.AddItem(ItemData);
-
-        if(canAddItem)
-            Destroy(this.gameObject);
-    }*/
-
-    public override void Collect(Player player)
-    {
-        var returnSlot = player.PlayerInventory.AddItem(ItemSlot);
-
-
-        if (returnSlot.HasItem() == true)
+        public void Set(ItemSlot itemSlot)
         {
-            Set(returnSlot);    
+            base.SetData(itemSlot);
         }
-        else
+
+
+        /*public override void Collect(Player player)
         {
-            Destroy(gameObject);
+            bool canAddItem = player.PlayerInventory.AddItem(ItemData);
+
+            if(canAddItem)
+                Destroy(this.gameObject);
+        }*/
+
+        public override void Collect(Player player)
+        {
+            var returnSlot = player.PlayerInventory.AddItem(ItemSlot);
+
+
+            if (returnSlot.HasItem() == true)
+            {
+                Set(returnSlot);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

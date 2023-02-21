@@ -1,35 +1,36 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerLootZone : MonoBehaviour
+namespace DIVH_InventorySystem
 {
-    public GameObject playerGameObject;
-    private Player player;
-
-
-
-    // Cached
-    private Item itemObject;
-    private UIPlayerInventory uiPlayerInventory;
-
-    private void Start()
+    public class PlayerLootZone : MonoBehaviour
     {
-        player = playerGameObject.GetComponent<Player>();
-        uiPlayerInventory = UIPlayerInventory.Instance;
-    }
+        public GameObject playerGameObject;
+        private Player player;
 
 
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Item"))
+        // Cached
+        private Item itemObject;
+        private UIPlayerInventory uiPlayerInventory;
+
+        private void Start()
         {
-            itemObject = collision.gameObject.GetComponent<Item>();
-            if (itemObject != null)
+            player = playerGameObject.GetComponent<Player>();
+            uiPlayerInventory = UIPlayerInventory.Instance;
+        }
+
+
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            if (collision.CompareTag("Item"))
             {
-                itemObject.Collect(player);
-                uiPlayerInventory.UpdateInventoryUI();
+                itemObject = collision.gameObject.GetComponent<Item>();
+                if (itemObject != null)
+                {
+                    itemObject.Collect(player);
+                    uiPlayerInventory.UpdateInventoryUI();
+                }
             }
         }
     }

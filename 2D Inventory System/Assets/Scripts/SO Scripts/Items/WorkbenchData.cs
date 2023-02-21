@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "Workbench", menuName = "ScriptableObject/Item/Placed/Workbench", order = 51)]
-public class WorkbenchData : ItemData
+namespace DIVH_InventorySystem
 {
+    [CreateAssetMenu(fileName = "Workbench", menuName = "ScriptableObject/Item/Placed/Workbench", order = 51)]
+    public class WorkbenchData : ItemData
+    {
 
+    }
 }

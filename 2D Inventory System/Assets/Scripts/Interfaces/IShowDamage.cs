@@ -1,6 +1,7 @@
-﻿using UnityEngine;
-
-public interface IShowDamage
+﻿namespace DIVH_InventorySystem
 {
-    public void ShowDamage(int damaged);
+    public interface IShowDamage
+    {
+        public void ShowDamage(int damaged);
+    }
 }

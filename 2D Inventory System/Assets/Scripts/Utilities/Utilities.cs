@@ -2,12 +2,10 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace MyGame.Ultilities
+namespace DIVH_InventorySystem
 {
     public static class Utilities
-    {    
-
-   
+    {     
         public static void AddEvent(GameObject obj, EventTriggerType type, UnityAction<BaseEventData> action)
         {
             EventTrigger trigger = obj.GetComponent<EventTrigger>();
@@ -23,10 +21,10 @@ namespace MyGame.Ultilities
         {
             GameObject returnGameObject = null;
 
-            var itemPrefab = ItemContainerManager.Instance.GetItemPrefab(itemSlot.ItemData.itemType.ToString());
+            var itemPrefab = ItemDataManager.Instance.GetItemPrefab(itemSlot.ItemData.itemType.ToString());
             if (itemPrefab != null)
             {
-                returnGameObject = MonoBehaviour.Instantiate(ItemContainerManager.Instance.GetItemPrefab(itemSlot.ItemData.itemType.ToString()), parent);
+                returnGameObject = MonoBehaviour.Instantiate(ItemDataManager.Instance.GetItemPrefab(itemSlot.ItemData.itemType.ToString()), parent);
                 returnGameObject.GetComponent<Item>().SetData(itemSlot);
      
             }

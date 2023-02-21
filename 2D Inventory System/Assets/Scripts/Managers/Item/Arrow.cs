@@ -1,4 +1,7 @@
-﻿public class Arrow : Item
+﻿namespace DIVH_InventorySystem
 {
+    public class Arrow : Item
+    {
 
+    }
 }

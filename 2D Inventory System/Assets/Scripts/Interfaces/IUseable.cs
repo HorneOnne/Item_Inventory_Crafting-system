@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public interface IUseable
+namespace DIVH_InventorySystem
 {
-    public bool Use(Player player);
+    public interface IUseable
+    {
+        public bool Use(Player player);
+    }
 }

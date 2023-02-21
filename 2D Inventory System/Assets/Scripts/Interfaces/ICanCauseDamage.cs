@@ -1,6 +1,7 @@
-﻿using UnityEngine;
-
-public interface ICanCauseDamage
+﻿namespace DIVH_InventorySystem
 {
-    public int GetDamage();
+    public interface ICanCauseDamage
+    {
+        public int GetDamage();
+    }
 }

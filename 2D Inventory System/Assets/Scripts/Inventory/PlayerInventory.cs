@@ -2,189 +2,192 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PlayerInventory : MonoBehaviour
+namespace DIVH_InventorySystem
 {
-    // Events
-    //public static event System.Action OnInventoryUpdate;
-
-    [Header("References")]
-    private Player player;
-    private ItemInHand itemInHand; 
-
-
-    [Header("Inventory Settings")]
-    public int capacity;
-    public List<ItemSlot> inventory = new List<ItemSlot>();
-
-
-    private void Start()
+    public class PlayerInventory : MonoBehaviour
     {
-        player = GetComponent<Player>();
-        itemInHand = player.ItemInHand;
+        // Events
+        //public static event System.Action OnInventoryUpdate;
 
-        for (int i = 0; i < capacity; i++)
+        [Header("References")]
+        private Player player;
+        private ItemInHand itemInHand;
+
+
+        [Header("Inventory Settings")]
+        public int capacity;
+        public List<ItemSlot> inventory = new List<ItemSlot>();
+
+
+        private void Start()
         {
-            inventory.Add(new ItemSlot());
-        }
-    }
+            player = GetComponent<Player>();
+            itemInHand = player.ItemInHand;
 
-    public ItemData GetItem(int slotIndex)
-    {
-        if(HasSlot(slotIndex))
-        {
-            return inventory[slotIndex].ItemData;
-        }
-        return null;
-    }
-
-
-    public bool AddItem(ItemData itemData)
-    {
-        bool canAddItem = false;
-
-        for(int i = 0; i < inventory.Count;i++) 
-        {
-            if (inventory[i].HasItem() == false)
+            for (int i = 0; i < capacity; i++)
             {
-                inventory[i].AddNewItem(itemData);
-                canAddItem = true;
-                break;
+                inventory.Add(new ItemSlot());
             }
-            else
-            {
-                if(inventory[i].ItemData == itemData)
-                {
-                    bool canAdd = inventory[i].AddItem();
+        }
 
-                    if(canAdd == true)
+        public ItemData GetItem(int slotIndex)
+        {
+            if (HasSlot(slotIndex))
+            {
+                return inventory[slotIndex].ItemData;
+            }
+            return null;
+        }
+
+
+        public bool AddItem(ItemData itemData)
+        {
+            bool canAddItem = false;
+
+            for (int i = 0; i < inventory.Count; i++)
+            {
+                if (inventory[i].HasItem() == false)
+                {
+                    inventory[i].AddNewItem(itemData);
+                    canAddItem = true;
+                    break;
+                }
+                else
+                {
+                    if (inventory[i].ItemData == itemData)
                     {
-                        canAddItem = true;
-                        break;
+                        bool canAdd = inventory[i].AddItem();
+
+                        if (canAdd == true)
+                        {
+                            canAddItem = true;
+                            break;
+                        }
                     }
                 }
-            }          
-        }
-
-        return canAddItem;
-    }
-
-    public ItemSlot AddItem(ItemSlot itemSlot)
-    {
-        ItemSlot copyItemSlot = new ItemSlot(itemSlot);
-        ItemSlot returnItemSlot = new ItemSlot(itemSlot);
-
-        for (int i = 0; i < inventory.Count; i++)
-        {
-            returnItemSlot = inventory[i].AddItemsFromAnotherSlot(copyItemSlot);
-
-            if (returnItemSlot.HasItem() == false)
-            {
-                break;
             }
 
+            return canAddItem;
         }
-        return returnItemSlot;
-    }
 
-
-    public bool AddItemAt(int index)
-    {
-        bool isSlotNotFull = inventory[index].AddItem();
-        EventManager.PlayerInventoryUpdate(); 
-
-        return isSlotNotFull;
-    }
-
-
-    public void AddNewItemAt(int index, ItemData item)
-    {
-        inventory[index].AddNewItem(item);
-        EventManager.PlayerInventoryUpdate();
-    }
-
-
-    public void RemoveItemAt(int index)
-    {
-        inventory[index].RemoveItem();
-        EventManager.PlayerInventoryUpdate();
-    }
-
-
-    public bool HasSlot(int slotIndex)
-    {
-        try
+        public ItemSlot AddItem(ItemSlot itemSlot)
         {
-            inventory[slotIndex].HasItem();
+            ItemSlot copyItemSlot = new ItemSlot(itemSlot);
+            ItemSlot returnItemSlot = new ItemSlot(itemSlot);
+
+            for (int i = 0; i < inventory.Count; i++)
+            {
+                returnItemSlot = inventory[i].AddItemsFromAnotherSlot(copyItemSlot);
+
+                if (returnItemSlot.HasItem() == false)
+                {
+                    break;
+                }
+
+            }
+            return returnItemSlot;
         }
-        catch
+
+
+        public bool AddItemAt(int index)
         {
+            bool isSlotNotFull = inventory[index].AddItem();
+            EventManager.PlayerInventoryUpdate();
+
+            return isSlotNotFull;
+        }
+
+
+        public void AddNewItemAt(int index, ItemData item)
+        {
+            inventory[index].AddNewItem(item);
+            EventManager.PlayerInventoryUpdate();
+        }
+
+
+        public void RemoveItemAt(int index)
+        {
+            inventory[index].RemoveItem();
+            EventManager.PlayerInventoryUpdate();
+        }
+
+
+        public bool HasSlot(int slotIndex)
+        {
+            try
+            {
+                inventory[slotIndex].HasItem();
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+
+        public bool HasItem(int slotIndex)
+        {
+            if (HasSlot(slotIndex))
+            {
+                return inventory[slotIndex].HasItem();
+            }
             return false;
         }
 
-        return true;
-    }
-
-
-    public bool HasItem(int slotIndex)
-    {
-        if(HasSlot(slotIndex))
+        public int? GetSlotIndex(ItemSlot itemSlot)
         {
-            return inventory[slotIndex].HasItem();
-        }
-        return false;
-    }
-
-    public int? GetSlotIndex(ItemSlot itemSlot)
-    {
-        for(int i = 0; i < inventory.Count; i++)
-        {
-            if (inventory[i].Equals(itemSlot))
+            for (int i = 0; i < inventory.Count; i++)
             {
-                return i;
+                if (inventory[i].Equals(itemSlot))
+                {
+                    return i;
+                }
+            }
+
+            return null;
+        }
+
+
+        public void StackItem()
+        {
+            if (itemInHand.GetItemData() == null) return;
+            Dictionary<int, int> dict = new Dictionary<int, int>();
+            Dictionary<int, int> sortedDict = new Dictionary<int, int>();
+
+            for (int i = 0; i < inventory.Count; i++)
+            {
+                if (inventory[i].ItemData == itemInHand.GetItemData())
+                {
+                    dict.Add(i, inventory[i].ItemQuantity);
+                }
+            }
+
+            // Use OrderBy to sort the dictionary by value
+            sortedDict = dict.OrderBy(x => x.Value)
+                .ToDictionary(x => x.Key, x => x.Value);
+
+            foreach (var e in sortedDict)
+            {
+                itemInHand.GetSlot().AddItemsFromAnotherSlot(inventory[e.Key]);
+                UIItemInHand.Instance.UpdateItemInHandUI();
+                UIPlayerInventory.Instance.UpdateInventoryUIAt(e.Key);
             }
         }
 
-        return null;
-    }
-
-
-    public void StackItem()
-    {
-        if (itemInHand.GetItemData() == null) return;
-        Dictionary<int, int> dict = new Dictionary<int, int>();
-        Dictionary<int, int> sortedDict = new Dictionary<int, int>();
-
-        for (int i = 0; i < inventory.Count; i++)
+        public int? FindArrowSlotIndex()
         {
-            if (inventory[i].ItemData == itemInHand.GetItemData())
+            for (int i = 0; i < inventory.Count; i++)
             {
-                dict.Add(i, inventory[i].ItemQuantity);
+                if (inventory[i].HasItem() == false)
+                    continue;
+
+                if (inventory[i].GetItemType() == ItemType.Arrow)
+                    return i;
             }
+
+            return null;
         }
-
-        // Use OrderBy to sort the dictionary by value
-        sortedDict = dict.OrderBy(x => x.Value)
-            .ToDictionary(x => x.Key, x => x.Value);
-     
-        foreach(var e in sortedDict)
-        {
-            itemInHand.GetSlot().AddItemsFromAnotherSlot(inventory[e.Key]);
-            UIItemInHand.Instance.UpdateItemInHandUI();
-            UIPlayerInventory.Instance.UpdateInventoryUIAt(e.Key);
-        }
-    }
-
-    public int? FindArrowSlotIndex()
-    {
-        for(int i = 0; i < inventory.Count;i++)
-        {
-            if (inventory[i].HasItem() == false)
-                continue;
-
-            if (inventory[i].GetItemType() == ItemType.Arrow)
-                return i;
-        }
-
-        return null;
     }
 }
