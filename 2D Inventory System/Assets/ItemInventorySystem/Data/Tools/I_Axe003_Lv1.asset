@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88805880ac79b2f4c8592f2e1b2c64ff, type: 3}
+  m_Name: I_Axe003_Lv1
+  m_EditorClassIdentifier: 
+  icon: {fileID: 56430679, guid: 0804b8f0cd3b81241862b9b94a207c61, type: 3}
+  itemCategory: 7
+  itemType: 6
+  max_quantity: 1
+  description: 
+  duration: 0
+  currentLevel: 1
+  maxLevel: 2
+  upgradeRecipe:
+    materials:
+    - itemData: {fileID: 11400000, guid: 59db2d8e10c755a4da53fc124717d3f6, type: 2}
+      quantity: 10
+    outputItem:
+      itemData: {fileID: 11400000, guid: 20ee756b84e98fe4a855636af05773c2, type: 2}
+      quantity: 1
+  axePower: 0
+  attackDamage: 0

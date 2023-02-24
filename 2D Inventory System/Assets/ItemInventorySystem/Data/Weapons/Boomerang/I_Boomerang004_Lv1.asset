@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a49cb402b306c34bb2a6d317a03bd01, type: 3}
+  m_Name: I_Boomerang004_Lv1
+  m_EditorClassIdentifier: 
+  icon: {fileID: 1420599477, guid: 0804b8f0cd3b81241862b9b94a207c61, type: 3}
+  itemCategory: 1
+  itemType: 8
+  max_quantity: 1
+  description: 
+  duration: 0.6
+  currentLevel: 0
+  maxLevel: 0
+  upgradeRecipe:
+    materials:
+    - itemData: {fileID: 11400000, guid: 84caf3b3f4aa3334c83def7386b08aeb, type: 2}
+      quantity: 64
+    outputItem:
+      itemData: {fileID: 11400000, guid: 438161109fb9ba444a1887e5fbc20442, type: 2}
+      quantity: 1
+  damage: 40
+  releaseSpeed: 40
+  timeToReturn: 0.8
+  rotateSpeed: 2
+  attackType: 1

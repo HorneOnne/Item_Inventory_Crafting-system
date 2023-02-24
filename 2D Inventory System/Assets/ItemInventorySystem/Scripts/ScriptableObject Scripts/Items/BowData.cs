@@ -1,0 +1,16 @@
+using UnityEngine;
+
+namespace DIVH_InventorySystem
+{
+    [CreateAssetMenu(fileName = "New Bow Object", menuName = "ScriptableObject/Item/Weapons/Bow", order = 51)]
+    public class BowData : UpgradeableItemData
+    {
+        [Header("BOW SETTINGS")]
+        public int baseAttackDamage;    // used for add damage with arrow
+        public float releaseSpeed;  // Affect the arrow speed
+
+        [Header("UPGRADE SETTINGS")]
+        public int useType;
+    }
+}
+
