@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11fb6a7510fa58b499a26b35445b0d79, type: 3}
+  m_Name: UI_Sword004_Lv2
+  m_EditorClassIdentifier: 
+  icon: {fileID: -914658713, guid: d4d04b54f146fc9499ef61e7951f0861, type: 3}
+  itemCategory: 1
+  itemType: 5
+  max_quantity: 1
+  description: '~Sword04
+
+    -+ 50 attack damage
+
+    -+ 3 attack speed
+
+    ++
+    0.5 attack speed'
+  usageVelocity: 3.5
+  currentLevel: 2
+  maxLevel: 2
+  upgradeRecipe:
+    materials: []
+    outputItem:
+      itemData: {fileID: 0}
+      quantity: 0
+  damage: 50
+  swingSwordIncreaseSize: 2
+  useType: 2

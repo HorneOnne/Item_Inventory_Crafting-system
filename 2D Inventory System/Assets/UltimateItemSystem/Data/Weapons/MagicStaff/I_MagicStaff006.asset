@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a9935b7b96f0904e953957d110d362b, type: 3}
+  m_Name: I_MagicStaff006
+  m_EditorClassIdentifier: 
+  icon: {fileID: 1007435960, guid: d4d04b54f146fc9499ef61e7951f0861, type: 3}
+  itemCategory: 1
+  itemType: 9
+  max_quantity: 1
+  description: '~MagicStaff006
+
+    -+ 10 attack damage
+
+    -+ 4.5 attack speed
+
+'
+  usageVelocity: 4.5
+  projectile: {fileID: 477230186, guid: f92440ba9d066c641aaac5f0da37c943, type: 3}
+  releaseProjectileSpeed: 80
+  damage: 10
+  particle: 5

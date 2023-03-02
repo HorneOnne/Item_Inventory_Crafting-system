@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c25d29b88d9c6245964c87bba20c0ed, type: 3}
+  m_Name: I_Helmet002_Lv1
+  m_EditorClassIdentifier: 
+  icon: {fileID: -439430292, guid: 7acc6c0bb5d6fa34ea847c9a9980fc2b, type: 3}
+  itemCategory: 0
+  itemType: 1
+  max_quantity: 1
+  description: 
+  usageVelocity: 1
+  currentLevel: 1
+  maxLevel: 3
+  upgradeRecipe:
+    materials:
+    - itemData: {fileID: 11400000, guid: 59db2d8e10c755a4da53fc124717d3f6, type: 2}
+      quantity: 10
+    outputItem:
+      itemData: {fileID: 11400000, guid: 7cea0a00135673a45a3ae727e633ed1e, type: 2}
+      quantity: 1
+  armor: 5

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88805880ac79b2f4c8592f2e1b2c64ff, type: 3}
+  m_Name: I_Axe006_Lv1
+  m_EditorClassIdentifier: 
+  icon: {fileID: 1795019034, guid: d4d04b54f146fc9499ef61e7951f0861, type: 3}
+  itemCategory: 7
+  itemType: 6
+  max_quantity: 1
+  description: '~Axe006
+
+    -+ 10 attack damage
+
+    -+ 2.0 attack speed'
+  usageVelocity: 2
+  currentLevel: 1
+  maxLevel: 2
+  upgradeRecipe:
+    materials:
+    - itemData: {fileID: 11400000, guid: 4ec61b2c4f3230240aa3d66955de7844, type: 2}
+      quantity: 10
+    outputItem:
+      itemData: {fileID: 11400000, guid: d3746818036a0954e8610308152e997c, type: 2}
+      quantity: 1
+  axePower: 0
+  attackDamage: 10
