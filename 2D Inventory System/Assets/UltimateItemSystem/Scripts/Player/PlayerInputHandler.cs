@@ -125,50 +125,58 @@ namespace UltimateItemSystem
 
         private void Update()
         {
-            movementInput = Input.GetAxisRaw("Horizontal");
             PressUtilityKeyInput = Input.GetKey(utilityKeyBinding);
-            JumpInput = Input.GetButtonDown("Jump");
-
-            elapsedTime += Time.deltaTime;
-
-
-            // Calculate hang time (Time leave ground)
-            if (playerMovement.IsGrounded())
-                hangCounter = player.playerData.hangTime;
-            else
-                hangCounter -= Time.deltaTime;
-
-
-            // calculate Jump Buffer
-            if (JumpInput)
+            
+            if (player.canMovement)
             {
-                jumpBufferCount = player.playerData.jumpBufferLength;
-            }
-            else
-            {
-                jumpBufferCount -= Time.deltaTime;
-            }
-
-            if (jumpBufferCount > 0 && hangCounter > 0)
-            {
-                TriggerJump = true;
-                jumpBufferCount = 0;
-            }
+                movementInput = Input.GetAxisRaw("Horizontal");               
+                JumpInput = Input.GetButtonDown("Jump");
+                elapsedTime += Time.deltaTime;
 
 
-            if (Input.GetKeyDown(dropItemKey))
-            {
-                if (itemInHand.GetICurrenttem() != null)
+                // Calculate hang time (Time leave ground)
+                if (playerMovement.IsGrounded())
+                    hangCounter = player.playerData.hangTime;
+                else
+                    hangCounter -= Time.deltaTime;
+
+
+                // calculate Jump Buffer
+                if (JumpInput)
                 {
-                    mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    itemInHand.GetICurrenttem().Drop(player, mousePosition, Vector3.zero, true);
-                    itemInHand.ClearSlot();
+                    jumpBufferCount = player.playerData.jumpBufferLength;
+                }
+                else
+                {
+                    jumpBufferCount -= Time.deltaTime;
+                }
+
+                if (jumpBufferCount > 0 && hangCounter > 0)
+                {
+                    TriggerJump = true;
+                    jumpBufferCount = 0;
                 }
             }
+            
+
+            if(player.canUseItem)
+            {
+                if (Input.GetKeyDown(dropItemKey))
+                {
+                    if (itemInHand.GetICurrenttem() != null)
+                    {
+                        mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        itemInHand.GetICurrenttem().Drop(player, mousePosition, Vector3.zero, true);
+                        itemInHand.ClearSlot();
+                    }
+                }
 
 
-            if (itemInHand.HasItem() && itemInHand.GetICurrenttem().showIconWhenHoldByHand == true)
-                RotateHoldItem();
+                if (itemInHand.HasItem() && itemInHand.GetICurrenttem().showIconWhenHoldByHand == true)
+                    RotateHoldItem();
+            }
+
+            
 
 
 
@@ -182,11 +190,11 @@ namespace UltimateItemSystem
             else if (CurrentMouseState == PointerState.SingleLeftClick)
             {
                 OpenCloseChest();
-                //UseItem();
             }
             else if (CurrentMouseState == PointerState.LeftPress)
             {
-                UseItem();
+                if(player.canUseItem)
+                    UseItem();
             }         
         }
 
@@ -205,8 +213,7 @@ namespace UltimateItemSystem
 
                 // check if last click was within doubleClickTime
                 if (Time.time - lastClickTime < doubleClickTime)
-                {
-                    //Debug.Log("Double click detected");                
+                {             
                     isLeftClicking = false;
                     CurrentMouseState = PointerState.DoubleLeftClick;
                 }
@@ -218,8 +225,7 @@ namespace UltimateItemSystem
                 }
             }
             else if (Input.GetMouseButtonUp(0) && isLeftClicking)
-            {
-                //Debug.Log("Single click detected");           
+            {       
                 isLeftClicking = false;
                 CurrentMouseState = PointerState.Null;
             }

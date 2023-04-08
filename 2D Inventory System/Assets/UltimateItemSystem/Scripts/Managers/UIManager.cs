@@ -14,22 +14,35 @@ namespace UltimateItemSystem
         [field: SerializeField] public GameObject PlayerEquipmentCanvas { get; private set; }
         [field: SerializeField] public GameObject ChestInventoryCanvas { get; private set; }
         [field: SerializeField] public GameObject AnvilCanvas { get; private set; }
-        [field: SerializeField] public GameObject ItemDescCanvas { get; private set; }
         [field: SerializeField] public GameObject MenuCanvas { get; private set; }
 
 
         private void Awake()
         {
             // Activate all UI canvases on awake.
-            PlayerInventoryCanvas.SetActive(true);
-            CreativeInventoryCanvas.SetActive(true);
-            CraftingTableCanvas.SetActive(true);
-            PlayerInformationCanvas.SetActive(true);
-            PlayerEquipmentCanvas.SetActive(true);
-            ChestInventoryCanvas.SetActive(true);
-            AnvilCanvas.SetActive(true);
-            ItemDescCanvas.SetActive(true);
-            MenuCanvas.SetActive(true);
+            if(PlayerInventoryCanvas != null)
+                PlayerInventoryCanvas.SetActive(true);
+
+            if (CreativeInventoryCanvas != null)
+                CreativeInventoryCanvas.SetActive(true);
+
+            if (CraftingTableCanvas != null)
+                CraftingTableCanvas.SetActive(true);
+
+            if (PlayerInformationCanvas != null)
+                PlayerInformationCanvas.SetActive(true);
+
+            if (PlayerEquipmentCanvas != null)
+                PlayerEquipmentCanvas.SetActive(true);
+
+            if (ChestInventoryCanvas != null)
+                ChestInventoryCanvas.SetActive(true);
+
+            if (AnvilCanvas != null)
+                AnvilCanvas.SetActive(true);
+
+            if (MenuCanvas != null)
+                MenuCanvas.SetActive(true);
         }
     }
 }

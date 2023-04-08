@@ -48,17 +48,14 @@ namespace UltimateItemSystem
             bool returnBool;
             if (xDifference > 0)
             {
-                //Debug.Log("GameObject2 is on the right of GameObject1");
                 returnBool = false;
             }
             else if (xDifference < 0)
             {
-                //Debug.Log("GameObject2 is on the left of GameObject1");
                 returnBool = true;
             }
             else
             {
-                //Debug.Log("GameObject2 is on the same x position as GameObject1");
                 returnBool = true;
             }
 
@@ -68,7 +65,6 @@ namespace UltimateItemSystem
 
         public override bool Use(Player player)
         {
-            //Debug.Log("Use");
             return true;
         }
 

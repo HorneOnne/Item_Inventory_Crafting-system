@@ -151,12 +151,10 @@ namespace UltimateItemSystem
 
             if (isAnvilOpen)
             {
-                //ShowCraftingTableUI();
                 Open(true);
             }
             else
             {
-                //HideCraftingTableUI();
                 Close(true);
             }
         }

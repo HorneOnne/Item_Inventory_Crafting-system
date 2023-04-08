@@ -1,15 +1,13 @@
 using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
-using UnityEngine.EventSystems;
-using System.Collections;
 
 namespace UltimateItemSystem
 {
     /// <summary>
     /// Class for handling UI Item Slots, implements IPointerEnterHandler and IPointerExitHandler
     /// </summary>
-    public class UIItemSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    public class UIItemSlot : MonoBehaviour
     {
         [Header("Internal References")]
         public Image mainImage;
@@ -94,48 +92,6 @@ namespace UltimateItemSystem
 
             mainImage.color = mainImageColor;
             amountItemInSlotText.color = defaultTextColor;
-        }
-
-
-        /// <summary>
-        /// Called when the pointer enters the UI element
-        /// </summary>
-        /// <param name="eventData">The pointer event data</param>
-        public void OnPointerEnter(PointerEventData eventData)
-        {
-            if(currentItemSlot.HasItem())
-            {
-                ItemDescriptionManager.Instance.SetItemData(currentItemSlot.ItemData);
-                StartCoroutine(Show());
-            }         
-        }
-
-        /// <summary>
-        /// Coroutine that shows the item description after a delay
-        /// </summary>
-        /// <returns>IEnumerator</returns>
-        IEnumerator Show()
-        {
-            yield return new WaitForSeconds(0.3f);
-            ItemDescriptionManager.Instance.Show();
-            UIManager.Instance.ItemDescCanvas.SetActive(true);               
-        }
-
-
-        /// <summary>
-        /// Called when the pointer exit the UI element
-        /// </summary>
-        /// <param name="eventData">The pointer event data</param>
-        public void OnPointerExit(PointerEventData eventData)
-        {
-            StopAllCoroutines();
-            if (currentItemSlot.HasItem())
-            {
-                ItemDescriptionManager.Instance.SetItemData(null);
-                ItemDescriptionManager.Instance.Hide();
-                UIManager.Instance.ItemDescCanvas.SetActive(false);
-            }
-            
         }
     }
 }

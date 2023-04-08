@@ -3,14 +3,6 @@ using UnityEngine;
 
 namespace UltimateItemSystem
 {
-    /// <summary>
-    /// Class that represents a player character.
-    /// </summary>
-    [RequireComponent(typeof(PlayerInventory))]
-    [RequireComponent(typeof(ItemInHand))]
-    [RequireComponent(typeof(PlayerMovement))]
-    [RequireComponent(typeof(PlayerInputHandler))]
-    [RequireComponent(typeof(PlayerEquipment))]
     public class Player : MonoBehaviour
     {
         [Header("CHARACTER REFERENCES")]
@@ -35,6 +27,10 @@ namespace UltimateItemSystem
         /// </summary>
         public Chest currentOpenChest;
 
+
+        [Header("Optional Restrict Feature")]
+        public bool canMovement;
+        public bool canUseItem;
 
 
         private void Awake()

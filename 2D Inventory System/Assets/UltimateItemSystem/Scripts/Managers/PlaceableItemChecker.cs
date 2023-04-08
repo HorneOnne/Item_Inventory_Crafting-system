@@ -30,8 +30,6 @@ namespace UltimateItemSystem
         #endregion
 
 
-
-
         private void OnEnable()
         {
             EventManager.OnItemInHandChanged += SetBoxCollider2D;
@@ -68,7 +66,6 @@ namespace UltimateItemSystem
 
             if (isAboveGround && IsCollideWithOtherObject == false)
             {
-                //Debug.Log("Can be placed");
                 uiItemInHand.UISlotImage.color = new Color(0, 1, 0, 1);
 
                 if (Input.GetMouseButtonDown(0))
@@ -78,11 +75,7 @@ namespace UltimateItemSystem
             }
             else
             {
-                //Debug.Log("Cannot be placed");
                 uiItemInHand.UISlotImage.color = new Color(1, 0, 0, 1);
-
-
-
             }
 
         }
